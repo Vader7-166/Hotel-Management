@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Hotel_Management.Areas.Admin.Controllers
+namespace Hotel_Management.Controllers.Customer
 {
-    public class AdminHomeController : Controller
+    public class ContactController : Controller
     {
         public IActionResult Index()
         {
