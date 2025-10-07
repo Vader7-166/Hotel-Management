@@ -64,10 +64,38 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark" href="../pages/notifications.html">
-                        <i class="material-symbols-rounded opacity-5">patient_list</i>
+                    <a class="nav-link text-dark" id="customerCollapseToggle" data-bs-toggle="collapse" href="#customerSubmenu">
+                        <i class="material-symbols-rounded opacity-5" >Patient_List</i>
                         <span class="nav-link-text ms-1">Customer Management</span>
                     </a>
+                    <div class="collapse" id="customerSubmenu">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Customer" asp-action="CustomerList">
+                                    <i class="material-symbols-rounded opacity-5">Patient_List</i>
+                                    <span class="nav-link-text ms-3">Customer List</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Customer" asp-action="AddnewCustomer">
+                                    <i class="material-symbols-rounded opacity-5">Patient_List</i>
+                                    <span class="nav-link-text ms-3">Add New Customer</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Customer" asp-action="CustomerSegmentation">
+                                    <i class="material-symbols-rounded opacity-5">Patient_List</i>
+                                    <span class="nav-link-text ms-3">Customer Segmentation</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Customer" asp-action="CustomerReport">
+                                    <i class="material-symbols-rounded opacity-5">Patient_List</i>
+                                    <span class="nav-link-text ms-3">Customer Reports</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
                 <li class="nav-item mt-3">
                     <h6 class="ps-4 ms-2 text-uppercase text-xs text-dark font-weight-bolder opacity-5">Account pages</h6>
@@ -205,5 +233,28 @@
         <!-- End main -->
     </main>
     <script src="~/js/admin/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const collapseElement = document.getElementById('customerSubmenu'); // Phần tử DIV (Submenu)
+            const toggleLink = document.getElementById('customerCollapseToggle'); // Phần tử A (Nút bấm)
+
+            if (collapseElement && toggleLink) {
+
+                // 1. Khi menu bắt đầu mở (show.bs.collapse)
+                collapseElement.addEventListener('show.bs.collapse', function () {
+                    // Đặt màu nền tối và chữ trắng (trạng thái active/mở)
+                    toggleLink.classList.add('bg-gradient-dark', 'text-white', 'active');
+                    toggleLink.classList.remove('text-dark'); // Đảm bảo chữ trắng hiển thị rõ
+                });
+
+                // 2. Khi menu bắt đầu đóng (hide.bs.collapse)
+                collapseElement.addEventListener('hide.bs.collapse', function () {
+                    // Đặt lại màu nền trong suốt và chữ tối (trạng thái bình thường)
+                    toggleLink.classList.remove('bg-gradient-dark', 'text-white', 'active');
+                    toggleLink.classList.add('text-dark');
+                });
+            }
+        });
+    </script>
 </body>
 </html>

@@ -25833,17 +25833,18 @@ hr.horizontal.gray-light {
 }
 
 .navbar-vertical .navbar-nav .nav-link[data-bs-toggle=collapse]:after {
-  display: inline-block;
-  font-style: normal;
-  font-variant: normal;
-  text-rendering: auto;
-  -webkit-font-smoothing: antialiased;
-  font-family: "Font Awesome 5 Free";
-  font-weight: 700;
-  content: "\f107";
-  margin-left: auto;
-  color: rgba(206, 212, 218, 0.7);
-  transition: all 0.2s ease-in-out;
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    font-family: "Font Awesome 5 Free";
+    font-weight: 700;
+    content: "\f105";
+    margin-left: auto;
+    color: rgba(206, 212, 218, 0.7);
+    transition: all 0.2s ease-in-out;
+    content: none !important; /* Đây là dòng quan trọng nhất */
 }
 
 @media (prefers-reduced-motion: reduce) {

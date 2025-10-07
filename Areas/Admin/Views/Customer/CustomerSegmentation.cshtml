@@ -1,0 +1,478 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewBag.Title = "Customer Segmentation";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-header pb-0">
+                    <h5 class="mb-0">Customer Segmentation</h5>
+                    <p class="text-sm mb-0">Analyze and segment customers by different criteria</p>
+                </div>
+                <div class="card-body">
+                    <!-- Segmentation Options -->
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <div class="btn-group" role="group">
+                                <input type="radio" class="btn-check" name="segmentType" id="byType" checked>
+                                <label class="btn btn-outline-primary" for="byType">By Customer Type</label>
+
+                                <input type="radio" class="btn-check" name="segmentType" id="byBooking">
+                                <label class="btn btn-outline-primary" for="byBooking">By Booking Frequency</label>
+
+                                <input type="radio" class="btn-check" name="segmentType" id="byRevenue">
+                                <label class="btn btn-outline-primary" for="byRevenue">By Revenue</label>
+
+                                <input type="radio" class="btn-check" name="segmentType" id="byLocation">
+                                <label class="btn btn-outline-primary" for="byLocation">By Location</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row">
+        <div class="col-xl-3 col-sm-6 mb-4">
+            <div class="card">
+                <div class="card-body p-3">
+                    <div class="chart">
+                        <canvas id="customerTypeChart" class="chart-canvas" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5 mb-4">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <h6>Customer by Booking Frequency</h6>
+                </div>
+                <div class="card-body p-3">
+                    <div class="chart">
+                        <canvas id="bookingFrequencyChart" class="chart-canvas" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Segmentation Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="mb-0">Segment Details</h6>
+                            <p class="text-sm mb-0">Detailed breakdown of customer segments</p>
+                        </div>
+                        <button class="btn bg-gradient-primary btn-sm" onclick="exportSegmentation()">
+                            <i class="material-symbols-rounded text-sm">file_download</i>&nbsp; Export
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body px-0 pb-0">
+                    <div class="table-responsive">
+                        <table class="table align-items-center mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Segment</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Total Customers</th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Percentage</th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Avg. Bookings</th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Total Revenue</th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Growth</th>
+                                    <th class="text-secondary opacity-7"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex px-2 py-1">
+                                            <div class="icon icon-shape icon-sm bg-gradient-success shadow text-center me-2 d-flex align-items-center justify-content-center">
+                                                <i class="material-symbols-rounded text-white opacity-10">star</i>
+                                            </div>
+                                            <div class="d-flex flex-column justify-content-center">
+                                                <h6 class="mb-0 text-sm">VIP Customers</h6>
+                                                <p class="text-xs text-secondary mb-0">High-value clients</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <p class="text-sm font-weight-bold mb-0">245</p>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <div class="progress-wrapper w-75 mx-auto">
+                                            <div class="progress-info">
+                                                <div class="progress-percentage">
+                                                    <span class="text-xs font-weight-bold">11%</span>
+                                                </div>
+                                            </div>
+                                            <div class="progress">
+                                                <div class="progress-bar bg-gradient-success" role="progressbar" style="width: 11%"></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <span class="text-sm font-weight-bold">24.5</span>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <span class="text-sm font-weight-bold">$485,000</span>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <span class="badge badge-sm bg-gradient-success">+12%</span>
+                                    </td>
+                                    <td class="align-middle">
+                                        <button class="btn btn-link text-secondary mb-0" data-bs-toggle="modal" data-bs-target="#segmentDetailModal">
+                                            <i class="material-symbols-rounded text-sm">visibility</i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex px-2 py-1">
+                                            <div class="icon icon-shape icon-sm bg-gradient-info shadow text-center me-2 d-flex align-items-center justify-content-center">
+                                                <i class="material-symbols-rounded text-white opacity-10">people</i>
+                                            </div>
+                                            <div class="d-flex flex-column justify-content-center">
+                                                <h6 class="mb-0 text-sm">Regular Customers</h6>
+                                                <p class="text-xs text-secondary mb-0">Standard clients</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <p class="text-sm font-weight-bold mb-0">1,523</p>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <div class="progress-wrapper w-75 mx-auto">
+                                            <div class="progress-info">
+                                                <div class="progress-percentage">
+                                                    <span class="text-xs font-weight-bold">68%</span>
+                                                </div>
+                                            </div>
+                                            <div class="progress">
+                                                <div class="progress-bar bg-gradient-info" role="progressbar" style="width: 68%"></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <span class="text-sm font-weight-bold">8.3</span>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <span class="text-sm font-weight-bold">$1,245,000</span>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <span class="badge badge-sm bg-gradient-success">+8%</span>
+                                    </td>
+                                    <td class="align-middle">
+                                        <button class="btn btn-link text-secondary mb-0">
+                                            <i class="material-symbols-rounded text-sm">visibility</i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex px-2 py-1">
+                                            <div class="icon icon-shape icon-sm bg-gradient-warning shadow text-center me-2 d-flex align-items-center justify-content-center">
+                                                <i class="material-symbols-rounded text-white opacity-10">person_add</i>
+                                            </div>
+                                            <div class="d-flex flex-column justify-content-center">
+                                                <h6 class="mb-0 text-sm">New Customers</h6>
+                                                <p class="text-xs text-secondary mb-0">Recent signups</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <p class="text-sm font-weight-bold mb-0">389</p>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <div class="progress-wrapper w-75 mx-auto">
+                                            <div class="progress-info">
+                                                <div class="progress-percentage">
+                                                    <span class="text-xs font-weight-bold">17%</span>
+                                                </div>
+                                            </div>
+                                            <div class="progress">
+                                                <div class="progress-bar bg-gradient-warning" role="progressbar" style="width: 17%"></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <span class="text-sm font-weight-bold">2.1</span>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <span class="text-sm font-weight-bold">$156,000</span>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <span class="badge badge-sm bg-gradient-success">+23%</span>
+                                    </td>
+                                    <td class="align-middle">
+                                        <button class="btn btn-link text-secondary mb-0">
+                                            <i class="material-symbols-rounded text-sm">visibility</i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex px-2 py-1">
+                                            <div class="icon icon-shape icon-sm bg-gradient-danger shadow text-center me-2 d-flex align-items-center justify-content-center">
+                                                <i class="material-symbols-rounded text-white opacity-10">block</i>
+                                            </div>
+                                            <div class="d-flex flex-column justify-content-center">
+                                                <h6 class="mb-0 text-sm">Inactive Customers</h6>
+                                                <p class="text-xs text-secondary mb-0">No recent activity</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <p class="text-sm font-weight-bold mb-0">127</p>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <div class="progress-wrapper w-75 mx-auto">
+                                            <div class="progress-info">
+                                                <div class="progress-percentage">
+                                                    <span class="text-xs font-weight-bold">4%</span>
+                                                </div>
+                                            </div>
+                                            <div class="progress">
+                                                <div class="progress-bar bg-gradient-danger" role="progressbar" style="width: 4%"></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <span class="text-sm font-weight-bold">0.5</span>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <span class="text-sm font-weight-bold">$12,500</span>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <span class="badge badge-sm bg-gradient-danger">-5%</span>
+                                    </td>
+                                    <td class="align-middle">
+                                        <button class="btn btn-link text-secondary mb-0">
+                                            <i class="material-symbols-rounded text-sm">visibility</i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Segment Detail Modal -->
+<div class="modal fade" id="segmentDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">VIP Customers - Detailed Analysis</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body p-3">
+                                <p class="text-sm mb-1">Average Transaction Value</p>
+                                <h4 class="font-weight-bolder">$1,980</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body p-3">
+                                <p class="text-sm mb-1">Customer Lifetime Value</p>
+                                <h4 class="font-weight-bolder">$48,510</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <h6 class="mb-3">Top Customers in this Segment</h6>
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Customer</th>
+                                <th>Total Bookings</th>
+                                <th>Revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>John Michael</td>
+                                <td>32</td>
+                                <td>$65,400</td>
+                            </tr>
+                            <tr>
+                                <td>Sarah Johnson</td>
+                                <td>28</td>
+                                <td>$54,200</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Customer Type Chart
+    const ctxType = document.getElementById('customerTypeChart').getContext('2d');
+    new Chart(ctxType, {
+        type: 'doughnut',
+        data: {
+            labels: ['VIP', 'Regular', 'New', 'Inactive'],
+            datasets: [{
+                data: [245, 1523, 389, 127],
+                backgroundColor: ['#82d616', '#17c1e8', '#fb8c00', '#ea0606']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    // Booking Frequency Chart
+    const ctxBooking = document.getElementById('bookingFrequencyChart').getContext('2d');
+    new Chart(ctxBooking, {
+        type: 'bar',
+        data: {
+            labels: ['1-3', '4-7', '8-15', '16-25', '25+'],
+            datasets: [{
+                label: 'Customers',
+                data: [450, 680, 520, 340, 294],
+                backgroundColor: '#17c1e8'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    function exportSegmentation() {
+        console.log('Exporting segmentation data...');
+    }
+</script>
+<div class="row">
+    <div class="col-8">
+        <div class="numbers">
+            <p class="text-sm mb-0 text-capitalize font-weight-bold">VIP Customers</p>
+            <h5 class="font-weight-bolder mb-0">
+                245
+                <span class="text-success text-sm font-weight-bolder">+12%</span>
+            </h5>
+        </div>
+    </div>
+    <div class="col-4 text-end">
+        <div class="icon icon-shape bg-gradient-success shadow text-center border-radius-md">
+            <i class="material-symbols-rounded opacity-10">star</i>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+<div class="col-xl-3 col-sm-6 mb-4">
+    <div class="card">
+        <div class="card-body p-3">
+            <div class="row">
+                <div class="col-8">
+                    <div class="numbers">
+                        <p class="text-sm mb-0 text-capitalize font-weight-bold">Regular Customers</p>
+                        <h5 class="font-weight-bolder mb-0">
+                            1,523
+                            <span class="text-success text-sm font-weight-bolder">+8%</span>
+                        </h5>
+                    </div>
+                </div>
+                <div class="col-4 text-end">
+                    <div class="icon icon-shape bg-gradient-info shadow text-center border-radius-md">
+                        <i class="material-symbols-rounded opacity-10">people</i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-xl-3 col-sm-6 mb-4">
+    <div class="card">
+        <div class="card-body p-3">
+            <div class="row">
+                <div class="col-8">
+                    <div class="numbers">
+                        <p class="text-sm mb-0 text-capitalize font-weight-bold">New Customers</p>
+                        <h5 class="font-weight-bolder mb-0">
+                            389
+                            <span class="text-success text-sm font-weight-bolder">+23%</span>
+                        </h5>
+                    </div>
+                </div>
+                <div class="col-4 text-end">
+                    <div class="icon icon-shape bg-gradient-warning shadow text-center border-radius-md">
+                        <i class="material-symbols-rounded opacity-10">person_add</i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-xl-3 col-sm-6 mb-4">
+    <div class="card">
+        <div class="card-body p-3">
+            <div class="row">
+                <div class="col-8">
+                    <div class="numbers">
+                        <p class="text-sm mb-0 text-capitalize font-weight-bold">Inactive</p>
+                        <h5 class="font-weight-bolder mb-0">
+                            127
+                            <span class="text-danger text-sm font-weight-bolder">-5%</span>
+                        </h5>
+                    </div>
+                </div>
+                <div class="col-4 text-end">
+                    <div class="icon icon-shape bg-gradient-danger shadow text-center border-radius-md">
+                        <i class="material-symbols-rounded opacity-10">block</i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- Charts Row -->
+<div class="row">
+    <div class="col-lg-7 mb-4">
+        <div class="card">
+            <div class="card-header pb-0">
+                <h6>Customer Distribution by Type</h6>
+            </div>
+            <div class="card-body p-3">
