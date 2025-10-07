@@ -1,6 +1,54 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
+
+@using Hotel_Management.Areas.Customer.Models
+
+@model List<RoomTypeViewModel>
 @{
+<<<<<<< Updated upstream
     Layout = "~/Views/Shared/_LayoutCustomer.cshtml";
+=======
+    ViewData["Title"] = "Các loại phòng";
+>>>>>>> Stashed changes
 }
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"
+            integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous">
+    </script>
+    <link href="~/css/customer/room.css" rel="stylesheet" />
+     </head>
+    <body>
+    <div class="container my-5">
+
+        <div class="text-center mb-5">
+            <p class="lead">
+                HT Hotel cung cấp 100 phòng và suite, với 8 loại phòng khác nhau nhằm đáp ứng đa dạng sở thích và phong cách nghỉ dưỡng. Mỗi phòng đều mang phong cách thiết kế tối giản, tạo nên không gian thanh lịch. Tiện nghi trong phòng được bố trí gọn gàng, đơn giản và tiện lợi, mang lại sự thoải mái tối đa cho khách hàng.
+            </p>
+            <a href="#" class="btn btn-compare mt-3">SO SÁNH HẠNG PHÒNG</a>
+        </div>
+
+        <div class="row room-showcase">
+            @foreach (var roomType in Model)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        <img src="@roomType.ImageUrl" class="card-img-top" alt="Ảnh phòng @roomType.TypeName">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">@roomType.TypeName</h5>
+                            <p class="card-text">@roomType.Description</p>
+                            <a asp-controller="Home" asp-action="RoomDetails" asp-route-id="@roomType.Id"
+                               class="btn btn-read-more">READ MORE</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    </body>
+</html>

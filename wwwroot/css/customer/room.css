@@ -1,0 +1,43 @@
+﻿.room-showcase .card {
+    border: 1px solid #e0e0e0;
+    transition: box-shadow 0.3s ease;
+}
+
+    .room-showcase .card:hover {
+        box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    }
+
+.room-showcase .card-title {
+    font-weight: 600;
+    color: #333;
+}
+
+.room-showcase .card-text {
+    color: #666;
+    min-height: 75px;
+}
+
+.btn-read-more {
+    background-color: #f0ad4e;
+    border-color: #eea236;
+    color: #fff;
+    font-weight: 500;
+}
+
+    .btn-read-more:hover {
+        background-color: #ec971f;
+        border-color: #d58512;
+        color: #fff;
+    }
+
+.btn-compare {
+    border: 2px solid #f0ad4e;
+    color: #f0ad4e;
+    font-weight: bold;
+    padding: 10px 30px;
+}
+
+    .btn-compare:hover {
+        background-color: #f0ad4e;
+        color: #fff;
+    }
