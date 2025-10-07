@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-//đăng ký đăng nhập
-namespace Hotel_Management.Controllers.Customer
+
+namespace Hotel_Management.Areas.Receptionist.Controllers
 {
-    public class AccountController : Controller
+    public class CustomerController : Controller
     {
         public IActionResult Index()
         {
