@@ -2,6 +2,7 @@
 
 namespace Hotel_Management.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class DashboardController : Controller
     {
         public IActionResult Index()
