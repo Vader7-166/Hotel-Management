@@ -1,415 +1,220 @@
 ﻿@{
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewBag.Title = "Admin Dashboard";
 }
-<p>Home Dashboard Index</p>
-@* <div class="container-fluid py-2">
-    <div class="row">
-        <div class="ms-3">
-            <h3 class="mb-0 h4 font-weight-bolder">Dashboard</h3>
-            <p class="mb-4">
-                Check the sales, value and bounce rate by country.
-            </p>
-        </div>
-        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-            <div class="card">
-                <div class="card-header p-2 ps-3">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <p class="text-sm mb-0 text-capitalize">Today's Money</p>
-                            <h4 class="mb-0">$53k</h4>
-                        </div>
-                        <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
-                            <i class="material-symbols-rounded opacity-10">weekend</i>
-                        </div>
-                    </div>
-                </div>
-                <hr class="dark horizontal my-0">
-                <div class="card-footer p-2 ps-3">
-                    <p class="mb-0 text-sm"><span class="text-success font-weight-bolder">+55% </span>than last week</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-            <div class="card">
-                <div class="card-header p-2 ps-3">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <p class="text-sm mb-0 text-capitalize">Today's Users</p>
-                            <h4 class="mb-0">2300</h4>
-                        </div>
-                        <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
-                            <i class="material-symbols-rounded opacity-10">person</i>
-                        </div>
-                    </div>
-                </div>
-                <hr class="dark horizontal my-0">
-                <div class="card-footer p-2 ps-3">
-                    <p class="mb-0 text-sm"><span class="text-success font-weight-bolder">+3% </span>than last month</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-            <div class="card">
-                <div class="card-header p-2 ps-3">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <p class="text-sm mb-0 text-capitalize">Ads Views</p>
-                            <h4 class="mb-0">3,462</h4>
-                        </div>
-                        <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
-                            <i class="material-symbols-rounded opacity-10">leaderboard</i>
-                        </div>
-                    </div>
-                </div>
-                <hr class="dark horizontal my-0">
-                <div class="card-footer p-2 ps-3">
-                    <p class="mb-0 text-sm"><span class="text-danger font-weight-bolder">-2% </span>than yesterday</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-sm-6">
-            <div class="card">
-                <div class="card-header p-2 ps-3">
-                    <div class="d-flex justify-content-between">
-                        <div>
-                            <p class="text-sm mb-0 text-capitalize">Sales</p>
-                            <h4 class="mb-0">$103,430</h4>
-                        </div>
-                        <div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
-                            <i class="material-symbols-rounded opacity-10">weekend</i>
-                        </div>
-                    </div>
-                </div>
-                <hr class="dark horizontal my-0">
-                <div class="card-footer p-2 ps-3">
-                    <p class="mb-0 text-sm"><span class="text-success font-weight-bolder">+5% </span>than yesterday</p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-lg-4 col-md-6 mt-4 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h6 class="mb-0 ">Website Views</h6>
-                    <p class="text-sm ">Last Campaign Performance</p>
-                    <div class="pe-2">
-                        <div class="chart">
-                            <canvas id="chart-bars" class="chart-canvas" height="170"></canvas>
-                        </div>
-                    </div>
-                    <hr class="dark horizontal">
-                    <div class="d-flex ">
-                        <i class="material-symbols-rounded text-sm my-auto me-1">schedule</i>
-                        <p class="mb-0 text-sm"> campaign sent 2 days ago </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4 col-md-6 mt-4 mb-4">
-            <div class="card ">
-                <div class="card-body">
-                    <h6 class="mb-0 "> Daily Sales </h6>
-                    <p class="text-sm "> (<span class="font-weight-bolder">+15%</span>) increase in today sales. </p>
-                    <div class="pe-2">
-                        <div class="chart">
-                            <canvas id="chart-line" class="chart-canvas" height="170"></canvas>
-                        </div>
-                    </div>
-                    <hr class="dark horizontal">
-                    <div class="d-flex ">
-                        <i class="material-symbols-rounded text-sm my-auto me-1">schedule</i>
-                        <p class="mb-0 text-sm"> updated 4 min ago </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4 mt-4 mb-3">
-            <div class="card">
-                <div class="card-body">
-                    <h6 class="mb-0 ">Completed Tasks</h6>
-                    <p class="text-sm ">Last Campaign Performance</p>
-                    <div class="pe-2">
-                        <div class="chart">
-                            <canvas id="chart-line-tasks" class="chart-canvas" height="170"></canvas>
-                        </div>
-                    </div>
-                    <hr class="dark horizontal">
-                    <div class="d-flex ">
-                        <i class="material-symbols-rounded text-sm my-auto me-1">schedule</i>
-                        <p class="mb-0 text-sm">just updated</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="dashboard-content container-fluid py-4">
+    <!-- Header -->
     <div class="row mb-4">
-        <div class="col-lg-8 col-md-6 mb-md-0 mb-4">
-            <div class="card">
-                <div class="card-header pb-0">
-                    <div class="row">
-                        <div class="col-lg-6 col-7">
-                            <h6>Projects</h6>
-                            <p class="text-sm mb-0">
-                                <i class="fa fa-check text-info" aria-hidden="true"></i>
-                                <span class="font-weight-bold ms-1">30 done</span> this month
-                            </p>
+        <div class="col-12">
+            <h3 class="mb-0 h4 fw-bold">Dashboard Quản Lý Khách Sạn</h3>
+            <p class="text-muted mb-0">Tổng quan hoạt động và doanh thu</p>
+        </div>
+    </div>
+
+    <!-- Thống kê tổng quan -->
+    <div class="row g-3 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card stat-card">
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted text-sm mb-1">Tổng Phòng</p>
+                            <h4 class="mb-0 fw-bold">120</h4>
+                            <small class="text-muted">phòng</small>
                         </div>
-                        <div class="col-lg-6 col-5 my-auto text-end">
-                            <div class="dropdown float-lg-end pe-4">
-                                <a class="cursor-pointer" id="dropdownTable" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fa fa-ellipsis-v text-secondary"></i>
-                                </a>
-                                <ul class="dropdown-menu px-2 py-3 ms-sm-n4 ms-n5" aria-labelledby="dropdownTable">
-                                    <li><a class="dropdown-item border-radius-md" href="javascript:;">Action</a></li>
-                                    <li><a class="dropdown-item border-radius-md" href="javascript:;">Another action</a></li>
-                                    <li><a class="dropdown-item border-radius-md" href="javascript:;">Something else here</a></li>
-                                </ul>
-                            </div>
+                        <div class="icon-box bg-gradient-blue text-white">
+                            <span class="material-symbols-rounded">hotel</span>
                         </div>
                     </div>
                 </div>
-                <div class="card-body px-0 pb-2">
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card stat-card">
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted text-sm mb-1">Đang Thuê</p>
+                            <h4 class="mb-0 fw-bold text-danger">87</h4>
+                            <small class="text-success fw-bold">+5 hôm nay</small>
+                        </div>
+                        <div class="icon-box bg-gradient-green text-white">
+                            <span class="material-symbols-rounded">meeting_room</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card stat-card">
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted text-sm mb-1">Phòng Trống</p>
+                            <h4 class="mb-0 fw-bold text-success">33</h4>
+                            <small class="text-muted">phòng</small>
+                        </div>
+                        <div class="icon-box bg-gradient-orange text-white">
+                            <span class="material-symbols-rounded">door_open</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card stat-card">
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted text-sm mb-1">Doanh Thu Hôm Nay</p>
+                            <h4 class="mb-0 fw-bold">45.2M</h4>
+                            <small class="text-success fw-bold">+12.5%</small>
+                        </div>
+                        <div class="icon-box bg-gradient-red text-white">
+                            <span class="material-symbols-rounded">payments</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Biểu đồ và tỷ lệ lấp đầy -->
+    <div class="row g-3 mb-4">
+        <!-- Tỷ lệ lấp đầy -->
+        <div class="col-lg-3 col-md-6">
+            <div class="card stat-card h-100">
+                <div class="card-body p-3">
+                    <h6 class="fw-bold mb-3">Tỷ Lệ Lấp Đầy</h6>
+                    <div class="text-center py-3">
+                        <svg class="progress-ring" width="150" height="150">
+                            <circle class="progress-ring-circle"
+                                    stroke="#e5e7eb"
+                                    stroke-width="12"
+                                    fill="transparent"
+                                    r="62"
+                                    cx="75"
+                                    cy="75" />
+                            <circle class="progress-ring-circle"
+                                    stroke="#667eea"
+                                    stroke-width="12"
+                                    fill="transparent"
+                                    r="62"
+                                    cx="75"
+                                    cy="75"
+                                    stroke-dasharray="389.557"
+                                    stroke-dashoffset="100"
+                                    id="occupancyCircle" />
+                        </svg>
+                        <div style="margin-top: -105px;">
+                            <h2 class="fw-bold mb-0" id="occupancyPercent">72.5%</h2>
+                            <small class="text-muted">87/120 phòng</small>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span><span class="room-status-indicator status-occupied"></span>Đang thuê</span>
+                            <span class="fw-bold">87</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span><span class="room-status-indicator status-available"></span>Trống</span>
+                            <span class="fw-bold">33</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Biểu đồ doanh thu -->
+        <div class="col-lg-5 col-md-6">
+            <div class="card stat-card h-100">
+                <div class="card-body p-3">
+                    <h6 class="fw-bold mb-1">Doanh Thu Theo Ngày</h6>
+                    <p class="text-muted text-sm mb-3">7 ngày gần nhất</p>
+                    <div class="chart-container">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Biểu đồ so sánh tháng -->
+        <div class="col-lg-4 col-md-12">
+            <div class="card stat-card h-100">
+                <div class="card-body p-3">
+                    <h6 class="fw-bold mb-1">Doanh Thu Theo Tháng</h6>
+                    <p class="text-muted text-sm mb-3">So sánh 6 tháng</p>
+                    <div class="chart-container">
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Check-in/Check-out hôm nay -->
+    <div class="row g-3">
+        <div class="col-lg-6">
+            <div class="card stat-card">
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="fw-bold mb-0">Check-in Hôm Nay</h6>
+                        <span class="badge bg-primary">12 khách</span>
+                    </div>
                     <div class="table-responsive">
-                        <table class="table align-items-center mb-0">
-                            <thead>
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
                                 <tr>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Companies</th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Members</th>
-                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Budget</th>
-                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Completion</th>
+                                    <th class="text-xs">Phòng</th>
+                                    <th class="text-xs">Khách Hàng</th>
+                                    <th class="text-xs">Giờ Check-in</th>
+                                    <th class="text-xs text-center">Trạng Thái</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>
-                                        <div class="d-flex px-2 py-1">
-                                            <div>
-                                                <img src="../assets/img/small-logos/logo-xd.svg" class="avatar avatar-sm me-3" alt="xd">
-                                            </div>
-                                            <div class="d-flex flex-column justify-content-center">
-                                                <h6 class="mb-0 text-sm">Material XD Version</h6>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="avatar-group mt-2">
-                                            <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ryan Tompson">
-                                                <img src="../assets/img/team-1.jpg" alt="team1">
-                                            </a>
-                                            <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Romina Hadid">
-                                                <img src="../assets/img/team-2.jpg" alt="team2">
-                                            </a>
-                                            <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Alexander Smith">
-                                                <img src="../assets/img/team-3.jpg" alt="team3">
-                                            </a>
-                                            <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Jessica Doe">
-                                                <img src="../assets/img/team-4.jpg" alt="team4">
-                                            </a>
-                                        </div>
-                                    </td>
-                                    <td class="align-middle text-center text-sm">
-                                        <span class="text-xs font-weight-bold"> $14,000 </span>
-                                    </td>
-                                    <td class="align-middle">
-                                        <div class="progress-wrapper w-75 mx-auto">
-                                            <div class="progress-info">
-                                                <div class="progress-percentage">
-                                                    <span class="text-xs font-weight-bold">60%</span>
-                                                </div>
-                                            </div>
-                                            <div class="progress">
-                                                <div class="progress-bar bg-gradient-info w-60" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                        </div>
+                                    <td><span class="fw-bold">201</span></td>
+                                    <td>Nguyễn Văn A</td>
+                                    <td class="text-muted">14:00</td>
+                                    <td class="text-center">
+                                        <span class="badge bg-success">Đã check-in</span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>
-                                        <div class="d-flex px-2 py-1">
-                                            <div>
-                                                <img src="../assets/img/small-logos/logo-atlassian.svg" class="avatar avatar-sm me-3" alt="atlassian">
-                                            </div>
-                                            <div class="d-flex flex-column justify-content-center">
-                                                <h6 class="mb-0 text-sm">Add Progress Track</h6>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="avatar-group mt-2">
-                                            <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Romina Hadid">
-                                                <img src="../assets/img/team-2.jpg" alt="team5">
-                                            </a>
-                                            <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Jessica Doe">
-                                                <img src="../assets/img/team-4.jpg" alt="team6">
-                                            </a>
-                                        </div>
-                                    </td>
-                                    <td class="align-middle text-center text-sm">
-                                        <span class="text-xs font-weight-bold"> $3,000 </span>
-                                    </td>
-                                    <td class="align-middle">
-                                        <div class="progress-wrapper w-75 mx-auto">
-                                            <div class="progress-info">
-                                                <div class="progress-percentage">
-                                                    <span class="text-xs font-weight-bold">10%</span>
-                                                </div>
-                                            </div>
-                                            <div class="progress">
-                                                <div class="progress-bar bg-gradient-info w-10" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                        </div>
+                                    <td><span class="fw-bold">305</span></td>
+                                    <td>Trần Thị B</td>
+                                    <td class="text-muted">14:30</td>
+                                    <td class="text-center">
+                                        <span class="badge bg-success">Đã check-in</span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>
-                                        <div class="d-flex px-2 py-1">
-                                            <div>
-                                                <img src="../assets/img/small-logos/logo-slack.svg" class="avatar avatar-sm me-3" alt="team7">
-                                            </div>
-                                            <div class="d-flex flex-column justify-content-center">
-                                                <h6 class="mb-0 text-sm">Fix Platform Errors</h6>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="avatar-group mt-2">
-                                            <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Romina Hadid">
-                                                <img src="../assets/img/team-3.jpg" alt="team8">
-                                            </a>
-                                            <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Jessica Doe">
-                                                <img src="../assets/img/team-1.jpg" alt="team9">
-                                            </a>
-                                        </div>
-                                    </td>
-                                    <td class="align-middle text-center text-sm">
-                                        <span class="text-xs font-weight-bold"> Not set </span>
-                                    </td>
-                                    <td class="align-middle">
-                                        <div class="progress-wrapper w-75 mx-auto">
-                                            <div class="progress-info">
-                                                <div class="progress-percentage">
-                                                    <span class="text-xs font-weight-bold">100%</span>
-                                                </div>
-                                            </div>
-                                            <div class="progress">
-                                                <div class="progress-bar bg-gradient-success w-100" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                        </div>
+                                    <td><span class="fw-bold">412</span></td>
+                                    <td>Lê Văn C</td>
+                                    <td class="text-muted">15:00</td>
+                                    <td class="text-center">
+                                        <span class="badge bg-warning">Chờ check-in</span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>
-                                        <div class="d-flex px-2 py-1">
-                                            <div>
-                                                <img src="../assets/img/small-logos/logo-spotify.svg" class="avatar avatar-sm me-3" alt="spotify">
-                                            </div>
-                                            <div class="d-flex flex-column justify-content-center">
-                                                <h6 class="mb-0 text-sm">Launch our Mobile App</h6>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="avatar-group mt-2">
-                                            <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ryan Tompson">
-                                                <img src="../assets/img/team-4.jpg" alt="user1">
-                                            </a>
-                                            <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Romina Hadid">
-                                                <img src="../assets/img/team-3.jpg" alt="user2">
-                                            </a>
-                                            <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Alexander Smith">
-                                                <img src="../assets/img/team-4.jpg" alt="user3">
-                                            </a>
-                                            <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Jessica Doe">
-                                                <img src="../assets/img/team-1.jpg" alt="user4">
-                                            </a>
-                                        </div>
-                                    </td>
-                                    <td class="align-middle text-center text-sm">
-                                        <span class="text-xs font-weight-bold"> $20,500 </span>
-                                    </td>
-                                    <td class="align-middle">
-                                        <div class="progress-wrapper w-75 mx-auto">
-                                            <div class="progress-info">
-                                                <div class="progress-percentage">
-                                                    <span class="text-xs font-weight-bold">100%</span>
-                                                </div>
-                                            </div>
-                                            <div class="progress">
-                                                <div class="progress-bar bg-gradient-success w-100" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                        </div>
+                                    <td><span class="fw-bold">508</span></td>
+                                    <td>Phạm Thị D</td>
+                                    <td class="text-muted">16:00</td>
+                                    <td class="text-center">
+                                        <span class="badge bg-warning">Chờ check-in</span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td>
-                                        <div class="d-flex px-2 py-1">
-                                            <div>
-                                                <img src="../assets/img/small-logos/logo-jira.svg" class="avatar avatar-sm me-3" alt="jira">
-                                            </div>
-                                            <div class="d-flex flex-column justify-content-center">
-                                                <h6 class="mb-0 text-sm">Add the New Pricing Page</h6>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="avatar-group mt-2">
-                                            <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ryan Tompson">
-                                                <img src="../assets/img/team-4.jpg" alt="user5">
-                                            </a>
-                                        </div>
-                                    </td>
-                                    <td class="align-middle text-center text-sm">
-                                        <span class="text-xs font-weight-bold"> $500 </span>
-                                    </td>
-                                    <td class="align-middle">
-                                        <div class="progress-wrapper w-75 mx-auto">
-                                            <div class="progress-info">
-                                                <div class="progress-percentage">
-                                                    <span class="text-xs font-weight-bold">25%</span>
-                                                </div>
-                                            </div>
-                                            <div class="progress">
-                                                <div class="progress-bar bg-gradient-info w-25" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="25"></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="d-flex px-2 py-1">
-                                            <div>
-                                                <img src="../assets/img/small-logos/logo-invision.svg" class="avatar avatar-sm me-3" alt="invision">
-                                            </div>
-                                            <div class="d-flex flex-column justify-content-center">
-                                                <h6 class="mb-0 text-sm">Redesign New Online Shop</h6>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="avatar-group mt-2">
-                                            <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Ryan Tompson">
-                                                <img src="../assets/img/team-1.jpg" alt="user6">
-                                            </a>
-                                            <a href="javascript:;" class="avatar avatar-xs rounded-circle" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Jessica Doe">
-                                                <img src="../assets/img/team-4.jpg" alt="user7">
-                                            </a>
-                                        </div>
-                                    </td>
-                                    <td class="align-middle text-center text-sm">
-                                        <span class="text-xs font-weight-bold"> $2,000 </span>
-                                    </td>
-                                    <td class="align-middle">
-                                        <div class="progress-wrapper w-75 mx-auto">
-                                            <div class="progress-info">
-                                                <div class="progress-percentage">
-                                                    <span class="text-xs font-weight-bold">40%</span>
-                                                </div>
-                                            </div>
-                                            <div class="progress">
-                                                <div class="progress-bar bg-gradient-info w-40" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="40"></div>
-                                            </div>
-                                        </div>
+                                    <td><span class="fw-bold">615</span></td>
+                                    <td>Hoàng Văn E</td>
+                                    <td class="text-muted">16:30</td>
+                                    <td class="text-center">
+                                        <span class="badge bg-warning">Chờ check-in</span>
                                     </td>
                                 </tr>
                             </tbody>
@@ -418,106 +223,336 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-4 col-md-6">
-            <div class="card h-100">
-                <div class="card-header pb-0">
-                    <h6>Orders overview</h6>
-                    <p class="text-sm">
-                        <i class="fa fa-arrow-up text-success" aria-hidden="true"></i>
-                        <span class="font-weight-bold">24%</span> this month
-                    </p>
-                </div>
+
+        <div class="col-lg-6">
+            <div class="card stat-card">
                 <div class="card-body p-3">
-                    <div class="timeline timeline-one-side">
-                        <div class="timeline-block mb-3">
-                            <span class="timeline-step">
-                                <i class="material-symbols-rounded text-success text-gradient">notifications</i>
-                            </span>
-                            <div class="timeline-content">
-                                <h6 class="text-dark text-sm font-weight-bold mb-0">$2400, Design changes</h6>
-                                <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">22 DEC 7:20 PM</p>
-                            </div>
-                        </div>
-                        <div class="timeline-block mb-3">
-                            <span class="timeline-step">
-                                <i class="material-symbols-rounded text-danger text-gradient">code</i>
-                            </span>
-                            <div class="timeline-content">
-                                <h6 class="text-dark text-sm font-weight-bold mb-0">New order #1832412</h6>
-                                <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">21 DEC 11 PM</p>
-                            </div>
-                        </div>
-                        <div class="timeline-block mb-3">
-                            <span class="timeline-step">
-                                <i class="material-symbols-rounded text-info text-gradient">shopping_cart</i>
-                            </span>
-                            <div class="timeline-content">
-                                <h6 class="text-dark text-sm font-weight-bold mb-0">Server payments for April</h6>
-                                <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">21 DEC 9:34 PM</p>
-                            </div>
-                        </div>
-                        <div class="timeline-block mb-3">
-                            <span class="timeline-step">
-                                <i class="material-symbols-rounded text-warning text-gradient">credit_card</i>
-                            </span>
-                            <div class="timeline-content">
-                                <h6 class="text-dark text-sm font-weight-bold mb-0">New card added for order #4395133</h6>
-                                <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">20 DEC 2:20 AM</p>
-                            </div>
-                        </div>
-                        <div class="timeline-block mb-3">
-                            <span class="timeline-step">
-                                <i class="material-symbols-rounded text-primary text-gradient">key</i>
-                            </span>
-                            <div class="timeline-content">
-                                <h6 class="text-dark text-sm font-weight-bold mb-0">Unlock packages for development</h6>
-                                <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">18 DEC 4:54 AM</p>
-                            </div>
-                        </div>
-                        <div class="timeline-block">
-                            <span class="timeline-step">
-                                <i class="material-symbols-rounded text-dark text-gradient">payments</i>
-                            </span>
-                            <div class="timeline-content">
-                                <h6 class="text-dark text-sm font-weight-bold mb-0">New order #9583120</h6>
-                                <p class="text-secondary font-weight-bold text-xs mt-1 mb-0">17 DEC</p>
-                            </div>
-                        </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="fw-bold mb-0">Check-out Hôm Nay</h6>
+                        <span class="badge bg-danger">8 khách</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="text-xs">Phòng</th>
+                                    <th class="text-xs">Khách Hàng</th>
+                                    <th class="text-xs">Giờ Check-out</th>
+                                    <th class="text-xs text-center">Trạng Thái</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="fw-bold">103</span></td>
+                                    <td>Vũ Thị F</td>
+                                    <td class="text-muted">12:00</td>
+                                    <td class="text-center">
+                                        <span class="badge bg-success">Đã check-out</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span class="fw-bold">207</span></td>
+                                    <td>Đặng Văn G</td>
+                                    <td class="text-muted">12:00</td>
+                                    <td class="text-center">
+                                        <span class="badge bg-success">Đã check-out</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span class="fw-bold">314</span></td>
+                                    <td>Bùi Thị H</td>
+                                    <td class="text-muted">12:00</td>
+                                    <td class="text-center">
+                                        <span class="badge bg-info">Đang dọn phòng</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span class="fw-bold">421</span></td>
+                                    <td>Ngô Văn I</td>
+                                    <td class="text-muted">12:00</td>
+                                    <td class="text-center">
+                                        <span class="badge bg-info">Đang dọn phòng</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span class="fw-bold">529</span></td>
+                                    <td>Đinh Thị K</td>
+                                    <td class="text-muted">12:00</td>
+                                    <td class="text-center">
+                                        <span class="badge bg-warning">Chưa check-out</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <footer class="footer py-4  ">
-        <div class="container-fluid">
-            <div class="row align-items-center justify-content-lg-between">
-                <div class="col-lg-6 mb-lg-0 mb-4">
-                    <div class="copyright text-center text-sm text-muted text-lg-start">
-                        © <script>
-                              document.write(new Date().getFullYear())
-                        </script>,
-                        made with <i class="fa fa-heart"></i> by
-                        <a href="https://www.creative-tim.com" class="font-weight-bold" target="_blank">Creative Tim</a>
-                        for a better web.
-                    </div>
-                </div>
-                <div class="col-lg-6">
-                    <ul class="nav nav-footer justify-content-center justify-content-lg-end">
-                        <li class="nav-item">
-                            <a href="https://www.creative-tim.com" class="nav-link text-muted" target="_blank">Creative Tim</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="https://www.creative-tim.com/presentation" class="nav-link text-muted" target="_blank">About Us</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="https://www.creative-tim.com/blog" class="nav-link text-muted" target="_blank">Blog</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="https://www.creative-tim.com/license" class="nav-link pe-0 text-muted" target="_blank">License</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </footer>
-</div> *@
+</div>
+
+<script>
+    // Biểu đồ doanh thu theo ngày
+    const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+    const revenueChart = new Chart(revenueCtx, {
+        type: 'line',
+        data: {
+            labels: ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'],
+            datasets: [{
+                label: 'Doanh thu (triệu VNĐ)',
+                data: [38.5, 42.3, 39.8, 45.2, 48.6, 52.1, 45.2],
+                borderColor: '#667eea',
+                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 5,
+                pointBackgroundColor: '#667eea',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    displayColors: false,
+                    callbacks: {
+                        label: function(context) {
+                            return context.parsed.y + ' triệu VNĐ';
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        borderDash: [5, 5]
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return value + 'M';
+                        }
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+
+    // Biểu đồ doanh thu theo tháng
+    const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+    const monthlyChart = new Chart(monthlyCtx, {
+        type: 'bar',
+        data: {
+            labels: ['T5', 'T6', 'T7', 'T8', 'T9', 'T10'],
+            datasets: [{
+                label: 'Doanh thu (tỷ VNĐ)',
+                data: [1.2, 1.35, 1.28, 1.42, 1.38, 1.45],
+                backgroundColor: [
+                    'rgba(102, 126, 234, 0.8)',
+                    'rgba(118, 75, 162, 0.8)',
+                    'rgba(240, 147, 251, 0.8)',
+                    'rgba(245, 87, 108, 0.8)',
+                    'rgba(79, 172, 254, 0.8)',
+                    'rgba(0, 242, 254, 0.8)'
+                ],
+                borderRadius: 8,
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    padding: 12,
+                    callbacks: {
+                        label: function(context) {
+                            return context.parsed.y + ' tỷ VNĐ';
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        borderDash: [5, 5]
+                    },
+                    ticks: {
+                        callback: function(value) {
+                            return value + ' tỷ';
+                        }
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+
+    // Animate occupancy circle
+    const circle = document.getElementById('occupancyCircle');
+    const radius = circle.r.baseVal.value;
+    const circumference = radius * 2 * Math.PI;
+    const occupancyRate = 72.5;
+    const offset = circumference - (occupancyRate / 100) * circumference;
+
+    circle.style.strokeDasharray = `${circumference} ${circumference}`;
+    circle.style.strokeDashoffset = circumference;
+
+    setTimeout(() => {
+        circle.style.strokeDashoffset = offset;
+    }, 100);
+</script>
+
+
+
+<style>
+    .dashboard-content {
+        background-color: #f8f9fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .dashboard-content .material-symbols-rounded {
+        font-family: 'Material Symbols Rounded';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+    }
+
+    .stat-card {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        transition: transform 0.2s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    }
+
+    .icon-box {
+        width: 56px;
+        height: 56px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+    }
+
+    .bg-gradient-blue {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .bg-gradient-green {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .bg-gradient-orange {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    .bg-gradient-red {
+        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    }
+
+    .room-status-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 8px;
+    }
+
+    .status-available {
+        background-color: #10b981;
+    }
+
+    .status-occupied {
+        background-color: #ef4444;
+    }
+
+    .status-maintenance {
+        background-color: #f59e0b;
+    }
+
+    .timeline-item {
+        border-left: 2px solid #e5e7eb;
+        padding-left: 20px;
+        padding-bottom: 20px;
+        position: relative;
+    }
+
+        .timeline-item:last-child {
+            border-left: none;
+        }
+
+    .timeline-icon {
+        position: absolute;
+        left: -13px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        color: white;
+    }
+
+    .chart-container {
+        position: relative;
+        height: 280px;
+    }
+
+    .occupancy-circle {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        position: relative;
+    }
+
+    .progress-ring {
+        transform: rotate(-90deg);
+    }
+
+    .progress-ring-circle {
+        transition: stroke-dashoffset 0.5s;
+    }
+</style>
