@@ -13,6 +13,7 @@
     <Folder Include="Areas\Customer\Views\" />
     <Folder Include="Areas\Receptionist\Models\" />
     <Folder Include="Areas\Receptionist\Views\" />
+    <Folder Include="wwwroot\images\room\" />
   </ItemGroup>
 
 </Project>

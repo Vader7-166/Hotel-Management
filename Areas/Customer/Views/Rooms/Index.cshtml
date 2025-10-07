@@ -6,12 +6,12 @@
 
 @model List<RoomTypeViewModel>
 @{
-<<<<<<< Updated upstream
+
     Layout = "~/Views/Shared/_LayoutCustomer.cshtml";
-=======
-    ViewData["Title"] = "Các loại phòng";
->>>>>>> Stashed changes
+
+    ViewData["Title"] = "Rooms";
 }
+
 
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -28,7 +28,7 @@
 
         <div class="text-center mb-5">
             <p class="lead">
-                HT Hotel cung cấp 100 phòng và suite, với 8 loại phòng khác nhau nhằm đáp ứng đa dạng sở thích và phong cách nghỉ dưỡng. Mỗi phòng đều mang phong cách thiết kế tối giản, tạo nên không gian thanh lịch. Tiện nghi trong phòng được bố trí gọn gàng, đơn giản và tiện lợi, mang lại sự thoải mái tối đa cho khách hàng.
+                HT Hotel cung cấp 100 phòng và suite, với 9 loại phòng khác nhau nhằm đáp ứng đa dạng sở thích và phong cách nghỉ dưỡng. Mỗi phòng đều mang phong cách thiết kế tối giản, tạo nên không gian thanh lịch. Tiện nghi trong phòng được bố trí gọn gàng, đơn giản và tiện lợi, mang lại sự thoải mái tối đa cho khách hàng.
             </p>
             <a href="#" class="btn btn-compare mt-3">SO SÁNH HẠNG PHÒNG</a>
         </div>
@@ -43,7 +43,7 @@
                             <h5 class="card-title">@roomType.TypeName</h5>
                             <p class="card-text">@roomType.Description</p>
                             <a asp-controller="Home" asp-action="RoomDetails" asp-route-id="@roomType.Id"
-                               class="btn btn-read-more">READ MORE</a>
+                               class="btn btn-read-more">View Details</a>
                         </div>
                     </div>
                 </div>
