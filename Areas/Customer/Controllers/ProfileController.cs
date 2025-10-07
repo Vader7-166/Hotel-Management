@@ -3,9 +3,9 @@
 namespace Hotel_Management.Areas.Customer.Controllers
 {
     [Area("Customer")]
-    public class AboutController : Controller
+    public class ProfileController : Controller
     {
-        [Route("Customer/About/Index")]
+        [Route("Customer/Profile/Edit")]
         public IActionResult Index()
         {
             return View();

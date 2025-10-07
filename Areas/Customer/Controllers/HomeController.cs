@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
+//Trang chủ
 namespace Hotel_Management.Areas.Customer.Controllers
 {
     [Area("Customer")]
-    public class AboutController : Controller
+    public class HomeController : Controller
     {
-        [Route("Customer/About/Index")]
+        [Route("Customer/Home/Index")]
         public IActionResult Index()
         {
             return View();
