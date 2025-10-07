@@ -1,6 +1,110 @@
-﻿namespace Hotel_Management.wwwroot.css.customer
-{
-    public class site
-    {
+﻿/* ===== HEADER ===== */
+.navbar {
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+}
+
+.navbar-brand img {
+    height: 55px;
+}
+
+.navbar-nav .nav-link {
+    font-weight: 300;
+    color: #000 !important;
+    margin-right: 20px;
+    transition: color 0.3s;
+}
+
+    .navbar-nav .nav-link:hover,
+    .navbar-nav .nav-link.active {
+        color: #c19b51 !important;
     }
+
+.btn-book {
+    background-color: #c19b51;
+    color: white !important;
+    font-weight: 600;
+    padding: 8px 20px;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+    .btn-book:hover {
+        background-color: #a77e3e;
+    }
+
+/* ===== DROPDOWN (Services) ===== */
+.navbar-nav .nav-item .nav-link {
+    color: #333;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+    .navbar-nav .nav-item .nav-link:hover {
+        color: #c19b51;
+    }
+
+.dropdown-menu {
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #c19b51;
+    color: #fff;
+}
+
+/* ===== FOOTER ===== */
+footer {
+    background-color: #0c2340;
+    color: #fff;
+    padding-top: 50px;
+    padding-bottom: 30px;
+}
+
+    footer .logo-footer img {
+        height: 70px;
+    }
+
+    footer a {
+        color: #c9c9c9;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+        footer a:hover {
+            color: #c19b51;
+        }
+
+    footer h6 {
+        font-weight: 600;
+        color: #fff;
+        margin-bottom: 20px;
+    }
+
+.social-icons a {
+    display: inline-block;
+    margin-right: 10px;
+    color: #fff;
+    background-color: #c19b51;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    text-align: center;
+    line-height: 36px;
+    transition: 0.3s;
+}
+
+    .social-icons a:hover {
+        background-color: #a77e3e;
+    }
+
+.footer-bottom {
+    border-top: 1px solid #1e3b63;
+    margin-top: 40px;
+    padding-top: 15px;
+    color: #aaa;
+    font-size: 14px;
+    text-align: center;
 }
