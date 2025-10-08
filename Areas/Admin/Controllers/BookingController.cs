@@ -9,5 +9,9 @@ namespace Hotel_Management.Areas.Admin.Controllers
         {
             return View();
         }
+        public IActionResult Calendar()
+        {
+            return View();
+        }
     }
 }
