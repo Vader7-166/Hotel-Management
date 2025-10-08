@@ -1,0 +1,13 @@
+﻿@charset "UTF-8";
+
+.page-item .page-link,
+.pagination .page-item.page-item-text .page-link {
+    width: auto !important;
+    min-width: 36px;
+    height: auto; /* Thêm thuộc tính này để đảm bảo chiều cao cũng co giãn */
+    /* Các thuộc tính reset khác */
+    border-radius: var(--bs-pagination-border-radius);
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    border-radius: 15% !important;
+}
