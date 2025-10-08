@@ -1,0 +1,244 @@
+﻿.main-content {
+    padding: 20px;
+    min-height: 100vh;
+}
+
+.page-header {
+    display: block;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.stats-card {
+    background: linear-gradient(135deg, #5676ff 0%, #f2c3ff 100%);
+    color: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+    .stats-card.success {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .stats-card.warning {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    .stats-card.info {
+        background: linear-gradient(135deg, #23e565 0%, #38f9d7 100%);
+    }
+
+.table-responsive {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.badge {
+    padding: 6px 12px;
+    font-weight: 500;
+}
+
+.calendar-container {
+    display: flex;
+    gap: 20px;
+    height: calc(100vh - 180px);
+}
+
+.calendar-info-section {
+    flex: 0 0 350px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    overflow-y: auto;
+}
+
+.calendar-view {
+    flex: 1;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    overflow-y: auto;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+.calendar-day {
+    aspect-ratio: 1.2;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 4px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+    .calendar-day:hover {
+        background: #f8f9fa;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .calendar-day.has-booking {
+        background: #e7f3ff;
+        border-color: var(--primary-color);
+    }
+
+.calendar-day-number {
+    font-weight: bold;
+    color: #495057;
+    font-size: 0.85rem;
+}
+
+.calendar-day-header {
+    text-align: center;
+    font-weight: bold;
+    padding: 6px;
+    background: #f8f9fa;
+    border-radius: 5px;
+    margin-bottom: 4px;
+    font-size: 0.75rem;
+}
+
+.booking-dot {
+    width: 5px;
+    height: 5px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    display: inline-block;
+    margin: 1px;
+}
+
+.calendar-booking-count {
+    font-size: 0.65rem;
+    color: #0d6efd;
+    margin-top: 2px;
+}
+
+.info-section-header {
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+@media (max-width: 992px) {
+    .calendar-container {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .calendar-info-section {
+        flex: 1;
+    }
+}
+
+.form-floating > label {
+    color: #6c757d;
+}
+
+.action-buttons .btn {
+    margin-right: 5px;
+}
+
+.search-box {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.status-pending {
+    background-color: #ffc107;
+}
+
+.status-confirmed {
+    background-color: #198754;
+}
+
+.status-cancelled {
+    background-color: #dc3545;
+}
+
+.status-completed {
+    background-color: #6c757d;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-250px);
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+}
+
+.table td {
+    padding-left: 1.5rem;
+}
+
+.stats-card h3 {
+    color: #f8f9fa;
+}
+
+.btn.btn-sm i, .btn-group-sm > .btn i {
+    font-size: 0.875rem;
+}
+
+/*Fix*/
+.form-control {
+    padding: 0.5rem;
+}
+
+.form-select {
+    padding: 0.5rem 1rem 0.5rem .85rem;
+}
+
+.form-floating > .form-control{
+    padding: 1rem;
+}
+
+.form-floating > label {
+    padding: 1rem .75rem;
+}
+
+.form-control,
+.form-select {
+    border: 1px solid #d2d6da !important;
+    border-radius: 0.5rem !important;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #0d6efd !important;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25) !important;
+    outline: 0 !important;
+}
+
+.table > :not(caption) > * > * {
+    color: #212529;
+}
+
+label {
+    font-size: 1rem;
+}

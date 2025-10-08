@@ -2,4 +2,282 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewBag.Title = "Booking View";
 }
+
+@section Styles {
+    @* <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> *@
+    <link href="~/css/admin/booking.css" rel="stylesheet" />
+}
+
+@section Script {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+}
+
+<div id="page-calendar" class="page-content">
+    <div class="page-header">
+        <h3><i class="bi bi-calendar3"></i> Lịch Đặt Phòng</h3>
+        <p class="text-muted">Xem lịch đặt phòng theo tháng</p>
+    </div>
+
+    <div class="calendar-container">
+        <!-- Left Side: Booking Info -->
+        <div class="calendar-info-section">
+            <div class="info-section-header">
+                <h5><i class="bi bi-info-circle"></i> Thông Tin Booking</h5>
+            </div>
+            <div id="selectedDateBookings">
+                <div class="text-center text-muted py-5">
+                    <i class="bi bi-calendar-event" style="font-size: 3rem;"></i>
+                    <p class="mt-3">Chọn một ngày trên lịch<br>để xem chi tiết booking</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side: Calendar -->
+        <div class="calendar-view">
+            <div class="calendar-header">
+                <button class="btn btn-sm btn-outline-primary" onclick="changeMonth(-1)">
+                    <i class="bi bi-chevron-left"></i> Trước
+                </button>
+                <h5 class="mb-0" id="currentMonthYear"></h5>
+                <button class="btn btn-sm btn-outline-primary" onclick="changeMonth(1)">
+                    Sau <i class="bi bi-chevron-right"></i>
+                </button>
+            </div>
+
+            <div class="calendar-grid">
+                <div class="calendar-day-header">CN</div>
+                <div class="calendar-day-header">T2</div>
+                <div class="calendar-day-header">T3</div>
+                <div class="calendar-day-header">T4</div>
+                <div class="calendar-day-header">T5</div>
+                <div class="calendar-day-header">T6</div>
+                <div class="calendar-day-header">T7</div>
+            </div>
+
+            <div class="calendar-grid" id="calendarGrid">
+                <!-- Calendar days will be generated here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Booking Details -->
+<div class="modal fade" id="bookingModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chi Tiết Booking</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Booking details will be inserted here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let bookings = [
+    {id: 'BK001', customer: 'Nguyễn Văn A', phone: '0901234567', email: 'nguyenvana@gmail.com', room: '101', checkIn: '2025-10-10', checkOut: '2025-10-12', status: 'confirmed', price: 2000000, notes: 'Khách VIP'},
+    {id: 'BK002', customer: 'Trần Thị B', phone: '0912345678', email: 'tranthib@gmail.com', room: '201', checkIn: '2025-10-11', checkOut: '2025-10-14', status: 'pending', price: 4500000, notes: ''},
+    {id: 'BK003', customer: 'Lê Văn C', phone: '0923456789', email: 'levanc@gmail.com', room: '102', checkIn: '2025-10-08', checkOut: '2025-10-09', status: 'completed', price: 1500000, notes: 'Check-out sớm'},
+    {id: 'BK004', customer: 'Phạm Thị D', phone: '0934567890', email: 'phamthid@gmail.com', room: '301', checkIn: '2025-10-10', checkOut: '2025-10-12', status: 'pending', price: 9000000, notes: 'Honeymoon package'},
+    {id: 'BK005', customer: 'Hoàng Văn E', phone: '0945678901', email: 'hoangvane@gmail.com', room: '202', checkIn: '2025-10-12', checkOut: '2025-10-13', status: 'cancelled', price: 3000000, notes: 'Khách hủy do lý do cá nhân'},
+    {id: 'BK006', customer: 'Vũ Thị F', phone: '0956789012', email: 'vuthif@gmail.com', room: '101', checkIn: '2025-10-20', checkOut: '2025-10-22', status: 'pending', price: 2000000, notes: ''},
+    {id: 'BK007', customer: 'Đặng Văn G', phone: '0967890123', email: 'dangvang@gmail.com', room: '302', checkIn: '2025-10-25', checkOut: '2025-10-28', status: 'confirmed', price: 12000000, notes: 'Corporate booking'},
+];
+
+    let currentMonth = new Date().getMonth();
+    let currentYear = new Date().getFullYear();
+
+    // Khi trang load xong thì render lịch
+    document.addEventListener('DOMContentLoaded', function() {
+        renderCalendar();
+    });
+
+    // Hàm render lịch
+    function renderCalendar() {
+        const grid = document.getElementById('calendarGrid');
+        grid.innerHTML = '';
+
+        const firstDay = new Date(currentYear, currentMonth, 1);
+        const lastDay = new Date(currentYear, currentMonth + 1, 0);
+        const startDate = firstDay.getDay();
+
+        document.getElementById('currentMonthYear').textContent =
+            `Tháng ${currentMonth + 1} năm ${currentYear}`;
+
+        // Ô trống trước khi tháng bắt đầu
+        for (let i = 0; i < startDate; i++) {
+            const emptyDay = document.createElement('div');
+            emptyDay.className = 'calendar-day';
+            grid.appendChild(emptyDay);
+        }
+
+        // Sinh ngày trong tháng
+        for (let day = 1; day <= lastDay.getDate(); day++) {
+            const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            const dayBookings = bookings.filter(b => b.checkIn === dateStr || b.checkOut === dateStr);
+
+            const countConfirmed = dayBookings.filter(b => b.status === 'confirmed').length;
+            const countPending = dayBookings.filter(b => b.status === 'pending').length;
+
+            const dayDiv = document.createElement('div');
+            dayDiv.className = 'calendar-day' + (dayBookings.length > 0 ? ' has-booking' : '');
+            dayDiv.innerHTML = `
+                <div class="calendar-day-number">${day}</div>
+                ${dayBookings.length > 0
+                    ? `<div class="calendar-booking-info">
+                            ${countPending > 0 ? `<div><span class="badge status-pending" style="margin-bottom: 5px">${countPending}</span> chờ xác nhận</div>` : ''}
+                            ${countConfirmed > 0 ? `<div><span class="badge status-confirmed">${countConfirmed}</span> đã xác nhận</div>` : ''}
+                      </div>`
+                    : ''}
+            `;
+            dayDiv.onclick = () => showDayBookings(dateStr, dayBookings);
+            grid.appendChild(dayDiv);
+        }
+    }
+
+    // Đổi tháng (prev / next)
+    function changeMonth(delta) {
+        currentMonth += delta;
+        if (currentMonth < 0) {
+            currentMonth = 11;
+            currentYear--;
+        } else if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear++;
+        }
+        renderCalendar();
+    }
+
+    // Hiển thị chi tiết booking khi click ngày
+    function showDayBookings(date, dayBookings) {
+        const container = document.getElementById('selectedDateBookings');
+        if (dayBookings.length === 0) {
+            container.innerHTML = `
+                <div class="text-center text-muted py-4">
+                    <i class="bi bi-calendar-x" style="font-size: 2.5rem;"></i>
+                    <p class="mt-3">Không có booking<br>vào ngày ${formatDate(date)}</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = `
+            <div class="mb-3">
+                <h6 class="text-primary"><i class="bi bi-calendar-check"></i> ${formatDate(date)}</h6>
+                <small class="text-muted">${dayBookings.length} booking</small>
+            </div>
+            <div class="list-group">
+                ${dayBookings.map(b => `
+                    <div class="list-group-item list-group-item-action" onclick="viewBooking('${b.id}')">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <div>
+                                <h6 class="mb-1">${b.id}</h6>
+                                <small class="text-muted">${b.customer}</small>
+                            </div>
+                            <span class="badge ${getStatusClass(b.status)}">${getStatusText(b.status)}</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small><i class="bi bi-door-open"></i> Phòng ${b.room}</small>
+                            <small><i class="bi bi-telephone"></i> ${b.phone}</small>
+                        </div>
+                        <hr class="my-2">
+                        <small class="text-muted">
+                            <i class="bi bi-cash"></i> ${formatCurrency(b.price)}
+                        </small>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+    // Utility Functions
+    function formatDate(dateStr) {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('vi-VN');
+    }
+
+    function formatCurrency(amount) {
+        return new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND'
+        }).format(amount);
+    }
+
+    function calculateNights(checkIn, checkOut) {
+        const start = new Date(checkIn);
+        const end = new Date(checkOut);
+        const diffTime = Math.abs(end - start);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays;
+    }
+
+    function getStatusClass(status) {
+        const classes = {
+            'pending': 'status-pending',
+            'confirmed': 'status-confirmed',
+            'cancelled': 'status-cancelled',
+            'completed': 'status-completed'
+        };
+        return classes[status] || 'bg-secondary';
+    }
+
+    function getStatusText(status) {
+        const texts = {
+            'pending': 'Chờ xác nhận',
+            'confirmed': 'Đã xác nhận',
+            'cancelled': 'Đã hủy',
+            'completed': 'Hoàn thành'
+        };
+        return texts[status] || status;
+    }
+        // View Booking Details
+    function viewBooking(id) {
+        const booking = bookings.find(b => b.id === id);
+        if (!booking) return;
+
+        const modalBody = document.getElementById('modalBody');
+        modalBody.innerHTML = `
+            <div class="row">
+                <div class="col-md-6">
+                    <h6><i class="bi bi-bookmark"></i> Thông Tin Booking</h6>
+                    <table class="table table-sm">
+                        <tr><td><strong>Mã Booking:</strong></td><td>${booking.id}</td></tr>
+                        <tr><td><strong>Trạng Thái:</strong></td><td><span class="badge ${getStatusClass(booking.status)}">${getStatusText(booking.status)}</span></td></tr>
+                        <tr><td><strong>Tổng Tiền:</strong></td><td>${formatCurrency(booking.price)}</td></tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <h6><i class="bi bi-person"></i> Thông Tin Khách</h6>
+                    <table class="table table-sm">
+                        <tr><td><strong>Họ Tên:</strong></td><td>${booking.customer}</td></tr>
+                        <tr><td><strong>Điện Thoại:</strong></td><td>${booking.phone}</td></tr>
+                        <tr><td><strong>Email:</strong></td><td>${booking.email || 'N/A'}</td></tr>
+                    </table>
+                </div>
+                <div class="col-md-12 mt-3">
+                    <h6><i class="bi bi-door-open"></i> Thông Tin Phòng</h6>
+                    <table class="table table-sm">
+                        <tr><td><strong>Phòng:</strong></td><td>Phòng ${booking.room}</td></tr>
+                        <tr><td><strong>Check-in:</strong></td><td>${formatDate(booking.checkIn)}</td></tr>
+                        <tr><td><strong>Check-out:</strong></td><td>${formatDate(booking.checkOut)}</td></tr>
+                        <tr><td><strong>Số Đêm:</strong></td><td>${calculateNights(booking.checkIn, booking.checkOut)} đêm</td></tr>
+                    </table>
+                </div>
+                ${booking.notes ? `
+                <div class="col-md-12 mt-3">
+                    <h6><i class="bi bi-sticky"></i> Ghi Chú</h6>
+                    <p class="bg-light p-3 rounded">${booking.notes}</p>
+                </div>
+                ` : ''}
+            </div>
+        `;
+
+        const modal = new bootstrap.Modal(document.getElementById('bookingModal'));
+        modal.show();
+    }
+</script>
