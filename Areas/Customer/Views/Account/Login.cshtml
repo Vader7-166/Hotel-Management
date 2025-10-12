@@ -7,7 +7,7 @@
     <div class="login-card shadow-lg p-4 rounded">
         <h3 class="text-center mb-4 fw-bold text-gold">LOGIN</h3>
 
-        <form asp-action="Login" method="post">
+        <form asp-area="Customer" asp-controller="Account" asp-action="Login" method="post">
             <div class="mb-3">
                 <label for="Username" class="form-label text-light">Username</label>
                 <input type="text" class="form-control custom-input" id="Username" name="Username"
