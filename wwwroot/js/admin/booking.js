@@ -16,12 +16,12 @@ let selectedBooking = null;
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
     renderBookingsTable();
-    renderCalendar();
     setupEventListeners();
     setMinDates();
 });
 
 // Setup Event Listeners
+// Click nav-link on sidebar
 function setupEventListeners() {
     document.querySelectorAll('.sidebar .nav-link').forEach(link => {
         link.addEventListener('click', function(e) {
@@ -35,12 +35,20 @@ function setupEventListeners() {
         });
     });
 
+    // Submit form booking
     document.getElementById('bookingForm').addEventListener('submit', function(e) {
         e.preventDefault();
         saveBooking();
     });
 
+    // Search by name/Id...
     document.getElementById('searchInput').addEventListener('input', searchBookings);
+
+    // Search by booking status
+    document.getElementById('statusFilter').addEventListener('change', searchBookings);
+
+    // Search by date
+    document.getElementById('dateFilter').addEventListener('change', searchBookings);
 }
 
 // Show Page
@@ -62,6 +70,19 @@ function renderBookingsTable(filteredBookings = null) {
     const data = filteredBookings || bookings;
     const tbody = document.getElementById('bookingsTableBody');
     tbody.innerHTML = '';
+
+    console.log("Data: ", data);
+
+    if (data.length === 0) {
+        const emptyRow = document.createElement('tr');
+        emptyRow.innerHTML = `
+        <td colspan="9" class="text-center text-muted py-3">
+            Không có booking tương ứng
+        </td>
+    `;
+        tbody.appendChild(emptyRow);
+        return;
+    }
 
     data.forEach(booking => {
         const row = document.createElement('tr');
@@ -104,106 +125,15 @@ function searchBookings() {
         const matchDate = !dateFilter || booking.checkIn === dateFilter || booking.checkOut === dateFilter;
         return matchSearch && matchStatus && matchDate;
     });
-
     renderBookingsTable(filtered);
 }
 
-// Render Calendar
-function renderCalendar() {
-    const grid = document.getElementById('calendarGrid');
-    grid.innerHTML = '';
+function resetFilter(){
+    document.getElementById('searchInput').value = '';
+    document.getElementById('statusFilter').value = '';
+    document.getElementById('dateFilter').value = '';
 
-    const firstDay = new Date(currentYear, currentMonth, 1);
-    const lastDay = new Date(currentYear, currentMonth + 1, 0);
-    const startDate = firstDay.getDay();
-
-    document.getElementById('currentMonthYear').textContent =
-        `Tháng ${currentMonth + 1} năm ${currentYear}`;
-
-    // Ô trống trước khi tháng bắt đầu
-    for (let i = 0; i < startDate; i++) {
-        const emptyDay = document.createElement('div');
-        emptyDay.className = 'calendar-day';
-        grid.appendChild(emptyDay);
-    }
-
-    // Ngày trong tháng
-    for (let day = 1; day <= lastDay.getDate(); day++) {
-        const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-        const dayBookings = bookings.filter(b => b.checkIn === dateStr || b.checkOut === dateStr);
-
-        // Đếm số booking theo trạng thái
-        const countConfirmed = dayBookings.filter(b => b.status === 'confirmed').length;
-        const countPending = dayBookings.filter(b => b.status === 'pending').length;
-
-        const dayDiv = document.createElement('div');
-        dayDiv.className = 'calendar-day' + (dayBookings.length > 0 ? ' has-booking' : '');
-        dayDiv.innerHTML = `
-            <div class="calendar-day-number">${day}</div>
-            ${dayBookings.length > 0
-                ? `<div class="calendar-booking-info">
-                        ${countPending > 0 ? `<div><span class="badge status-pending" style="margin-bottom: 5px">${countPending}</span> chờ xác nhận</div>` : ''}
-                        ${countConfirmed > 0 ? `<div><span class="badge status-confirmed">${countConfirmed}</span> đã xác nhận</div>` : ''}
-                </div>`
-                : ''}
-        `;
-        dayDiv.onclick = () => showDayBookings(dateStr, dayBookings);
-        grid.appendChild(dayDiv);
-    }
-}
-
-
-function changeMonth(delta) {
-    currentMonth += delta;
-    if (currentMonth < 0) {
-        currentMonth = 11;
-        currentYear--;
-    } else if (currentMonth > 11) {
-        currentMonth = 0;
-        currentYear++;
-    }
-    renderCalendar();
-}
-
-function showDayBookings(date, dayBookings) {
-    const container = document.getElementById('selectedDateBookings');
-    if (dayBookings.length === 0) {
-        container.innerHTML = `
-            <div class="text-center text-muted py-4">
-                <i class="bi bi-calendar-x" style="font-size: 2.5rem;"></i>
-                <p class="mt-3">Không có booking<br>vào ngày ${formatDate(date)}</p>
-            </div>
-        `;
-        return;
-    }
-
-    container.innerHTML = `
-        <div class="mb-3">
-            <h6 class="text-primary"><i class="bi bi-calendar-check"></i> ${formatDate(date)}</h6>
-            <small class="text-muted">${dayBookings.length} booking</small>
-        </div>
-        <div class="list-group">
-            ${dayBookings.map(b => `
-                <div class="list-group-item list-group-item-action" onclick="viewBooking('${b.id}')">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <div>
-                            <h6 class="mb-1">${b.id}</h6>
-                            <small class="text-muted">${b.customer}</small>
-                        </div>
-                        <span class="badge ${getStatusClass(b.status)}">${getStatusText(b.status)}</span>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <small><i class="bi bi-door-open"></i> Phòng ${b.room}</small>
-                        <small><i class="bi bi-telephone"></i> ${b.phone}</small>
-                    </div>
-                    <hr class="my-2">
-                    <small class="text-muted">
-                        <i class="bi bi-cash"></i> ${formatCurrency(b.price)}
-                    </small>
-                </div>
-            `).join('')}
-        </div>
-    `;
+    searchBookings();
 }
 
 // View Booking Details
@@ -308,14 +238,14 @@ function saveBooking() {
     showPage('bookings');
 }
 
-// Delete Booking
+// Delete Booking (Sau này kết nối db sẽ xóa trong db và lịch sẽ cập nhật lại mỗi lần vào view)
 function confirmDelete(id) {
     if (confirm('Bạn có chắc chắn muốn xóa booking này?\n\nMã booking: ' + id)) {
         const index = bookings.findIndex(b => b.id === id);
         if (index !== -1) {
             bookings.splice(index, 1);
             renderBookingsTable();
-            renderCalendar();
+            //renderCalendar(); Render lại Lịch 
             showNotification('Đã xóa booking thành công!', 'danger');
         }
     }
