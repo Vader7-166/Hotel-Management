@@ -15,6 +15,10 @@ namespace Hotel_Management.Areas.Customer.Controllers
         {
             return View();
         }
-
+        [Route("Customer/Account/Register")]
+        public IActionResult Register()
+        {
+            return View();
+        }
     }
 }
