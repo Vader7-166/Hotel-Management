@@ -1,4 +1,4 @@
-﻿namespace Hotel_Management.Models.Customer
+﻿namespace Hotel_Management.Models.Customers
 {
     public class ModelCustomer
     {

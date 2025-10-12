@@ -1,7 +1,8 @@
-﻿using Hotel_Management.Models.Customer;
+﻿using Hotel_Management.Models.Customers;
 using Microsoft.AspNetCore.Mvc;
 namespace Hotel_Management.Areas.Admin.Controllers
 {
+
     [Area("Admin")]
     public class CustomerController : Controller
     {
