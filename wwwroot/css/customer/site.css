@@ -20,6 +20,7 @@
         color: #c19b51 !important;
     }
 
+
 .btn-book {
     background-color: #c19b51;
     color: white !important;
@@ -32,6 +33,23 @@
     .btn-book:hover {
         background-color: #a77e3e;
     }
+/* ===== BUTTON GOLD ===== */
+.btn-gold {
+    background-color: #c19b51 !important;
+    color: #fff !important;
+    font-weight: 600;
+    padding: 8px 20px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+    .btn-gold:hover {
+        background-color: #a77e3e !important;
+        color: #fff !important;
+    }
+
 
 /* ===== DROPDOWN (Services) ===== */
 .navbar-nav .nav-item .nav-link {

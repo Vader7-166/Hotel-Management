@@ -1,6 +1,245 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-    <p>index of booking controller</p>
+﻿@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewBag.Title = "Booking Management";
 }
+
+@section Styles {
+    <link href="~/css/admin/booking.css" rel="stylesheet" />
+}
+
+@section Script {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/admin/booking.js"></script>
+}
+
+<div class="main-content">
+    <!-- Page: Danh Sách Booking -->
+    <div id="page-bookings" class="page-content">
+        <div class="row mb-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-1"><i class="bi"></i> Quản Lý Đặt Phòng</h2>
+                    <p class="text-muted mb-0">Danh sách tất cả các booking</p>
+                </div>
+                <button class="btn btn-primary" onclick="showPage('create')">
+                    <i class="bi bi-plus-circle"></i> Tạo Booking Mới
+                </button>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <h3 class="mb-2">156</h3>
+                    <p class="mb-0"><i class="bi bi-calendar-check"></i> Tổng Booking</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card success">
+                    <h3 class="mb-2">89</h3>
+                    <p class="mb-0"><i class="bi bi-check-circle"></i> Đã Xác Nhận</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card warning">
+                    <h3 class="mb-2">45</h3>
+                    <p class="mb-0"><i class="bi bi-clock"></i> Chờ Xử Lý</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card info">
+                    <h3 class="mb-2">22</h3>
+                    <p class="mb-0"><i class="bi bi-calendar-event"></i> Check-in Hôm Nay</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="search-box">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="searchInput" placeholder="Tìm theo tên, SĐT, mã booking...">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="statusFilter">
+                        <option value="">Tất cả trạng thái</option>
+                        <option value="pending">Chờ xác nhận</option>
+                        <option value="confirmed">Đã xác nhận</option>
+                        <option value="cancelled">Đã hủy</option>
+                        <option value="completed">Hoàn thành</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <input type="date" class="form-control" id="dateFilter">
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-primary w-100 resetBtn" onclick="resetFilter()">
+                        <i class="bi bi-arrow-clockwise"></i> Reset
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bookings Table -->
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="bookingsTable">
+                        <thead>
+                            <tr>
+                                <th>Mã Booking</th>
+                                <th>Khách Hàng</th>
+                                <th>Số Điện Thoại</th>
+                                <th>Phòng</th>
+                                <th>Check-in</th>
+                                <th>Check-out</th>
+                                <th>Trạng Thái</th>
+                                <th>Tổng Tiền</th>
+                                <th>Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bookingsTableBody">
+                            <!-- Data will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page: Calendar View -->
+
+    <!-- Page: Create/Edit Booking -->
+    <div id="page-create" class="page-content" style="display: none;">
+        <div class="page-header">
+            <h3><i class="bi bi-plus-circle"></i> <span id="formTitle">Tạo Booking Mới</span></h3>
+            <p class="text-muted">Điền thông tin để tạo đặt phòng mới</p>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <form id="bookingForm">
+                    <input type="hidden" id="bookingId">
+
+                    <h5 class="mb-3"><i class="bi bi-person"></i> Thông Tin Khách Hàng</h5>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="customerName" required>
+                                <label>Họ và Tên *</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="tel" class="form-control" id="customerPhone" required>
+                                <label>Số Điện Thoại *</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="email" class="form-control" id="customerEmail">
+                                <label>Email</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="customerIdCard">
+                                <label>CMND/CCCD</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5 class="mb-3"><i class="bi bi-door-open"></i> Thông Tin Đặt Phòng</h5>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <select class="form-select" id="roomType" required>
+                                    <option value="">Chọn loại phòng</option>
+                                    <option value="101">Phòng 101 - Standard Single</option>
+                                    <option value="102">Phòng 102 - Standard Double</option>
+                                    <option value="201">Phòng 201 - Deluxe</option>
+                                    <option value="202">Phòng 202 - Deluxe Sea View</option>
+                                    <option value="301">Phòng 301 - Suite</option>
+                                    <option value="302">Phòng 302 - Presidential Suite</option>
+                                </select>
+                                <label>Phòng *</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="number" class="form-control" id="numGuests" value="1" min="1" max="4" required>
+                                <label>Số Khách</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="date" class="form-control" id="checkInDate" required>
+                                <label>Ngày Check-in *</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="date" class="form-control" id="checkOutDate" required>
+                                <label>Ngày Check-out *</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <select class="form-select" id="bookingStatus">
+                                    <option value="pending">Chờ xác nhận</option>
+                                    <option value="confirmed">Đã xác nhận</option>
+                                    <option value="cancelled">Đã hủy</option>
+                                    <option value="completed">Hoàn thành</option>
+                                </select>
+                                <label>Trạng Thái</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="number" class="form-control" id="totalPrice" required>
+                                <label>Tổng Tiền (VNĐ) *</label>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-floating">
+                                <textarea class="form-control" id="bookingNotes" style="height: 100px"></textarea>
+                                <label>Ghi Chú</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Lưu Booking
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="showPage('bookings')">
+                            <i class="bi bi-x-circle"></i> Hủy
+                        </button>
+                        <button type="button" class="btn btn-outline-danger ms-auto" id="deleteBtn" style="display: none;" onclick="deleteBooking()">
+                            <i class="bi bi-trash"></i> Xóa Booking
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Booking Details -->
+<div class="modal fade" id="bookingModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chi Tiết Booking</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Booking details will be inserted here -->
+            </div>
+        </div>
+    </div>
+</div>
+
