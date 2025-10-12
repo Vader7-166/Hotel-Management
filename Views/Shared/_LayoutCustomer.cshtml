@@ -10,9 +10,13 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/customer/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    @RenderSection("Styles", required: false)
 </head>
 <body>
-
+    @{
+        var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+        var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    }
     <!-- HEADER -->
     <header>
         <nav class="navbar navbar-expand-lg navbar-light sticky-top">
@@ -27,14 +31,21 @@
 
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav mx-auto">
-                        <li class="nav-item"><a class="nav-link active" asp-area="Customer" asp-controller="Home" asp-action="Index">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-area="Customer" asp-controller="Rooms" asp-action="Index">Rooms</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-area="Customer" asp-controller="Booking" asp-action="Create">Booking</a></li>
-
-                        <!-- Dropdown Services -->
+                        <li class="nav-item">
+                            <a class="nav-link @(currentController == "Home" ? "active" : "")"
+                               asp-area="Customer" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(currentController == "Rooms" ? "active" : "")"
+                               asp-area="Customer" asp-controller="Rooms" asp-action="Index">Rooms</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(currentController == "Booking" ? "active" : "")"
+                               asp-area="Customer" asp-controller="Booking" asp-action="Create">Booking</a>
+                        </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="servicesDropdown" role="button"
-                               data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle @(currentController == "Services" ? "active" : "")"
+                               href="#" id="servicesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Services
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="servicesDropdown">
@@ -43,11 +54,19 @@
                                 <li><a class="dropdown-item" href="#">Swimming Pool</a></li>
                             </ul>
                         </li>
-
-                        <li class="nav-item"><a class="nav-link" asp-area="Customer" asp-controller="About" asp-action="Index">About us</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-area="Customer" asp-controller="Contact" asp-action="Index">Contact</a></li>
+                        <li class="nav-item">
+                            <a class="nav-link @(currentController == "About" ? "active" : "")"
+                               asp-area="Customer" asp-controller="About" asp-action="Index">About us</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(currentController == "Contact" ? "active" : "")"
+                               asp-area="Customer" asp-controller="Contact" asp-action="Index">Contact</a>
+                        </li>
                     </ul>
-                    <a asp-area="Customer" asp-controller="Account" asp-action="Login" class="btn btn-book">Login</a>
+                    @if (!(currentController == "Account" && currentAction == "Login"))
+                    {
+                        <a asp-area="Customer" asp-controller="Account" asp-action="Login" class="btn btn-gold">Login</a>
+                    }
                 </div>
             </div>
         </nav>
@@ -60,6 +79,7 @@
 
     <!-- FOOTER -->
     <footer>
+        
         <div class="container text-center text-md-start">
             <div class="row">
                 <div class="col-md-4 mb-4 text-center">

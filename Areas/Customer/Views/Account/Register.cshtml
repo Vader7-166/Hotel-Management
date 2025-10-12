@@ -1,5 +1,107 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿
 @{
+    ViewData["Title"] = "Register";
+    Layout = "~/Views/Shared/_LayoutCustomer.cshtml";
+}
+
+<div class="register-container d-flex justify-content-center align-items-center">
+    <div class="register-card shadow-lg p-4 rounded">
+        <h3 class="text-center mb-4 fw-bold text-gold">CREATE ACCOUNT</h3>
+
+        <form asp-action="Register" method="post">
+            <div class="mb-3">
+                <label for="FullName" class="form-label text-light">Full Name</label>
+                <input type="text" class="form-control custom-input" id="FullName" name="FullName"
+                       placeholder="Enter your full name" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="Username" class="form-label text-light">Username</label>
+                <input type="text" class="form-control custom-input" id="Username" name="Username"
+                       placeholder="Choose a username" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="Email" class="form-label text-light">Email</label>
+                <input type="email" class="form-control custom-input" id="Email" name="Email"
+                       placeholder="Enter your email" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="Password" class="form-label text-light">Password</label>
+                <input type="password" class="form-control custom-input" id="Password" name="Password"
+                       placeholder="Create a password" required />
+            </div>
+
+            <div class="mb-3">
+                <label for="ConfirmPassword" class="form-label text-light">Confirm Password</label>
+                <input type="password" class="form-control custom-input" id="ConfirmPassword" name="ConfirmPassword"
+                       placeholder="Re-enter your password" required />
+            </div>
+
+            <button type="submit" class="btn btn-gold w-100 mt-2">Register</button>
+
+            <p class="text-center mt-3 mb-0 text-light">
+                Already have an account?
+                <a asp-area="Customer" asp-controller="Account" asp-action="Login" href="/Customer/Account/Login"
+                   class="text-gold text-decoration-none fw-semibold">Login here</a>
+            </p>
+        </form>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        body {
+            background-color: #0a2342;
+            font-family: "Segoe UI", sans-serif;
+        }
+
+        .register-container {
+            min-height: 85vh;
+        }
+
+        .register-card {
+            width: 400px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .text-gold {
+            color: #c8a45d !important;
+        }
+
+        .btn-gold {
+            background-color: #c8a45d;
+            color: #fff;
+            font-weight: 600;
+            border: none;
+        }
+
+            .btn-gold:hover {
+                background-color: #b38a47;
+                color: #fff;
+            }
+
+        .custom-input {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+            .custom-input::placeholder {
+                color: #ccc;
+            }
+
+            .custom-input:focus {
+                box-shadow: 0 0 5px #c8a45d;
+                border-color: #c8a45d;
+            }
+
+        footer {
+            background-color: #091a33 !important;
+            color: #c8a45d !important;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
 }
