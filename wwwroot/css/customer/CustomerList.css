@@ -11,3 +11,30 @@
     padding-right: 0.75rem;
     border-radius: 15% !important;
 }
+
+.form-control {
+    padding: 0.5rem;
+}
+
+.form-select {
+    padding: 0.5rem 1rem 0.5rem .85rem;
+}
+
+.form-select {
+    border: 1px solid #d2d6da !important;
+    border-radius: 0.5rem !important;
+}
+
+    .form-select:focus {
+        /*    border-color: #d63384 !important;*/
+        box-shadow: 0 0 0 0.15rem #d63384 !important;
+        outline: 0 !important;
+    }
+
+/*.table > :not(caption) > * > * {
+    color: #212529;
+}
+*/
+label {
+    font-size: 1rem;
+}

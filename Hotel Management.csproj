@@ -10,9 +10,7 @@
   <ItemGroup>
     <Folder Include="Areas\Admin\Models\" />
     <Folder Include="Areas\Customer\Models\" />
-    <Folder Include="Areas\Customer\Views\" />
     <Folder Include="Areas\Receptionist\Models\" />
-    <Folder Include="Areas\Receptionist\Views\" />
   </ItemGroup>
 
 </Project>
