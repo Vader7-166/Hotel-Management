@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 @model Hotel_Management.Models.Booking;
 
+=======
+﻿@model Hotel_Management.Models.Booking
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+>>>>>>> 70b41d6acbcbb33a675caaaa5c6620afdaeae74f
 @{
     ViewData["Title"] = "Booking Details";
     Layout = "~/Views/Shared/_LayoutCustomer.cshtml";
@@ -41,7 +46,7 @@
         </table>
 
         <div class="text-end">
-            <a asp-action="MyBooking" class="btn btn-secondary">Back to My Bookings</a>
+            <a asp-area="Customer" asp-controller="Booking" asp-action="MyBookings" class="btn btn-secondary">Back to My Bookings</a>
         </div>
     </div>
 </div>

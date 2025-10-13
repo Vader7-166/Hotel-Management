@@ -5,71 +5,70 @@
     Layout = "~/Views/Shared/_LayoutCustomer.cshtml";
 }
 
-<div class="container mt-5">
-    <h2 class="text-center mb-4">Your Bookings</h2>
+<div class="container mt-5 mb-5 text-center">
+    <h2 class="fw-bold text-uppercase section-title">Your Bookings</h2>
 
     @* ✅ If there are no bookings *@
     @if (!Model.Any())
     {
-        <div class="alert alert-info text-center">
+        <div class="alert alert-info mt-4">
             You have not made any bookings yet.
         </div>
     }
     else
     {
-        <table class="table table-bordered table-hover">
-            <thead class="table-dark text-center">
-                <tr>
-                    <th>Booking ID</th>
-                    <th>Booking Date</th>
-                    <th>Check-In</th>
-                    <th>Check-Out</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var booking in Model)
-                {
-                    <tr class="text-center">
-                        <td>@booking.BookingId</td>
-                        <td>@booking.BookingDate.ToString("dd/MM/yyyy")</td>
-                        <td>@booking.CheckInDate.ToString("dd/MM/yyyy")</td>
-                        <td>@booking.CheckOutDate.ToString("dd/MM/yyyy")</td>
-                        <td>
-                            @* ✅ Display different color badges based on booking status *@
-                            @if (booking.Status == "Pending")
-                            {
-                                <span class="badge bg-warning text-dark">Pending Confirmation</span>
-                            }
-                            else if (booking.Status == "Confirmed")
-                            {
-                                <span class="badge bg-success">Confirmed</span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-danger">Cancelled</span>
-                            }
-                        </td>
-                        <td>
-                            <a asp-action="Details" asp-route-id="@booking.BookingId" class="btn btn-sm btn-outline-primary">
-                                Details
-                            </a>
-
-                            @* ✅ Show "Cancel" button only if booking is still pending *@
-                            @if (booking.Status == "Pending")
-                            {
-                                <form asp-action="Cancel" asp-route-id="@booking.BookingId" method="post" class="d-inline">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger"
-                                            onclick="return confirm('Are you sure you want to cancel this booking?');">
-                                        Cancel
-                                    </button>
-                                </form>
-                            }
-                        </td>
+        <div class="table-responsive d-flex justify-content-center mt-4">
+            <table class="table table-bordered table-hover text-center w-auto shadow-sm">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Booking Date</th>
+                        <th>Check-In</th>
+                        <th>Check-Out</th>
+                        <th>Status</th>
+                        <th>Actions</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var booking in Model)
+                    {
+                        <tr>
+                            <td>@booking.BookingId</td>
+                            <td>@booking.BookingDate.ToString("dd/MM/yyyy")</td>
+                            <td>@booking.CheckInDate.ToString("dd/MM/yyyy")</td>
+                            <td>@booking.CheckOutDate.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                @if (booking.Status == "Pending")
+                                {
+                                    <span class="badge bg-warning text-dark">Pending Confirmation</span>
+                                }
+                                else if (booking.Status == "Confirmed")
+                                {
+                                    <span class="badge bg-success">Confirmed</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Cancelled</span>
+                                }
+                            </td>
+                            <td>
+                                <a asp-action="Details" asp-route-id="@booking.BookingId"
+                                   class="btn btn-sm btn-outline-primary me-1">Details</a>
+
+                                @if (booking.Status == "Pending")
+                                {
+                                    <form asp-action="Cancel" asp-route-id="@booking.BookingId" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                onclick="return confirm('Are you sure you want to cancel this booking?');">
+                                            Cancel
+                                        </button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     }
 </div>
