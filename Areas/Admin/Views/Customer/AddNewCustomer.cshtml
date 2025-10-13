@@ -49,7 +49,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row ">
                             <div class="col-md-6">
                                 <div class="input-group input-group-outline mb-3">
                                     <label class="form-label"></label>
@@ -60,7 +60,7 @@
                                 <div class="input-group input-group-outline mb-3">
                                     <label class="form-label"></label>
                                     <select class="form-select" name="Gender">
-                                        <option value="">Select Gender</option>
+                                        <option value="" disabled selected hidden>Select Gender</option>
                                         <option value="male">Male</option>
                                         <option value="female">Female</option>
                                         <option value="other">Other</option>
@@ -103,9 +103,9 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="input-group input-group-outline mb-3">
-                                    <label class="form-label">Customer Type</label>
+                                    <label class="form-label"></label>
                                     <select class="form-select" name="CustomerType">
-                                        <option value="">Select Type</option>
+                                        <option value="" disabled selected hidden>Select Type</option>
                                         <option value="vip">VIP</option>
                                         <option value="regular">Regular</option>
                                         <option value="new">New</option>
@@ -114,8 +114,9 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="input-group input-group-outline mb-3">
-                                    <label class="form-label">Status</label>
+                                    <label class="form-label"></label>
                                     <select class="form-select" name="Status">
+                                        <option value="" disabled selected hidden>Select Customer Status</option>
                                         <option value="active">Active</option>
                                         <option value="inactive">Inactive</option>
                                     </select>
@@ -129,9 +130,9 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="input-group input-group-outline mb-3">
-                                    <label class="form-label">ID Type</label>
+                                    <label class="form-label"></label>
                                     <select class="form-select" name="IdType">
-                                        <option value="">Select ID Type</option>
+                                        <option value="" disabled selected hidden>Select ID Type</option>
                                         <option value="passport">Passport</option>
                                         <option value="national_id">National ID</option>
                                         <option value="driver_license">Driver License</option>
@@ -186,3 +187,11 @@
         </div>
     </div>
 </div>
+@section Script {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/customer/AddNewCustomer.js"></script>
+}
+
+@section Styles {
+    <link href="/css/customer/AddNewCustomer.css" rel="stylesheet">
+}
