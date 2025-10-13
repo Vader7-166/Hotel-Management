@@ -23,15 +23,16 @@ builder.Services.AddSession(options =>
 // 🧩 Nếu đang chạy ở môi trường Development thì load secrets
 if (builder.Environment.IsDevelopment())
 {
+
     builder.Configuration.AddUserSecrets<Program>();
 }
-
 // 🧩 Lấy chuỗi kết nối từ User Secrets
 var connectionString = builder.Configuration.GetConnectionString("DatabaseConnection");
 
 // 🧩 Cấu hình DbContext để dùng chuỗi kết nối đó
 builder.Services.AddDbContext<HotelManagementContext>(options =>
     options.UseSqlServer(connectionString));
+
 
 builder.Services.AddControllersWithViews();
 // Add services to the container.

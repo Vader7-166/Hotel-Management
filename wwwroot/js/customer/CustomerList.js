@@ -46,27 +46,11 @@ function applyFilters() {
     const statusValue = document.getElementById('statusFilter').value;
     const typeValue = document.getElementById('typeFilter').value;
 
-    // 2. In giá trị ra console để kiểm tra (đây là phần placeholder)
-    // Bạn có thể mở DevTools (F12) -> Console để xem kết quả khi bấm nút Filter
+    // 2. In giá trị ra console để kiểm tra
     console.log('Đang áp dụng bộ lọc với các giá trị:');
     console.log('Từ khóa tìm kiếm:', searchValue);
     console.log('Trạng thái:', statusValue);
     console.log('Loại khách hàng:', typeValue);
-
-    // 3. BƯỚC TIẾP THEO: Gửi các giá trị này lên server để lọc dữ liệu
-    // Bạn sẽ sử dụng AJAX (Fetch API) để gửi request đến một Action trong Controller
-    // và nhận lại danh sách khách hàng đã được lọc. Sau đó, bạn sẽ cập nhật lại
-    // bảng trên giao diện.
-
-    // Ví dụ (code này cần được hoàn thiện):
-    // const url = `/Admin/Customer/FilterCustomers?search=${encodeURIComponent(searchValue)}&status=${statusValue}&type=${typeValue}`;
-    // fetch(url)
-    //     .then(response => response.json())
-    //     .then(filteredCustomers => {
-    //         console.log('Dữ liệu đã lọc nhận được:', filteredCustomers);
-    //         // Viết code để cập nhật lại bảng ở đây...
-    //     })
-    //     .catch(error => console.error('Có lỗi xảy ra khi lọc dữ liệu:', error));
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
