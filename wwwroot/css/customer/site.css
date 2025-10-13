@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Open+Sans:wght@400;500;600&display=swap');
 
 body {
-    font-family: Raleway, sans-serif;
+    font-family: 'Open Sans', sans-serif;
     color: #222;
     background-color: #fff;
     scroll-behavior: smooth;
@@ -101,6 +101,7 @@ footer {
     color: #fff;
     padding-top: 50px;
     padding-bottom: 30px;
+    margin-top: 60px;
 }
 
     footer .logo-footer img {
@@ -148,3 +149,77 @@ footer {
     font-size: 14px;
     text-align: center;
 }
+
+/* Căn giữa bảng bookings */
+.table-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 40px; /* tạo khoảng cách với footer */
+}
+
+/* Nếu bảng nằm trực tiếp trong container */
+.table {
+    margin: 0 auto; /* căn giữa bảng */
+}
+
+/* MyProfile: tạo khoảng cách với footer */
+.profile-container {
+    margin-bottom: 60px; /* đẩy profile lên một chút */
+}
+
+/* Card hiển thị thông tin user */
+.profile-card {
+    max-width: 600px;
+    margin: 0 auto; /* căn giữa thẻ profile */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+}
+
+@media (max-width: 768px) {
+    .table th, .table td {
+        font-size: 14px;
+        white-space: nowrap;
+    }
+
+    .table {
+        width: 100%;
+    }
+}
+/* MyBookings */
+.section-title {
+    color: #c19b51;
+    border-bottom: 3px solid #c19b51;
+    display: inline-block;
+    padding-bottom: 6px;
+    margin-bottom: 15px;
+    font-family: 'Playfair Display', serif;
+    letter-spacing: 1px;
+}
+
+/* Giữ bảng không bị tràn khi màn nhỏ */
+.table-responsive {
+    overflow-x: auto;
+}
+
+/* Giữ bảng căn giữa */
+.table {
+    margin: 0 auto;
+}
+.profile-card {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    background-color: #fff;
+    padding: 25px;
+}
+
+.btn-gold {
+    background-color: #c19b51 !important;
+    color: white !important;
+    border: none;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+
+    .btn-gold:hover {
+        background-color: #a77e3e !important;
+    }
