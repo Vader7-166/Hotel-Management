@@ -3,6 +3,22 @@ using Microsoft.EntityFrameworkCore;
 using System;
 
 var builder = WebApplication.CreateBuilder(args);
+// Thêm bộ nhớ tạm (in-memory) để lưu trữ session
+builder.Services.AddDistributedMemoryCache();
+// Cấu hình Session cho ứng dụng
+builder.Services.AddSession(options =>
+{
+    // Thời gian hết hạn session (không hoạt động sau 30 phút sẽ bị xóa)
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+
+    // Chỉ cho phép truy cập cookie của session từ server (bảo mật hơn)
+    options.Cookie.HttpOnly = true;
+
+    // Đánh dấu cookie này là cần thiết (Essential)
+    // để không bị chặn khi người dùng bật chế độ chặn cookie
+    options.Cookie.IsEssential = true;
+});
+
 
 // 🧩 Nếu đang chạy ở môi trường Development thì load secrets
 if (builder.Environment.IsDevelopment())
@@ -37,6 +53,9 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+// Kích hoạt session trước khi định tuyến
+app.UseSession();
 
 app.MapControllerRoute(
     name: "areas",
