@@ -57,7 +57,7 @@
         <!-- Chi tiết phòng -->
         <div class="col-lg-5">
             <div class="card booking-card p-4">
-                <h2 class="fw-bold mb-3 text-primary">@Model.TypeName</h2>
+                <h2 class="fw-bold mb-3 text-secondary">@Model.TypeName</h2>
                 <p class="mb-3 text-muted">@Model.Description</p>
 
                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -67,7 +67,7 @@
 
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <span class="text-secondary">Giá cơ bản:</span>
-                    <span class="price-badge">@Model.BasePrice.ToString("N0") VNĐ</span>
+                    <span class="price-badge text-secondary">@Model.BasePrice.ToString("N0") VNĐ</span>
                 </div>
 
                 <div class="text-muted mb-3">
@@ -97,12 +97,12 @@
                         </select>
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">
+                    <button type="submit" class="btn btn-secondary w-100 py-2 fw-bold">
                         <i class="bi bi-calendar-check me-1"></i> Đặt phòng ngay
                     </button>
                 </form>
 
-                <div class="mt-4 text-center">
+                <div class="mt-4 text-center text-secondary">
                     <a asp-controller="Rooms" asp-action="Index" class="text-decoration-none">
                         <i class="bi bi-arrow-left"></i> Quay lại danh sách
                     </a>

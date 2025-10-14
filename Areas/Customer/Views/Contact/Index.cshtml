@@ -2,5 +2,247 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
-    Layout = "~/Views/Shared/_LayoutCustomer.cshtml";
+ ViewData["Title"] = "Contact Us - Hanoi Hotel";
+ Layout = "~/Views/Shared/_LayoutCustomer.cshtml";
 }
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="~/css/customer/contact.css" rel="stylesheet" />
+</head>
+<body>
+    <!-- Reception Banner -->
+    <section class="reception-banner">
+        <div class="container-fluid p-0">
+            <img src="/images/contact_banner.jpg" alt="Hanoi Hotel Reception" class="img-fluid w-100">
+        </div>
+    </section>
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Liên Hệ Với Chúng Tôi</h1>
+            <p>Chúng tôi luôn sẵn sàng lắng nghe bạn</p>
+        </div>
+    </section>
+    <!-- Contact Info Cards -->
+    <section class="contact-info-section">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="contact-info-card">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <h3>Địa Chỉ</h3>
+                        <p>Số 3 phố Cầu Giấy, Phường Láng</p>
+                        <p>Hà Nội, Việt Nam</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="contact-info-card">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <h3>Điện Thoại</h3>
+                        <p><a href="tel:+84123456789">(+84) 36 290 9853</a></p>
+                        <p><a href="tel:+84987654321">(+84) 36 290 9853</a></p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="contact-info-card">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <h3>Email</h3>
+                        <p><a href="mailto:sales@hanoihotel.com.vn">sales@hanoihotel.com.vn</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Form & Info -->
+    <section class="contact-form-section">
+        <div class="container">
+            <h2 class="section-title">Gửi Tin Nhắn</h2>
+            <p class="section-subtitle">Điền thông tin bên dưới</p>
+            
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="contact-form">
+                        <form id="contactForm" asp-action="Contact" asp-controller="Home" method="post">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="fullName" class="form-label">Họ và Tên <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="fullName" name="FullName" required placeholder="Nguyễn Văn A">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" id="email" name="Email" required placeholder="example@email.com">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="phone" class="form-label">Số Điện Thoại <span class="text-danger">*</span></label>
+                                    <input type="tel" class="form-control" id="phone" name="Phone" required placeholder="0123 456 789">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="subject" class="form-label">Chủ Đề</label>
+                                    <select class="form-select" id="subject" name="Subject">
+                                        <option value="">Chọn chủ đề</option>
+                                        <option value="booking">Đặt Phòng</option>
+                                        <option value="event">Tổ Chức Sự Kiện</option>
+                                        <option value="feedback">Góp Ý</option>
+                                        <option value="other">Khác</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="message" class="form-label">Nội Dung <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="message" name="Message" rows="6" required placeholder="Nhập nội dung tin nhắn của bạn..."></textarea>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn-submit">
+                                    <i class="fas fa-paper-plane me-2"></i> Gửi Tin Nhắn
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <!-- Working Hours -->
+                    <div class="working-hours">
+                        <h3><i class="fas fa-clock me-2"></i> Giờ Làm Việc</h3>
+                        <div class="hours-item">
+                            <span class="hours-day">Thứ Hai - Thứ Sáu</span>
+                            <span class="hours-time">8:00 - 22:00</span>
+                        </div>
+                        <div class="hours-item">
+                            <span class="hours-day">Thứ Bảy</span>
+                            <span class="hours-time">9:00 - 23:00</span>
+                        </div>
+                        <div class="hours-item">
+                            <span class="hours-day">Chủ Nhật</span>
+                            <span class="hours-time">9:00 - 23:00</span>
+                        </div>
+                        <div class="hours-item">
+                            <span class="hours-day">Lễ Tết</span>
+                            <span class="hours-time">10:00 - 20:00</span>
+                        </div>
+                    </div>
+
+                    <!-- Social Media -->
+                    <div class="social-media">
+                        <h3><i class="fas fa-share-alt me-2"></i> Mạng Xã Hội</h3>
+                        <div class="social-links">
+                            <a href="#" class="social-link" title="Facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="#" class="social-link" title="Instagram">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="#" class="social-link" title="Tiktok">
+                                <i class="fab fa-tiktok"></i>
+                            </a>
+                            <a href="#" class="social-link" title="LinkedIn">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="map-section">
+        <div class="map-container">
+            <!-- Thay thế link Google Maps của bạn vào đây -->
+            <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.096924709995!2d105.8195377!3d21.0277644!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ab9bd9861ca1%3A0xe7887f7b72ca17a9!2zSMOgIE7hu5lpLCBWaeG7h3QgTmFt!5e0!3m2!1svi!2s!4v1234567890123!5m2!1svi!2s" 
+                allowfullscreen="" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Form validation and submission
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(this);
+            
+            // Simple validation
+            const fullName = formData.get('FullName');
+            const email = formData.get('Email');
+            const phone = formData.get('Phone');
+            const message = formData.get('Message');
+            
+            if (!fullName || !email || !phone || !message) {
+                alert('Vui lòng điền đầy đủ thông tin bắt buộc!');
+                return;
+            }
+           
+            // Phone validation (Vietnamese phone format)
+            const phoneRegex = /^[0-9]{10,11}$/;
+            const cleanPhone = phone.replace(/\s/g, '');
+            if (!phoneRegex.test(cleanPhone)) {
+                alert('Số điện thoại không hợp lệ!');
+                return;
+            }
+            
+            // If validation passes, submit form
+            // In production, this would send data to server
+            alert('Cảm ơn bạn đã liên hệ! Chúng tôi sẽ phản hồi trong thời gian sớm nhất.');
+            this.reset();
+            
+            // Uncomment below line to actually submit to server
+            // this.submit();
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Add animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe contact info cards
+        document.querySelectorAll('.contact-info-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'all 0.6s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
