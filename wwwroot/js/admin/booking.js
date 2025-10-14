@@ -1,13 +1,18 @@
 ﻿// Biến để lưu trữ modal instance
 let deleteModal = null;
+let detailsModal = null;
 
 document.addEventListener('DOMContentLoaded', function () {
     // Khởi tạo đối tượng Modal của Bootstrap một lần khi trang được tải
     if (document.getElementById('deleteConfirmModal')) {
         deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
     }
+    if (document.getElementById('bookingModal')) {
+        detailsModal = new bootstrap.Modal(document.getElementById('bookingModal'));
+    }
 });
 
+// Delete Modal
 function showDeleteModal(bookingId, customerName) {
     // Lấy form trong modal
     const deleteForm = document.getElementById('deleteForm');
@@ -24,24 +29,10 @@ function showDeleteModal(bookingId, customerName) {
     }
 }
 
-let detailsModal = null;
-
-document.addEventListener('DOMContentLoaded', function () {
-    if (document.getElementById('bookingModal')) {
-        detailsModal = new bootstrap.Modal(document.getElementById('bookingModal'));
-    }
-});
-
+// Booking Detail Modal
 async function viewBookingDetails(bookingId) {
     const modalBody = document.getElementById('modalBody');
 
-    if (!modalBody) {
-        console.error("Element with ID 'modalBody' was not found.");
-        return;
-    }
-
-    // Hiển thị trạng thái "Loading..."
-    modalBody.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>';
     if (detailsModal) {
         detailsModal.show();
     }
