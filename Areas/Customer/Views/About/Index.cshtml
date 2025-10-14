@@ -1,6 +1,306 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
     Layout = "~/Views/Shared/_LayoutCustomer.cshtml";
+    ViewData["Title"] = "About Us - Hanoi Hotel";
 }
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="~/css/customer/about.css" rel="stylesheet" />
+</head>
+<body>
+    <section class="hero-banner">
+        <div class="hero-content">
+            <h1>About Hanoi Hotel</h1>
+            <p>Explore the journey of luxury and hospitality</p>
+        </div>
+    </section>
+
+    <section class="about-section">
+        <div class="container">
+            <h2 class="section-title-about">Our Story</h2>
+            <p class="section-subtitle">Where tradition meets modernity</p>
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <img src="~/images/Hotel_Banner.jpg" alt="About Hanoi Hotel" class="img-fluid rounded shadow">
+                </div>
+                <div class="col-lg-6">
+                    <p class="lead">Hanoi Hotel is a symbol of elegance and luxury, offering a world-class resort experience right in the heart of Hanoi.</p>
+                    <p>With over 20 years of experience in the hospitality industry, we pride ourselves on providing a perfect retreat that harmoniously blends traditional Vietnamese beauty with modern amenities.</p>
+                    <p>Every detail at Hanoi Hotel is meticulously curated, from the interior design to our guest services, to create unforgettable moments and the ultimate experience for our guests.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="gallery-section">
+        <div class="container">
+            <h2 class="section-title-about">Explore Our Spaces</h2>
+            <p class="section-subtitle">Our Gallery</p>
+        </div>
+        <div class="container-fluid">
+            <div class="gallery-wrapper">
+                <button class="gallery-nav prev" onclick="scrollGallery('left')">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="gallery-nav next" onclick="scrollGallery('right')">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <div class="gallery-container" id="galleryContainer">
+                    <div class="gallery-item">
+                        <img src="/images/Room/room1.jpg" alt="Deluxe Room">
+                        <div class="gallery-overlay">
+                            <h4>Deluxe Room</h4>
+                            <p>Luxurious Spaces, Modern Comforts</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="/images/Room/room2.jpg" alt="Premier">
+                        <div class="gallery-overlay">
+                            <h4>Premier City View Room</h4>
+                            <p>Iconic Views, Unforgettable Moments</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="/images/Room/room3.jpg" alt="Superior Room">
+                        <div class="gallery-overlay">
+                            <h4>Superior Room</h4>
+                            <p>An Elevated Stay, A Serene Retreat</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="/images/Room/room4.jpg" alt="Executive Room">
+                        <div class="gallery-overlay">
+                            <h4>Executive Room</h4>
+                            <p>Where Productivity Meets Relaxation</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="/images/Room/room5.jpg" alt="Junior Suite">
+                        <div class="gallery-overlay">
+                            <h4>Junior Suite</h4>
+                            <p>Spacious Living, Elegant Design</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="/images/Room/room6.jpg" alt="Family Suite">
+                        <div class="gallery-overlay">
+                            <h4>Family Suite</h4>
+                            <p>Space to Connect, Room for Everyone</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="/images/Room/room7.jpg" alt="Terrace Suite">
+                        <div class="gallery-overlay">
+                            <h4>Terrace Suite</h4>
+                            <p>Your Private Oasis, Above the City</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="/images/Room/room8.jpg" alt="Presidential Suite">
+                        <div class="gallery-overlay">
+                            <h4>Presidential Suite</h4>
+                            <p>The Pinnacle of Luxury, A Panoramic Perspective</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <img src="/images/Room/room9.jpg" alt="Hanoi Signature">
+                        <div class="gallery-overlay">
+                            <h4>8. Hanoi Signature Suite</h4>
+                            <p>Local Artistry, Timeless Elegance</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="stats-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="200">0</div>
+                        <div class="stat-label">Rooms</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="20">0</div>
+                        <div class="stat-label">Years of Experience</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="50000">0</div>
+                        <div class="stat-label">Happy Guests</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-item">
+                        <div class="stat-number" data-target="15">0</div>
+                        <div class="stat-label">Awards</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features-section">
+        <div class="container">
+            <h2 class="section-title-about">Services & Amenities</h2>
+            <p class="section-subtitle">What We Offer</p>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-wifi"></i>
+                        </div>
+                        <h4>Free WiFi</h4>
+                        <p>High-speed internet access throughout the entire hotel.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-concierge-bell"></i>
+                        </div>
+                        <h4>24/7 Service</h4>
+                        <p>Our professional team is always available to assist you.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <h4>Fine Dining Restaurant</h4>
+                        <p>Diverse Asian and European Cuisine</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-swimming-pool"></i>
+                        </div>
+                        <h4>Pool & Spa</h4>
+                        <p>For your relaxation and wellness.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-parking"></i>
+                        </div>
+                        <h4>Parking</h4>
+                        <p>Spacious and secure parking is available for our guests.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-dumbbell"></i>
+                        </div>
+                        <h4>Fitness Center</h4>
+                        <p>State-of-the-art fitness equipment.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Gallery scroll function
+        function scrollGallery(direction) {
+            const container = document.getElementById('galleryContainer');
+            const scrollAmount = 420;
+
+            if (direction === 'left') {
+                container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+            } else {
+                container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            }
+        }
+
+        // Counter animation
+        function animateCounter(element) {
+            const target = parseInt(element.getAttribute('data-target'));
+            const duration = 2000;
+            const step = target / (duration / 16);
+            let current = 0;
+
+            const timer = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    element.textContent = target.toLocaleString();
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current).toLocaleString();
+                }
+            }, 16);
+        }
+
+        // Intersection Observer for stats
+        const observerOptions = {
+            threshold: 0.5
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counters = entry.target.querySelectorAll('.stat-number');
+                    counters.forEach(counter => {
+                        animateCounter(counter);
+                    });
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        const statsSection = document.querySelector('.stats-section');
+        if (statsSection) {
+            observer.observe(statsSection);
+        }
+
+        // Smooth scroll behavior
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Touch swipe for gallery on mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        const galleryContainer = document.getElementById('galleryContainer');
+
+        galleryContainer.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        galleryContainer.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50) {
+                scrollGallery('right');
+            }
+            if (touchEndX > touchStartX + 50) {
+                scrollGallery('left');
+            }
+        }
+    </script>
+</body>
+</html>
