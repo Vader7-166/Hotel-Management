@@ -1,4 +1,22 @@
-﻿@{
+﻿@model Hotel_Management.ViewModels.BookingIndexViewModel
+@using System.Globalization
+@functions {
+    public string GetStatusClass(string? status)
+    {
+        return status switch
+        {
+            "Pending" => "status-pending",
+            "Confirmed" => "status-confirmed",
+            "Cancelled" => "status-cancelled",
+            "CheckedIn" => "status-checkedin", // Thêm các status khác nếu cần
+            "CheckedOut" => "status-completed",
+            _ => "bg-secondary"
+        };
+    }
+}
+
+
+@{
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
     ViewBag.Title = "Booking Management";
 }
@@ -9,237 +27,248 @@
 
 @section Script {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/admin/booking.js"></script>
+    <script src="~/js/admin/booking.js"></script> 
 }
 
 <div class="main-content">
-    <!-- Page: Danh Sách Booking -->
     <div id="page-bookings" class="page-content">
         <div class="row mb-4">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h2 class="mb-1"><i class="bi"></i> Quản Lý Đặt Phòng</h2>
-                    <p class="text-muted mb-0">Danh sách tất cả các booking</p>
+                    <h2 class="mb-1"><i class="bi"></i> Booking Management</h2>
+                    <p class="text-muted mb-0">List of all bookings</p>
                 </div>
-                <button class="btn btn-primary" onclick="showPage('create')">
-                    <i class="bi bi-plus-circle"></i> Tạo Booking Mới
-                </button>
+                <a asp-controller="Booking" asp-action="Create" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Create New Booking
+                </a>
             </div>
         </div>
 
-        <!-- Statistics Cards -->
         <div class="row">
             <div class="col-md-3">
                 <div class="stats-card">
-                    <h3 class="mb-2">156</h3>
-                    <p class="mb-0"><i class="bi bi-calendar-check"></i> Tổng Booking</p>
+                    <h3 class="mb-2">@Model.TotalBookings</h3>
+                    <p class="mb-0"><i class="bi bi-calendar-check"></i> Total Bookings</p>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stats-card success">
-                    <h3 class="mb-2">89</h3>
-                    <p class="mb-0"><i class="bi bi-check-circle"></i> Đã Xác Nhận</p>
+                    <h3 class="mb-2">@Model.ConfirmedBookings</h3>
+                    <p class="mb-0"><i class="bi bi-check-circle"></i> Confirmed</p>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stats-card warning">
-                    <h3 class="mb-2">45</h3>
-                    <p class="mb-0"><i class="bi bi-clock"></i> Chờ Xử Lý</p>
+                    <h3 class="mb-2">@Model.PendingBookings</h3>
+                    <p class="mb-0"><i class="bi bi-clock"></i> Pending</p>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stats-card info">
-                    <h3 class="mb-2">22</h3>
-                    <p class="mb-0"><i class="bi bi-calendar-event"></i> Check-in Hôm Nay</p>
+                    <h3 class="mb-2">@Model.TodaysCheckIns</h3>
+                    <p class="mb-0"><i class="bi bi-calendar-event"></i> Today's Check-ins</p>
                 </div>
             </div>
         </div>
 
-        <!-- Search and Filter -->
         <div class="search-box">
-            <div class="row g-3">
-                <div class="col-md-4">
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="searchInput" placeholder="Tìm theo tên, SĐT, mã booking...">
+            <form asp-action="Index" method="get">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <input type="text" name="searchString" class="form-control" placeholder="Search by name, phone, booking ID..." value="@Model.SearchString">
+                    </div>
+                    <div class="col-md-3">
+                        <select name="statusFilter" class="form-select" asp-items="@Model.StatusFilterOptions">
+                            <option value="">All Statuses</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="date" name="dateFilter" class="form-control" value="@Model.DateFilter">
+                    </div>
+                    <div class="col-md-2 d-flex gap-2">
+                        <button type="submit" class="btn btn-info w-100"><i class="bi bi-search"></i> Filter</button>
+                        <a asp-action="Index" class="btn btn-outline-secondary resetBtn"><i class="bi bi-arrow-clockwise"></i></a>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <select class="form-select" id="statusFilter">
-                        <option value="">Tất cả trạng thái</option>
-                        <option value="pending">Chờ xác nhận</option>
-                        <option value="confirmed">Đã xác nhận</option>
-                        <option value="cancelled">Đã hủy</option>
-                        <option value="completed">Hoàn thành</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <input type="date" class="form-control" id="dateFilter">
-                </div>
-                <div class="col-md-2">
-                    <button class="btn btn-primary w-100 resetBtn" onclick="resetFilter()">
-                        <i class="bi bi-arrow-clockwise"></i> Reset
-                    </button>
-                </div>
-            </div>
+            </form>
         </div>
-
-        <!-- Bookings Table -->
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover" id="bookingsTable">
                         <thead>
                             <tr>
-                                <th>Mã Booking</th>
-                                <th>Khách Hàng</th>
-                                <th>Số Điện Thoại</th>
-                                <th>Phòng</th>
+                                <th>Booking ID</th>
+                                <th>Customer</th>
+                                <th>Phone Number</th>
+                                <th>Room</th>
                                 <th>Check-in</th>
                                 <th>Check-out</th>
-                                <th>Trạng Thái</th>
-                                <th>Tổng Tiền</th>
-                                <th>Thao Tác</th>
+                                <th>Status</th>
+                                <th>Total Price</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="bookingsTableBody">
-                            <!-- Data will be inserted here -->
+                            @foreach (var item in Model.Bookings)
+                            {
+                                var bookingDetail = item.BookingDetails.FirstOrDefault();
+                                <tr>
+                                    <td><strong>@item.BookingId</strong></td>
+                                    <td>@item.Customer.FullName</td>
+                                    <td>@item.Customer.Phone</td>
+                                    <td>@(bookingDetail?.Room.RoomNumber ?? "N/A")</td>
+                                    <td>@item.CheckInDate.ToString("dd/MM/yyyy")</td>
+                                    <td>@item.CheckOutDate.ToString("dd/MM/yyyy")</td>
+                                    <td>
+                                        <span class="badge @GetStatusClass(item.Status)">@item.Status</span>
+                                    </td>
+                                    <td>
+                                        @item.BookingDetails.Sum(bd => bd.SubTotal ?? 0).ToString("C0", new CultureInfo("vi-VN"))
+                                    </td>
+                                    <td class="action-buttons">
+                                        <button class="btn btn-sm btn-info" onclick="viewBookingDetails(@item.BookingId)">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <a asp-action="Edit" asp-route-id="@item.BookingId" class="btn btn-sm btn-warning">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-danger"
+                                        @* An Toàn trong truyền dữ liệu vào js *@
+                                            onclick="showDeleteModal(@item.BookingId, '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(item.Customer.FullName))')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
+                    @* Pagination *@
+                    <div class="pagination-container mt-4 d-flex justify-content-between align-items-center">
+                        <div>
+                            @if (Model.TotalPage > 0)
+                            {
+                                <span class="text-muted">
+                                    Page @Model.CurrentPage of @Model.TotalPage
+                                </span>
+                            }
+                        </div>
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination">
+                                @{
+                                    int adjacentPages = 2;
+
+                                    // --- Logic tính toán ---
+                                    int startPage = Math.Max(1, Model.CurrentPage - adjacentPages);
+                                    int endPage = Math.Min(Model.TotalPage, Model.CurrentPage + adjacentPages);
+
+                                    if (Model.CurrentPage < 1 + (adjacentPages * 2))
+                                    {
+                                        endPage = Math.Min(1 + (adjacentPages * 2), Model.TotalPage);
+                                    }
+                                    if (Model.CurrentPage > Model.TotalPage - (adjacentPages * 2))
+                                    {
+                                        startPage = Math.Max(1, Model.TotalPage - (adjacentPages * 2));
+                                    }
+                                }
+
+                                @* Nút "Previous" *@
+                                <li class="page-item @(!Model.HasPreviousPage ? "disabled" : "")">
+                                    <a class="page-link" asp-action="Index"
+                                       asp-route-page="@(Model.CurrentPage - 1)"
+                                       asp-route-searchString="@Model.SearchString"
+                                       asp-route-statusFilter="@Model.StatusFilter"
+                                       asp-route-dateFilter="@Model.DateFilter"><i class="bi bi-arrow-left"></i></a>
+                                </li>
+
+                                @* Nút Trang Đầu và dấu "..." *@
+                                @if (startPage > 1)
+                                {
+                                    <li class="page-item">
+                                        <a class="page-link" asp-action="Index" asp-route-page="1" asp-route-searchString="@Model.SearchString" asp-route-statusFilter="@Model.StatusFilter" asp-route-dateFilter="@Model.DateFilter">1</a>
+                                    </li>
+                                    @if (startPage > 2)
+                                    {
+                                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                                    }
+                                }
+
+                                @* Vòng lặp chính hiển thị các trang ở giữa *@
+                                @for (var i = startPage; i <= endPage; i++)
+                                {
+                                    <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                                        <a class="page-link" asp-action="Index"
+                                           asp-route-page="@i"
+                                           asp-route-searchString="@Model.SearchString"
+                                           asp-route-statusFilter="@Model.StatusFilter"
+                                           asp-route-dateFilter="@Model.DateFilter">@i</a>
+                                    </li>
+                                }
+
+                                @* Nút Trang Cuối và dấu "..." *@
+                                @if (endPage < Model.TotalPage)
+                                {
+                                    @if (endPage < Model.TotalPage - 1)
+                                    {
+                                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                                    }
+                                    <li class="page-item">
+                                        <a class="page-link" asp-action="Index" asp-route-page="@Model.TotalPage" asp-route-searchString="@Model.SearchString" asp-route-statusFilter="@Model.StatusFilter" asp-route-dateFilter="@Model.DateFilter">@Model.TotalPage</a>
+                                    </li>
+                                }
+
+                                @* Nút "Next" *@
+                                <li class="page-item @(!Model.HasNextPage ? "disabled" : "")">
+                                    <a class="page-link" asp-action="Index"
+                                       asp-route-page="@(Model.CurrentPage + 1)"
+                                       asp-route-searchString="@Model.SearchString"
+                                       asp-route-statusFilter="@Model.StatusFilter"
+                                       asp-route-dateFilter="@Model.DateFilter"><i class="bi bi-arrow-right"></i></a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Page: Calendar View -->
-
-    <!-- Page: Create/Edit Booking -->
-    <div id="page-create" class="page-content" style="display: none;">
-        <div class="page-header">
-            <h3><i class="bi bi-plus-circle"></i> <span id="formTitle">Tạo Booking Mới</span></h3>
-            <p class="text-muted">Điền thông tin để tạo đặt phòng mới</p>
-        </div>
-
-        <div class="card">
-            <div class="card-body">
-                <form id="bookingForm">
-                    <input type="hidden" id="bookingId">
-
-                    <h5 class="mb-3"><i class="bi bi-person"></i> Thông Tin Khách Hàng</h5>
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" id="customerName" required>
-                                <label>Họ và Tên *</label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="tel" class="form-control" id="customerPhone" required>
-                                <label>Số Điện Thoại *</label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="email" class="form-control" id="customerEmail">
-                                <label>Email</label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="text" class="form-control" id="customerIdCard">
-                                <label>CMND/CCCD</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <h5 class="mb-3"><i class="bi bi-door-open"></i> Thông Tin Đặt Phòng</h5>
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <select class="form-select" id="roomType" required>
-                                    <option value="">Chọn loại phòng</option>
-                                    <option value="101">Phòng 101 - Standard Single</option>
-                                    <option value="102">Phòng 102 - Standard Double</option>
-                                    <option value="201">Phòng 201 - Deluxe</option>
-                                    <option value="202">Phòng 202 - Deluxe Sea View</option>
-                                    <option value="301">Phòng 301 - Suite</option>
-                                    <option value="302">Phòng 302 - Presidential Suite</option>
-                                </select>
-                                <label>Phòng *</label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="number" class="form-control" id="numGuests" value="1" min="1" max="4" required>
-                                <label>Số Khách</label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="date" class="form-control" id="checkInDate" required>
-                                <label>Ngày Check-in *</label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="date" class="form-control" id="checkOutDate" required>
-                                <label>Ngày Check-out *</label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <select class="form-select" id="bookingStatus">
-                                    <option value="pending">Chờ xác nhận</option>
-                                    <option value="confirmed">Đã xác nhận</option>
-                                    <option value="cancelled">Đã hủy</option>
-                                    <option value="completed">Hoàn thành</option>
-                                </select>
-                                <label>Trạng Thái</label>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-floating">
-                                <input type="number" class="form-control" id="totalPrice" required>
-                                <label>Tổng Tiền (VNĐ) *</label>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="form-floating">
-                                <textarea class="form-control" id="bookingNotes" style="height: 100px"></textarea>
-                                <label>Ghi Chú</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-check-circle"></i> Lưu Booking
-                        </button>
-                        <button type="button" class="btn btn-outline-secondary" onclick="showPage('bookings')">
-                            <i class="bi bi-x-circle"></i> Hủy
-                        </button>
-                        <button type="button" class="btn btn-outline-danger ms-auto" id="deleteBtn" style="display: none;" onclick="deleteBooking()">
-                            <i class="bi bi-trash"></i> Xóa Booking
-                        </button>
-                    </div>
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="deleteConfirmText"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="margin:0 0 16px">Cancel</button>
+                <form id="deleteForm" asp-action="Delete" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">Delete</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Modal for Booking Details -->
-<div class="modal fade" id="bookingModal" tabindex="-1">
+<div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Chi Tiết Booking</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <h5 class="modal-title" id="bookingModalLabel">Booking Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="modalBody">
-                <!-- Booking details will be inserted here -->
+                @* Fill detail booking html in here *@
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
-

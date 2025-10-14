@@ -1,5 +1,111 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model Hotel_Management.ViewModels.BookingEditViewModel
 @{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewBag.Title = "Edit Booking";
+}
+
+@section Styles {
+    <link href="~/css/admin/booking.css" rel="stylesheet" />
+}
+
+<div class="main-content" style="min-height:unset">
+    <div class="page-header">
+        <h3><i class="bi bi-pencil-square"></i> Edit Booking - ID: @Model.BookingId</h3>
+        <p class="text-muted">Update booking information</p>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <form asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <input type="hidden" asp-for="BookingId" />
+                <input type="hidden" asp-for="CustomerId" />
+
+                <h5 class="mb-3"><i class="bi bi-person"></i> Customer Information</h5>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="FullName" class="form-control" />
+                            <label asp-for="FullName"></label>
+                            <span asp-validation-for="FullName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="Phone" class="form-control" />
+                            <label asp-for="Phone"></label>
+                            <span asp-validation-for="Phone" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="Email" class="form-control" />
+                            <label asp-for="Email"></label>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="IdNumber" class="form-control" />
+                            <label asp-for="IdNumber"></label>
+                        </div>
+                    </div>
+                </div>
+
+                <h5 class="mb-3"><i class="bi bi-door-open"></i> Booking Information</h5>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select asp-for="RoomTypeId" class="form-select" asp-items="@Model.RoomTypes"></select>
+                            <label asp-for="RoomTypeId"></label>
+                            <span asp-validation-for="RoomTypeId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <select asp-for="Status" class="form-select" asp-items="@Model.BookingStatus"></select>
+                            <label asp-for="Status"></label>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="CheckInDate" type="date" class="form-control" />
+                            <label asp-for="CheckInDate"></label>
+                            <span asp-validation-for="CheckInDate" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="CheckOutDate" type="date" class="form-control" />
+                            <label asp-for="CheckOutDate"></label>
+                            <span asp-validation-for="CheckOutDate" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-floating">
+                            <textarea asp-for="Notes" class="form-control" style="height: 100px"></textarea>
+                            <label asp-for="Notes"></label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i> Save Changes
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-circle"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Script {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
