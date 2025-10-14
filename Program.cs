@@ -1,6 +1,7 @@
 ﻿using Hotel_Management.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 // Thêm bộ nhớ tạm (in-memory) để lưu trữ session

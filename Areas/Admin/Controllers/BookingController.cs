@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Hotel_Management.ViewModels;
-using Hotel_Management.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hotel_Management.Areas.Admin.Controllers
@@ -16,26 +15,82 @@ namespace Hotel_Management.Areas.Admin.Controllers
             this.db = _db;
         }
         // Index
-        public IActionResult Index()
+        public IActionResult Index(string searchString, string statusFilter, string dateFilter, int page = 1)
         {
-            var allBookings = db.Bookings
-                .Include(b => b.Customer)                   // Tải kèm thông tin khách hàng
-                .Include(b => b.BookingDetails)             // Tải kèm danh sách chi tiết booking
-                    .ThenInclude(bd => bd.Room)             // Với mỗi chi tiết, tải kèm thông tin phòng
-                        .ThenInclude(r => r.RoomType)       // Với mỗi phòng, tải kèm thông tin loại phòng
-                .OrderByDescending(b => b.BookingDate)      // Sắp xếp cho dễ nhìn (tùy chọn)
+            var bookingsQuery = db.Bookings
+                .Include(b => b.Customer)
+                .Include(b => b.BookingDetails)
+                    .ThenInclude(bd => bd.Room)
+                .OrderByDescending(b => b.BookingId)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                bool isNumericOnly = searchString.All(char.IsDigit);
+
+                if (isNumericOnly && int.TryParse(searchString, out int searchId))
+                {
+                    bookingsQuery = bookingsQuery.Where(b => b.BookingId == searchId);
+                }
+                else
+                {
+                    bookingsQuery = bookingsQuery.Where(b =>
+                        b.Customer.FullName.Contains(searchString) ||
+                        b.Customer.Phone.Contains(searchString)
+                    );
+                }
+            }
+
+            if (!string.IsNullOrEmpty(statusFilter))
+            {
+                bookingsQuery = bookingsQuery.Where(b => b.Status == statusFilter);
+            }
+
+            if (!string.IsNullOrEmpty(dateFilter) && DateOnly.TryParse(dateFilter, out var filterDate))
+            {
+                bookingsQuery = bookingsQuery.Where(b => b.CheckInDate == filterDate || b.CheckOutDate == filterDate);
+            }
+
+            // Pagination 
+            const int pageSize = 10;
+            var totalBookingsCount = bookingsQuery.Count();
+            var totalPages = (int)Math.Ceiling(totalBookingsCount / (double)pageSize);
+            var paginatedBookings = bookingsQuery
+                .Skip((page-1)*pageSize)    // Skip current page-1 * number of value in page
+                .Take(pageSize)
                 .ToList();
 
+            var allBookings = db.Bookings.ToList();
             var today = DateOnly.FromDateTime(DateTime.Now);
 
             var viewModel = new BookingIndexViewModel
             {
-                Bookings = allBookings,
-                TotalBookings = allBookings.Count,
+                // Query in current page
+                Bookings = paginatedBookings,       
+
+                // Asign value to filter
+                SearchString = searchString,
+                StatusFilter = statusFilter,
+                DateFilter = dateFilter,
+                StatusFilterOptions = new List<SelectListItem>
+                {
+                    new SelectListItem { Value = "Pending", Text = "Pending" },
+                    new SelectListItem { Value = "Confirmed", Text = "Confirmed" },
+                    new SelectListItem { Value = "Cancelled", Text = "Cancelled" },
+                    new SelectListItem { Value = "Completed", Text = "Completed" }
+                },
+
+                // Asign value for paginating
+                CurrentPage = page,
+                TotalPage = totalPages,
+
+                // Asign value for statistics
+                TotalBookings = allBookings.Count(),
                 ConfirmedBookings = allBookings.Count(b => b.Status == "Confirmed"),
                 PendingBookings = allBookings.Count(b => b.Status == "Pending"),
                 TodaysCheckIns = allBookings.Count(b => b.CheckInDate == today && b.Status != "Cancelled")
             };
+
             return View(viewModel);
         }
 
@@ -198,7 +253,8 @@ namespace Hotel_Management.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(int? id, BookingEditViewModel viewModel)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, BookingEditViewModel viewModel)
         {
             if (id != viewModel.BookingId) return NotFound();
 
@@ -206,98 +262,187 @@ namespace Hotel_Management.Areas.Admin.Controllers
             {
                 ModelState.AddModelError("CheckOutDate", "Check-out date must be after check-in date.");
             }
+
             if (ModelState.IsValid)
             {
-                var bookingToUpdate = db.Bookings
-                    .Include(b => b.BookingDetails)
-                        .ThenInclude(bd => bd.Room)
-                    .FirstOrDefault(b => b.BookingId == viewModel.BookingId);
-                if (bookingToUpdate == null) return NotFound();
-                var customerToUpdate = db.Customers.Find(viewModel.CustomerId);
-
-                if (bookingToUpdate == null || customerToUpdate == null) return NotFound();
-
-                // 1. Cập nhật thông tin khách hàng
-                customerToUpdate.FullName = viewModel.FullName;
-                customerToUpdate.Phone = viewModel.Phone;
-                customerToUpdate.Email = viewModel.Email;
-                customerToUpdate.Idnumber = viewModel.IdNumber;
-                customerToUpdate.UpdatedAt = DateTime.Now;
-
-                // 2. Cập nhật thông tin booking chính
-                bookingToUpdate.CheckInDate = viewModel.CheckInDate;
-                bookingToUpdate.CheckOutDate = viewModel.CheckOutDate;
-                bookingToUpdate.Status = viewModel.Status;
-                bookingToUpdate.Notes = viewModel.Notes;
-                bookingToUpdate.UpdatedAt = DateTime.Now;
-
-                // --- LOGIC XỬ LÝ ĐỔI PHÒNG: Cho chọn các loại phòng, hệ thống sẽ kiểm tra xem còn phòng loại đó không?
-                // Nếu còn thì tự động được xếp vào 1 phòng, nếu không sẽ trả lại thông báo ---
-                var bookingDetail = bookingToUpdate.BookingDetails.First();
-                int oldRoomTypeId = bookingDetail.Room.RoomTypeId;
-                int oldRoomId = bookingDetail.RoomId;
-
-                if (oldRoomTypeId != viewModel.RoomTypeId)  // Nếu khách đổi phòng 
+                using (var transaction = await db.Database.BeginTransactionAsync())
                 {
-                    var oldRoom = db.Rooms.Find(oldRoomId);
-                    if(oldRoom == null) oldRoom.Status = "Available";
-
-                    var newRoom = db.Rooms.FirstOrDefault(r => (r.RoomTypeId == viewModel.RoomTypeId && r.Status == "Available"));
-
-                    if (newRoom == null)
+                    try
                     {
-                        // Bao loi
-                        ModelState.AddModelError("RoomTypeId", "The selected room type is no longer available. Please choose another.");
-                        // Nạp lại dữ liệu cho view và trả về
-                        viewModel.RoomTypes = db.RoomTypes.Select(rt => new SelectListItem { Value = rt.RoomTypeId.ToString(), Text = rt.TypeName }).ToList();
-                        viewModel.BookingStatus = GetStatusOptions();
-                        return View(viewModel);
-                    }
-                    // Neu con trong
-                    bookingDetail.RoomId = newRoom.RoomId;
-                    newRoom.Status = "Occupied";
-                    bookingDetail.UnitPrice = newRoom.RoomType.BasePrice;
+                        // Lấy các bản ghi gốc từ DB để so sánh và cập nhật
+                        var bookingFromDb = await db.Bookings
+                            .Include(b => b.BookingDetails)
+                                .ThenInclude(bd => bd.Room)
+                            .AsNoTracking() 
+                            .FirstOrDefaultAsync(b => b.BookingId == viewModel.BookingId);
 
+                        if (bookingFromDb == null) return NotFound();
+
+                        var customerToUpdate = await db.Customers.FindAsync(viewModel.CustomerId);
+                        if (customerToUpdate == null) return NotFound();
+
+                        var bookingDetailToUpdate = await db.BookingDetails.FirstOrDefaultAsync(bd => bd.BookingId == viewModel.BookingId);
+                        if (bookingDetailToUpdate == null) return NotFound();
+
+                        // 1. Cập nhật Customer
+                        customerToUpdate.FullName = viewModel.FullName;
+                        customerToUpdate.Phone = viewModel.Phone;
+                        customerToUpdate.Email = viewModel.Email;
+                        customerToUpdate.Idnumber = viewModel.IdNumber;
+                        customerToUpdate.UpdatedAt = DateTime.Now;
+
+                        // 2. Xử lý logic đổi phòng (nếu có)
+                        int currentRoomId = bookingDetailToUpdate.RoomId;
+                        var currentRoom = await db.Rooms.FindAsync(currentRoomId);
+
+                        if (bookingFromDb.BookingDetails.First().Room.RoomTypeId != viewModel.RoomTypeId)
+                        {
+                            // Trả phòng cũ về 'Available'
+                            if (currentRoom != null)
+                            {
+                                currentRoom.Status = "Available";
+                            }
+
+                            // ⭐ SỬA 2: Include RoomType khi tìm phòng mới
+                            var newRoom = await db.Rooms
+                                .Include(r => r.RoomType)
+                                .FirstOrDefaultAsync(r => r.RoomTypeId == viewModel.RoomTypeId && r.Status == "Available");
+
+                            if (newRoom == null)
+                            {
+                                // Báo lỗi hết phòng
+                                ModelState.AddModelError("RoomTypeId", "The selected room type is no longer available. Please choose another.");
+                                await transaction.RollbackAsync();
+
+                                // Nạp lại dữ liệu cho dropdown
+                                viewModel.RoomTypes = await db.RoomTypes.Select(rt => new SelectListItem { Value = rt.RoomTypeId.ToString(), Text = rt.TypeName }).ToListAsync();
+                                viewModel.BookingStatus = GetStatusOptions();
+                                return View(viewModel);
+                            }
+
+                            // Gán phòng mới và cập nhật trạng thái, giá
+                            bookingDetailToUpdate.RoomId = newRoom.RoomId;
+                            newRoom.Status = "Occupied";
+                            bookingDetailToUpdate.UnitPrice = newRoom.RoomType.BasePrice;
+                            currentRoom = newRoom; // Cập nhật lại biến currentRoom để logic status bên dưới chạy đúng
+                        }
+
+                        // 3. Logic xử lý cập nhật trạng thái phòng (dựa trên thay đổi Status của Booking)
+                        string oldStatus = bookingFromDb.Status;
+                        string newStatus = viewModel.Status;
+
+                        if (oldStatus != newStatus && currentRoom != null)
+                        {
+                            switch (newStatus)
+                            {
+                                case "CheckedOut":
+                                case "Cancelled":
+                                    currentRoom.Status = "Available";
+                                    break;
+                                case "Confirmed":
+                                case "CheckedIn":
+                                    currentRoom.Status = "Occupied";
+                                    break;
+                            }
+                        }
+
+                        // 4. Cập nhật lại số đêm và tổng tiền cho BookingDetail
+                        var nights = viewModel.CheckOutDate.DayNumber - viewModel.CheckInDate.DayNumber;
+                        bookingDetailToUpdate.Nights = nights;
+
+                        // 5. Cập nhật lại thông tin Booking chính
+                        var bookingEntityToUpdate = await db.Bookings.FindAsync(viewModel.BookingId);
+                        if (bookingEntityToUpdate != null)
+                        {
+                            bookingEntityToUpdate.CheckInDate = viewModel.CheckInDate;
+                            bookingEntityToUpdate.CheckOutDate = viewModel.CheckOutDate;
+                            bookingEntityToUpdate.Status = viewModel.Status;
+                            bookingEntityToUpdate.Notes = viewModel.Notes;
+                            bookingEntityToUpdate.UpdatedAt = DateTime.Now;
+                        }
+
+                        // 6. Lưu tất cả thay đổi và commit transaction
+                        await db.SaveChangesAsync();
+                        await transaction.CommitAsync();
+
+                        return RedirectToAction(nameof(Index));
+                    }
+                    catch (Exception)
+                    {
+                        await transaction.RollbackAsync();
+                        ModelState.AddModelError("", "An error occurred while updating the booking.");
+                    }
                 }
-                var nights = viewModel.CheckOutDate.DayNumber - viewModel.CheckInDate.DayNumber;
-                bookingDetail.Nights = nights;
-                bookingDetail.SubTotal = nights * bookingDetail.UnitPrice;
-                db.SaveChanges();
-                return RedirectToAction(nameof(Index));
             }
+
+            // Nạp lại dữ liệu nếu ModelState không hợp lệ
+            viewModel.RoomTypes = await db.RoomTypes.Select(rt => new SelectListItem { Value = rt.RoomTypeId.ToString(), Text = rt.TypeName }).ToListAsync();
+            viewModel.BookingStatus = GetStatusOptions();
             return View(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            // 1. Tìm booking cần xóa
-            var bookingToDelete = db.Bookings
-                .Include(b => b.BookingDetails)
-                .FirstOrDefault(b => b.BookingId == id);
-
-            if (bookingToDelete == null)
+            using (var transaction = await db.Database.BeginTransactionAsync())
             {
-                return NotFound();
-            }
-
-            // 2. Lấy thông tin phòng để cập nhật lại trạng thái
-            var bookingDetail = bookingToDelete.BookingDetails.FirstOrDefault();
-            if (bookingDetail != null)
-            {
-                var room = db.Rooms.Find(bookingDetail.RoomId);
-                if (room != null)
+                try
                 {
-                    room.Status = "Available";
+                    // 1. Tìm booking cần xóa, TẢI KÈM TẤT CẢ DỮ LIỆU CON
+                    var bookingToDelete = await db.Bookings
+                        .Include(b => b.BookingDetails) // Tải kèm chi tiết booking
+                        .Include(b => b.ServiceUsages)  // QUAN TRỌNG: Tải kèm các dịch vụ đã sử dụng
+                        .FirstOrDefaultAsync(b => b.BookingId == id);
+
+                    if (bookingToDelete == null)
+                    {
+                        return NotFound();
+                    }
+
+                    // 2. Cập nhật lại trạng thái phòng
+                    var bookingDetail = bookingToDelete.BookingDetails.FirstOrDefault();
+                    if (bookingDetail != null)
+                    {
+                        var room = await db.Rooms.FindAsync(bookingDetail.RoomId);
+                        if (room != null) room.Status = "Available";
+                    }
+
+                    // 3. XÓA CÁC BẢN GHI CON TRƯỚC
+                    // Xóa tất cả ServiceUsage liên quan
+                    if (bookingToDelete.ServiceUsages.Any())
+                    {
+                        db.ServiceUsages.RemoveRange(bookingToDelete.ServiceUsages);
+                    }
+                    // Xóa tất cả BookingDetails liên quan
+                    if (bookingToDelete.BookingDetails.Any())
+                    {
+                        db.BookingDetails.RemoveRange(bookingToDelete.BookingDetails);
+                    }
+
+                    // (Nếu có Invoice liên quan, bạn cũng phải xóa nó trước)
+                    var invoice = await db.Invoices.FirstOrDefaultAsync(i => i.BookingId == id);
+                    if (invoice != null)
+                    {
+                        db.Invoices.Remove(invoice);
+                    }
+
+                    // 4. XÓA BẢN GHI CHA (BOOKING) SAU CÙNG
+                    db.Bookings.Remove(bookingToDelete);
+
+                    await db.SaveChangesAsync();
+                    await transaction.CommitAsync();
+
+                    TempData["SuccessMessage"] = $"Booking ID {id} has been deleted successfully.";
+                }
+                catch (Exception ex) // Bắt lỗi cụ thể hơn để debug
+                {
+                    await transaction.RollbackAsync();
+                    // Ghi lại lỗi để kiểm tra (tùy chọn)
+                    // _logger.LogError(ex, "Error deleting booking {BookingId}", id);
+                    TempData["ErrorMessage"] = $"An error occurred while deleting booking ID {id}.";
                 }
             }
-            // 3. Xóa các bản ghi liên quan trước (BookingDetails, ServiceUsages...)
-            db.BookingDetails.RemoveRange(bookingToDelete.BookingDetails);
-            db.Bookings.Remove(bookingToDelete);
-            db.SaveChanges();
-
-            TempData["SuccessMessage"] = $"Booking ID {id} has been deleted successfully.";
 
             return RedirectToAction(nameof(Index));
         }
@@ -320,6 +465,7 @@ namespace Hotel_Management.Areas.Admin.Controllers
             var bookingDetail = booking.BookingDetails.FirstOrDefault();
 
             // Tạo một đối tượng vô danh (anonymous object) để chứa dữ liệu cần thiết cho client.
+            // ??: use 1 when 1 is not null, else use 2
             var result = new
             {
                 bookingId = booking.BookingId,
