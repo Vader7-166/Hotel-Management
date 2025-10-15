@@ -77,7 +77,8 @@ namespace Hotel_Management.Areas.Admin.Controllers
                     new SelectListItem { Value = "Pending", Text = "Pending" },
                     new SelectListItem { Value = "Confirmed", Text = "Confirmed" },
                     new SelectListItem { Value = "Cancelled", Text = "Cancelled" },
-                    new SelectListItem { Value = "Completed", Text = "Completed" }
+                    new SelectListItem { Value = "CheckedIn", Text = "CheckedIn"},
+                    new SelectListItem { Value = "CheckedOut", Text = "CheckedOut"}
                 },
 
                 // Asign value for paginating
@@ -228,7 +229,6 @@ namespace Hotel_Management.Areas.Admin.Controllers
                     Text = $"{rt.TypeName} ({rt.Rooms.Count(r => r.Status == "Available")} available)"
                 }).ToList();
 
-            // Ánh xạ (Map) dữ liệu từ Model sang ViewModel
             var viewModel = new BookingEditViewModel
             {
                 BookingId = booking.BookingId,
@@ -284,50 +284,52 @@ namespace Hotel_Management.Areas.Admin.Controllers
                         var bookingDetailToUpdate = await db.BookingDetails.FirstOrDefaultAsync(bd => bd.BookingId == viewModel.BookingId);
                         if (bookingDetailToUpdate == null) return NotFound();
 
-                        // 1. Cập nhật Customer
+                        // 1. Update Customer
                         customerToUpdate.FullName = viewModel.FullName;
                         customerToUpdate.Phone = viewModel.Phone;
                         customerToUpdate.Email = viewModel.Email;
                         customerToUpdate.Idnumber = viewModel.IdNumber;
                         customerToUpdate.UpdatedAt = DateTime.Now;
 
-                        // 2. Xử lý logic đổi phòng (nếu có)
+                        // 2. Logic change room 
                         int currentRoomId = bookingDetailToUpdate.RoomId;
                         var currentRoom = await db.Rooms.FindAsync(currentRoomId);
 
                         if (bookingFromDb.BookingDetails.First().Room.RoomTypeId != viewModel.RoomTypeId)
                         {
-                            // Trả phòng cũ về 'Available'
+                            // Change old room status to 'Available'
                             if (currentRoom != null)
                             {
                                 currentRoom.Status = "Available";
                             }
 
-                            // ⭐ SỬA 2: Include RoomType khi tìm phòng mới
+                            // Define new room
                             var newRoom = await db.Rooms
                                 .Include(r => r.RoomType)
                                 .FirstOrDefaultAsync(r => r.RoomTypeId == viewModel.RoomTypeId && r.Status == "Available");
 
+                            // If out of room
                             if (newRoom == null)
                             {
-                                // Báo lỗi hết phòng
+                                // Alerting error and roll back
                                 ModelState.AddModelError("RoomTypeId", "The selected room type is no longer available. Please choose another.");
                                 await transaction.RollbackAsync();
 
-                                // Nạp lại dữ liệu cho dropdown
-                                viewModel.RoomTypes = await db.RoomTypes.Select(rt => new SelectListItem { Value = rt.RoomTypeId.ToString(), Text = rt.TypeName }).ToListAsync();
+                                // Update the dropdown value
+                                viewModel.RoomTypes = await db.RoomTypes.Select(rt => new SelectListItem 
+                                            { Value = rt.RoomTypeId.ToString(), Text = rt.TypeName }).ToListAsync();
                                 viewModel.BookingStatus = GetStatusOptions();
                                 return View(viewModel);
                             }
 
-                            // Gán phòng mới và cập nhật trạng thái, giá
+                            // Update new room
                             bookingDetailToUpdate.RoomId = newRoom.RoomId;
                             newRoom.Status = "Occupied";
                             bookingDetailToUpdate.UnitPrice = newRoom.RoomType.BasePrice;
-                            currentRoom = newRoom; // Cập nhật lại biến currentRoom để logic status bên dưới chạy đúng
+                            currentRoom = newRoom;
                         }
 
-                        // 3. Logic xử lý cập nhật trạng thái phòng (dựa trên thay đổi Status của Booking)
+                        // 3. Update room status base on booking status
                         string oldStatus = bookingFromDb.Status;
                         string newStatus = viewModel.Status;
 
@@ -340,17 +342,20 @@ namespace Hotel_Management.Areas.Admin.Controllers
                                     currentRoom.Status = "Available";
                                     break;
                                 case "Confirmed":
+                                    currentRoom.Status = "Reserved";
+                                    break;
                                 case "CheckedIn":
                                     currentRoom.Status = "Occupied";
                                     break;
                             }
                         }
 
-                        // 4. Cập nhật lại số đêm và tổng tiền cho BookingDetail
+                        // 4. Update number of nights and SubTotal
                         var nights = viewModel.CheckOutDate.DayNumber - viewModel.CheckInDate.DayNumber;
                         bookingDetailToUpdate.Nights = nights;
+                        bookingDetailToUpdate.SubTotal = nights * bookingDetailToUpdate.UnitPrice;
 
-                        // 5. Cập nhật lại thông tin Booking chính
+                        // 5. Update main booking
                         var bookingEntityToUpdate = await db.Bookings.FindAsync(viewModel.BookingId);
                         if (bookingEntityToUpdate != null)
                         {
@@ -361,7 +366,7 @@ namespace Hotel_Management.Areas.Admin.Controllers
                             bookingEntityToUpdate.UpdatedAt = DateTime.Now;
                         }
 
-                        // 6. Lưu tất cả thay đổi và commit transaction
+                        // 6. Save all
                         await db.SaveChangesAsync();
                         await transaction.CommitAsync();
 
@@ -375,7 +380,6 @@ namespace Hotel_Management.Areas.Admin.Controllers
                 }
             }
 
-            // Nạp lại dữ liệu nếu ModelState không hợp lệ
             viewModel.RoomTypes = await db.RoomTypes.Select(rt => new SelectListItem { Value = rt.RoomTypeId.ToString(), Text = rt.TypeName }).ToListAsync();
             viewModel.BookingStatus = GetStatusOptions();
             return View(viewModel);
@@ -435,11 +439,9 @@ namespace Hotel_Management.Areas.Admin.Controllers
 
                     TempData["SuccessMessage"] = $"Booking ID {id} has been deleted successfully.";
                 }
-                catch (Exception ex) // Bắt lỗi cụ thể hơn để debug
+                catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-                    // Ghi lại lỗi để kiểm tra (tùy chọn)
-                    // _logger.LogError(ex, "Error deleting booking {BookingId}", id);
                     TempData["ErrorMessage"] = $"An error occurred while deleting booking ID {id}.";
                 }
             }
