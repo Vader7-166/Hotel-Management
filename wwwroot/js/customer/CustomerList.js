@@ -1,297 +1,261 @@
-﻿// Luôn đợi cho toàn bộ nội dung HTML được tải xong rồi mới chạy script
-document.addEventListener('DOMContentLoaded', function () {
+﻿$(document).ready(function () {
 
-    // --- Floating Label for Inputs ---
-    // Tìm tất cả các nhóm input có outline trên trang
-    const inputGroups = document.querySelectorAll('.input-group.input-group-outline');
+    // ============ LOGIC "NHÃN NỔI" (FLOATING LABEL) ============
 
-    // Lặp qua từng nhóm để gán sự kiện
-    inputGroups.forEach(function (group) {
-        const input = group.querySelector('input, textarea');
-        const label = group.querySelector('.form-label');
+    // Hàm này sẽ kiểm tra tất cả các input và select, thêm class 'is-filled' nếu chúng có giá trị
+    function initializeFloatingLabels() {
+        $('.input-group .form-control').each(function () {
+            const input = $(this);
+            const inputGroup = input.closest('.input-group');
 
-        if (input) {
-            // Sự kiện khi click vào ô input (focus)
-            input.addEventListener('focus', function () {
-                group.classList.add('is-focused');
-            });
-
-            // Sự kiện khi click ra ngoài ô input (blur)
-            input.addEventListener('blur', function () {
-                // Luôn xóa class is-focused khi blur
-                group.classList.remove('is-focused');
-
-                // Kiểm tra xem input có dữ liệu hay không
-                if (input.value !== '') {
-                    // Nếu có dữ liệu, thêm class is-filled để label không bị rơi xuống
-                    group.classList.add('is-filled');
-                } else {
-                    // Nếu không có dữ liệu, xóa class is-filled
-                    group.classList.remove('is-filled');
-                }
-            });
-
-            // Xử lý trường hợp trang tải lại và input đã có sẵn giá trị
-            if (input.value !== '') {
-                group.classList.add('is-filled');
-            }
-        }
-    });
-});
-// --- Filter Logic ---
-// Hàm này được đặt ở global scope để thuộc tính onclick trong HTML có thể gọi được
-function applyFilters() {
-    // 1. Lấy giá trị từ các trường filter
-    const searchValue = document.getElementById('searchInput').value;
-    const statusValue = document.getElementById('statusFilter').value;
-    const typeValue = document.getElementById('typeFilter').value;
-
-    // 2. In giá trị ra console để kiểm tra
-    console.log('Đang áp dụng bộ lọc với các giá trị:');
-    console.log('Từ khóa tìm kiếm:', searchValue);
-    console.log('Trạng thái:', statusValue);
-    console.log('Loại khách hàng:', typeValue);
-}
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-// Customer Filter Logic
-(function () {
-    'use strict';
-
-    // Lấy các elements
-    const searchInput = document.getElementById('searchInput');
-    const statusFilter = document.getElementById('statusFilter');
-    const typeFilter = document.getElementById('typeFilter');
-    const customerTable = document.querySelector('#customerTable tbody');
-
-    // Hàm chuẩn hóa chuỗi (loại bỏ dấu tiếng Việt, chuyển về lowercase)
-    function normalizeString(str) {
-        if (!str) return '';
-        return str.toString().toLowerCase()
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')
-            .replace(/đ/g, 'd')
-            .replace(/Đ/g, 'D')
-            .trim();
-    }
-
-    // Hàm kiểm tra xem text có chứa searchTerm không (không phân biệt hoa thường, dấu)
-    function containsText(text, searchTerm) {
-        if (!searchTerm) return true;
-        return normalizeString(text).includes(normalizeString(searchTerm));
-    }
-
-    // Hàm lấy thông tin từ một row
-    function getRowData(row) {
-        // Lấy tên khách hàng
-        const nameElement = row.querySelector('h6.text-sm');
-        const name = nameElement ? nameElement.textContent.trim() : '';
-
-        // Lấy email (dòng đầu tiên trong cell thứ 2)
-        const emailElement = row.querySelectorAll('td')[1]?.querySelector('p.text-xs:first-child');
-        const email = emailElement ? emailElement.textContent.trim() : '';
-
-        // Lấy số điện thoại (dòng thứ hai trong cell thứ 2)
-        const phoneElement = row.querySelectorAll('td')[1]?.querySelector('p.text-xs.text-secondary');
-        const phone = phoneElement ? phoneElement.textContent.trim() : '';
-
-        // Lấy loại khách hàng (Customer Type)
-        const typeElement = row.querySelectorAll('td')[2]?.querySelector('.badge');
-        const type = typeElement ? typeElement.textContent.trim() : '';
-
-        // Lấy trạng thái (Status)
-        const statusElement = row.querySelectorAll('td')[3]?.querySelector('.badge');
-        const status = statusElement ? statusElement.textContent.trim() : '';
-
-        return {
-            name: name,
-            email: email,
-            phone: phone,
-            type: type,
-            status: status
-        };
-    }
-
-    // Hàm filter chính
-    function applyFilters() {
-        const searchTerm = searchInput.value.trim();
-        const selectedStatus = statusFilter.value.toLowerCase();
-        const selectedType = typeFilter.value.toLowerCase();
-
-        // Lấy tất cả các rows
-        const rows = customerTable.querySelectorAll('tr');
-        let visibleCount = 0;
-
-        rows.forEach(row => {
-            const data = getRowData(row);
-
-            // Kiểm tra search term (tìm trong name, email, phone)
-            const matchesSearch = !searchTerm ||
-                containsText(data.name, searchTerm) ||
-                containsText(data.email, searchTerm) ||
-                containsText(data.phone, searchTerm);
-
-            // Kiểm tra status filter
-            const matchesStatus = !selectedStatus ||
-                normalizeString(data.status) === normalizeString(selectedStatus);
-
-            // Kiểm tra type filter
-            const matchesType = !selectedType ||
-                normalizeString(data.type) === normalizeString(selectedType);
-
-            // Hiển thị hoặc ẩn row
-            if (matchesSearch && matchesStatus && matchesType) {
-                row.style.display = '';
-                visibleCount++;
+            // Nếu input có giá trị (và không phải là giá trị rỗng của dropdown), thêm class 'is-filled'
+            if (input.val() && input.val().trim() !== '') {
+                inputGroup.addClass('is-filled');
             } else {
-                row.style.display = 'none';
+                inputGroup.removeClass('is-filled');
             }
         });
-
-        // Cập nhật thông tin số lượng kết quả (nếu có phần pagination)
-        updateResultsInfo(visibleCount, rows.length);
-
-        // Hiển thị thông báo nếu không có kết quả
-        showNoResultsMessage(visibleCount);
     }
 
-    // Hàm cập nhật thông tin số lượng kết quả
-    function updateResultsInfo(visibleCount, totalCount) {
-        const resultsInfo = document.querySelector('.border-top.py-3.px-4 p.text-sm');
-        if (resultsInfo) {
-            resultsInfo.textContent = `Showing ${visibleCount} of ${totalCount} entries`;
-        }
-    }
+    // SỬ DỤNG EVENT DELEGATION cho các sự kiện focus và blur
+    // Gắn sự kiện vào 'body' để nó hoạt động với cả các element được tạo sau này bằng AJAX
 
-    // Hàm hiển thị thông báo không có kết quả
-    function showNoResultsMessage(visibleCount) {
-        // Xóa thông báo cũ nếu có
-        const oldMessage = customerTable.querySelector('.no-results-message');
-        if (oldMessage) {
-            oldMessage.remove();
-        }
+    // Khi một input hoặc select được focus
+    $('body').on('focus', '.input-group .form-control', function () {
+        $(this).closest('.input-group').addClass('is-focused');
+    });
 
-        // Nếu không có kết quả, thêm thông báo
-        if (visibleCount === 0) {
-            const messageRow = document.createElement('tr');
-            messageRow.className = 'no-results-message';
-            messageRow.innerHTML = `
-                <td colspan="7" class="text-center py-4">
-                    <div class="d-flex flex-column align-items-center">
-                        <i class="material-symbols-rounded text-secondary mb-2" style="font-size: 3rem;">search_off</i>
-                        <h6 class="text-secondary mb-1">No customers found</h6>
-                        <p class="text-xs text-secondary mb-0">Try adjusting your filters or search term</p>
-                    </div>
-                </td>
-            `;
-            customerTable.appendChild(messageRow);
-        }
-    }
+    // Khi một input hoặc select bị mất focus (blur)
+    $('body').on('blur', '.input-group .form-control', function () {
+        const input = $(this);
+        const inputGroup = input.closest('.input-group');
 
-    // Hàm reset filters
-    function resetFilters() {
-        searchInput.value = '';
-        statusFilter.value = '';
-        typeFilter.value = '';
-        applyFilters();
-    }
-
-    // Event listeners
-    // Lắng nghe sự kiện click nút Filter
-    const filterButton = document.querySelector('button[onclick="applyFilters()"]');
-    if (filterButton) {
-        filterButton.removeAttribute('onclick'); // Xóa onclick cũ
-        filterButton.addEventListener('click', applyFilters);
-    }
-
-    // Lắng nghe sự kiện Enter trong ô search
-    searchInput.addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            applyFilters();
+        inputGroup.removeClass('is-focused');
+        // Kiểm tra lại trạng thái 'is-filled'
+        if (input.val() && input.val().trim() !== '') {
+            inputGroup.addClass('is-filled');
+        } else {
+            inputGroup.removeClass('is-filled');
         }
     });
 
-    // Lắng nghe sự kiện thay đổi của select filters (tự động filter)
-    statusFilter.addEventListener('change', applyFilters);
-    typeFilter.addEventListener('change', applyFilters);
+    // Chạy lần đầu khi trang tải xong cho các input có sẵn (như ô search)
+    initializeFloatingLabels();
 
-    // Lắng nghe sự kiện input trong search box (real-time search - tùy chọn)
-    // Bỏ comment dòng dưới nếu muốn tìm kiếm real-time khi gõ
-    // searchInput.addEventListener('input', debounce(applyFilters, 300));
+    // ============ LOGIC LỌC, PHÂN TRANG, VÀ RESET ============
 
-    // Hàm debounce để tránh gọi hàm quá nhiều lần khi typing
-    function debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    }
+    // Gán sự kiện 'click' cho nút Filter
+    $('#filterButton').on('click', function () {
+        loadPage(1); // Luôn tải trang 1 với bộ lọc mới
+        //khi nhấn nút filter thì sẽ gọi đến hàm loadpage, lấy giá trị tại các bộ lọc, hàm loadpage nhận vào số trang
+    });
 
-    // Thêm nút Reset (tùy chọn)
-    function addResetButton() {
-        const filterButton = document.querySelector('button[class*="bg-gradient-info"]');
-        if (filterButton && !document.getElementById('resetFilterBtn')) {
-            const resetBtn = document.createElement('button');
-            resetBtn.id = 'resetFilterBtn';
-            resetBtn.className = 'btn btn-outline-secondary ms-2';
-            resetBtn.innerHTML = '<i class="material-symbols-rounded">refresh</i> Reset';
-            resetBtn.addEventListener('click', resetFilters);
-            filterButton.parentElement.appendChild(resetBtn);
+    // Gán sự kiện nhấn phím 'Enter' trong ô tìm kiếm
+    $('#searchInput').on('keypress', function (e) {
+        if (e.which === 13) {
+            e.preventDefault();
+            loadPage(1);
         }
-    }
+    });
 
-    // Gọi hàm thêm nút reset khi trang load
-    addResetButton();
-
-    // Export hàm applyFilters để có thể gọi từ bên ngoài nếu cần
-    window.applyFilters = applyFilters;
-    window.resetFilters = resetFilters;
-
-    // Log để debug
-    console.log('Customer filter script loaded successfully');
-})();
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-// Pagination AJAX Logic
-$(document).ready(function () {
-    // Xử lý click pagination
+    // Gán sự kiện 'click' cho các nút phân trang
     $('body').on('click', 'li.page-item a', function (e) {
-        console.log("Click event fired!"); // <-- THÊM DÒNG NÀY
         e.preventDefault();
-
-        var $pageItem = $(this).parent();//lấy ra thẻ <li> cha của thẻ a vừa rồi
-        if ($pageItem.hasClass('disabled') || $pageItem.hasClass('active')) { //nếu thẻ vừa được lấy ra có chứa lớp DIsable hoặc ACtivate thì không làm gì cả
+        var $pageItem = $(this).parent();
+        if ($pageItem.hasClass('disabled') || $pageItem.hasClass('active')) {
             return;
         }
-
-        //lấy ra số trang của the li đó
         var page = parseInt($pageItem.attr('page'));
-        //sau đó gọi hàm loadpage
         loadPage(page);
     });
 
-    // Load trang
-    function loadPage(pageIndex) {
+    //Gán sự kiện click cho các nút Action trên mỗi đối tượng
+    //sự kiên Víew details
+    // Sự kiện View details
+    $('body').on('click', '.view-details-btn', function (e) {
+        e.preventDefault();
+        var url = $(this).attr('href');
+        // Target vào .modal-content để nhất quán với logic Edit
+        var modalContent = $('#detailsModal .modal-content');
+
+        // Hiển thị một spinner đơn giản
+        modalContent.html('<div class="modal-body text-center p-5"><div class="spinner-border text-primary"></div></div>');
+
+        $.get(url, function (response) {
+            modalContent.html(response);
+        }).fail(function () {
+            modalContent.html('<div class="modal-body"><p>Could not load the Details!</p></div>');
+        });
+    });
+
+
+    // =======================================================
+    // LOGIC CHO NÚT RESET
+    // =======================================================
+    $('#resetFilterButton').on('click', function () {
+        $('#searchInput').val('');
+        $('#GenderFilter').val('');
+        $('#NationalityFilter').val('');
+
+        // Gọi đúng hàm để cập nhật lại giao diện cho tất cả các ô
+        initializeFloatingLabels();
+
+        loadPage(1);
+    });
+
+    // Hàm chính để tải dữ liệu thông qua AJAX
+    function loadPage(pageIndex) { 
+        //lấy các giá trị đang có tại bộ lọc
+        var searchQuery = $('#searchInput').val();
+        var gender = $('#GenderFilter').val();
+        var nationality = $('#NationalityFilter').val();
+
+        //tạo một biến map giống như dict trong python để lưu dữ liệu
+        var data = {
+            pageIndex: pageIndex,
+            searchQuery: searchQuery,
+            gender: gender,
+            nationality: nationality
+        };
+
+        //sử dụng AJAX
         $.ajax({
-            url: '/Admin/Customer/CustomerTableAndPagination', //URL của action 
-            type: 'GET', //Phương thức GET
-            data: { pageIndex: pageIndex }, //tham số pageIndex gán giá trị bằng giá tri của parameter
-            success: function (response) {
-                //chuyển chuỗi HTML thành đối tương JQuery
-                var $response = $(response);
-                //tìm body trong resphonse đem thay thế với body cũ
-                $('#customerTable tbody').replaceWith($response.find('tbody'));
-                //tìm container của pagination trong response và cập nhật lại toàn bộ 
-                $('#paginationContainer').html($response.find('.border-top'));
+            url: '/Admin/Customer/CustomerTableAndPagination',
+            type: 'GET',
+            data: data,
+            success: function (response) { //nếu thành công thì thay nội dung của .table-with-pagination bằng kết quả trà về
+                $('.table-with-pagination').html(response);
             },
             error: function () {
-                alert('Có lỗi xảy ra!'); //nếu có lỗi thì in ra cảnh báo
+                alert('Có lỗi xảy ra khi tải dữ liệu!');
             }
         });
     }
+
+
+    // =======================================================
+    // LOGIC CHO ACTION
+    // =======================================================
+
+    // ============ AJAX XỬ LÍ ACTION TRÊN MỖI NGƯỜI DÙNG ============
+    // === AJAX GET ĐỂ LẤY FORM EDIT ===
+    // Class của nút bấm là '.edit-details-btn'
+    $('body').on('click', '.edit-details-btn', function (e) {
+        e.preventDefault();
+        var url = $(this).attr('href');
+        var modalContent = $('#detailsModal .modal-content');
+
+        var loadingSpinner = `
+        <div class="modal-body text-center p-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 text-muted">Đang tải dữ liệu...</p>
+        </div>`;
+        modalContent.html(loadingSpinner);
+
+        $.get(url, function (response) {
+            modalContent.html(response);
+            initializeFloatingLabels();
+        }).fail(function () {
+            var errorAlert = `<div class="modal-body"><div class="alert alert-danger">Không thể tải dữ liệu.</div></div>`;
+            modalContent.html(errorAlert);
+        });
+    });
+
+    // === AJAX POST ĐỂ GỬI FORM EDIT ĐI ===
+    $('#detailsModal').on('submit', '#editCustomerForm', function (e) {
+        e.preventDefault();
+        var form = $(this);
+        var url = form.attr('action');
+        var formData = form.serialize();
+
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: formData,
+            success: function (response) {
+                if (response.success) {
+                    $('#detailsModal').modal('hide');
+                    alert(response.message);
+                    location.reload();
+                } else {
+                    $('#detailsModal .modal-content').html(response);
+                }
+            },
+            error: function () {
+                alert('Đã có lỗi xảy ra trong quá trình gửi dữ liệu.');
+            }
+        });
+    });
+
+    // Thêm vào file CustomerList.js
+
+    // === AJAX ĐỂ HIỂN THỊ MODAL XÁC NHẬN XÓA ===
+    $('body').on('click', '.delete-button', function (e) {
+        e.preventDefault();
+
+        const customerId = $(this).data('id');
+        const customerName = $(this).data('name');
+        const url = `/Admin/Customer/Delete/${customerId}`; // Xây dựng URL cho action POST
+
+        const modalContent = $('#detailsModal .modal-content');
+
+        // Tạo HTML cho modal xác nhận
+        const confirmationHtml = `
+        <div class="modal-header">
+            <h5 class="modal-title">Confirm Deletion</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete customer: <strong>${customerName}</strong>?</p>
+            <p class="text-danger">This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <form id="deleteConfirmForm" action="${url}" method="post" class="d-inline">
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+        </div>
+    `;
+
+        // Cập nhật và hiển thị modal
+        modalContent.html(confirmationHtml);
+        $('#detailsModal').modal('show');
+    });
+
+
+    // === AJAX ĐỂ SUBMIT FORM XÓA ===
+    $('#detailsModal').on('submit', '#deleteConfirmForm', function (e) {
+        e.preventDefault();
+
+        const form = $(this);
+        const url = form.attr('action');
+
+        // Lấy Anti-Forgery Token từ form ẩn và gộp vào dữ liệu gửi đi
+        const antiForgeryToken = $('#antiForgeryForm input[name=__RequestVerificationToken]').val();
+        const formData = form.serialize() + '&__RequestVerificationToken=' + antiForgeryToken;
+
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: formData,
+            success: function (response) {
+                if (response.success) {
+                    $('#detailsModal').modal('hide');
+                    alert(response.message); // Hoặc dùng Toastr
+
+                    // Tải lại bảng dữ liệu ở trang hiện tại
+                    const currentPage = parseInt($('ul.pagination li.active').attr('page')) || 1;
+                    loadPage(currentPage);
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function () {
+                alert('An error occurred while trying to delete.');
+            }
+        });
+    });
 });
+

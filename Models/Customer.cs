@@ -5,6 +5,11 @@ namespace Hotel_Management.Models;
 
 public partial class Customer
 {
+    public Customer()
+    {
+        Accounts = new HashSet<Account>();
+        Bookings = new HashSet<Booking>();
+    }
     public int CustomerId { get; set; }
 
     public string FullName { get; set; } = null!;

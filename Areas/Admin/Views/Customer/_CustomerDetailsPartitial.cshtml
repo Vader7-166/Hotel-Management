@@ -1,0 +1,121 @@
+﻿@* Partial View này chứa một cấu trúc modal hoàn chỉnh *@
+@model Hotel_Management.Models.Customer
+
+@if (Model != null)
+{
+    // Phần Header của Modal
+    <div class="modal-header">
+        <h5 class="modal-title" id="detailsModalLabel">Chi tiết khách hàng: <strong>@Model.FullName</strong></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+
+    // Phần Body của Modal
+    <div class="modal-body">
+        <div class="d-flex align-items-center mb-2">
+            <i class="material-symbols-rounded text-primary me-2" style="font-size: 2rem;">badge</i>
+            <h6 class="mb-0 text-primary fw-bold">Thông tin cá nhân</h6>
+        </div>
+        <ul class="list-group list-group-flush mb-4">
+            <li class="list-group-item d-flex justify-content-between">
+                <span class="fw-semibold">Mã khách hàng:</span>
+                <span>#@Model.CustomerId</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+                <span class="fw-semibold">Họ và tên:</span>
+                <span>@Model.FullName</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+                <span class="fw-semibold">Ngày sinh:</span>
+                <span>@Html.Raw(Model.BirthDate?.ToString("dd/MM/yyyy") ?? "<span class='text-muted fst-italic'>Chưa cập nhật</span>")</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+                <span class="fw-semibold">Giới tính:</span>
+                <span>@Html.Raw(Model.Gender ?? "<span class='text-muted fst-italic'>Chưa cập nhật</span>")</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+                <span class="fw-semibold">Số CCCD/Passport:</span>
+                <span>@Html.Raw(Model.Idnumber ?? "<span class='text-muted fst-italic'>Chưa cập nhật</span>")</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+                <span class="fw-semibold">Quốc tịch:</span>
+                <span>@Html.Raw(Model.Nationality ?? "<span class='text-muted fst-italic'>Chưa cập nhật</span>")</span>
+            </li>
+        </ul>
+        <div class="d-flex align-items-center mb-2">
+            <i class="material-symbols-rounded text-primary me-2" style="font-size: 2rem;">contact_phone</i>
+            <h6 class="mb-0 text-primary fw-bold">Thông tin liên hệ</h6>
+        </div>
+        <ul class="list-group list-group-flush mb-4">
+            <li class="list-group-item d-flex justify-content-between">
+                <span class="fw-semibold">Số điện thoại:</span>
+                @if (!string.IsNullOrEmpty(Model.Phone))
+                {
+                    <a href="tel:@Model.Phone">@Model.Phone</a>
+                }
+                else
+                {
+                    <span class='text-muted fst-italic'>Chưa cập nhật</span>
+                }
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+                <span class="fw-semibold">Email:</span>
+                @if (!string.IsNullOrEmpty(Model.Email))
+                {
+                    <a href="mailto:@Model.Email">@Model.Email</a>
+                }
+                else
+                {
+                    <span class='text-muted fst-italic'>Chưa cập nhật</span>
+                }
+            </li>
+            <li class="list-group-item">
+                <div class="fw-semibold mb-1">Địa chỉ:</div>
+                <div class="text-end">@Html.Raw(Model.Address ?? "<span class='text-muted fst-italic'>Chưa cập nhật</span>")</div>
+            </li>
+        </ul>
+        <div class="d-flex align-items-center mb-2">
+            <i class="material-symbols-rounded text-primary me-2" style="font-size: 2rem;">Dns</i>
+            <h6 class="mb-0 text-primary fw-bold">Thông tin hệ thống</h6>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between">
+                <span class="fw-semibold">Số tài khoản:</span>
+                <span class="badge bg-secondary rounded-pill">@Model.Accounts.Count()</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+                <span class="fw-semibold">Số lần đặt phòng:</span>
+                <span class="badge bg-secondary rounded-pill">@Model.Bookings.Count()</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+                <span class="fw-semibold">Ngày tạo:</span>
+                <span>@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+                <span class="fw-semibold">Cập nhật lần cuối:</span>
+                <span>@Html.Raw(Model.UpdatedAt?.ToString("dd/MM/yyyy HH:mm") ?? "<span class='text-muted fst-italic'>Chưa có cập nhật</span>")</span>
+            </li>
+        </ul>
+    </div>
+
+    // Phần Footer của Modal
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+        <a href="@Url.Action("Edit", "Customer", new { id = Model.CustomerId })" class="btn btn-primary edit-details-btn" data-bs-toggle="modal" data-bs-target="#detailsModal">Chỉnh sửa</a>
+    </div>
+}
+else
+{
+    // Cấu trúc modal hoàn chỉnh cho trường hợp lỗi
+    <div class="modal-header">
+        <h5 class="modal-title" id="detailsModalLabel">Lỗi</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <div class="alert alert-danger" role="alert">
+            Không tìm thấy thông tin chi tiết của khách hàng này.
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+    </div>
+}

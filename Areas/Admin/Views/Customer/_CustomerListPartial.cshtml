@@ -1,13 +1,16 @@
-﻿<div class="table-responsive">
+﻿@model IEnumerable<Hotel_Management.Models.Customer>
+@{
+}
+<div class="table-responsive">
     <table class="table table-flush" id="customerTable">
         <thead class="thead-light">
             <tr>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Customer</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Contact</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7">Type</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7">Status</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7">Total Bookings</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7">Last Visit</th>
+                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">ID</th>
+                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2">Full Name</th>
+                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2">Email</th>
+                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2">Phone</th>
+                <th class="text-uppercase text-secondary text-xs font-weight-bolder text-center opacity-7">Gender</th>
+                <th class="text-uppercase text-secondary text-xs font-weight-bolder text-center opacity-7">Nationality</th>
                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
             </tr>
         </thead>
@@ -17,56 +20,36 @@
                 <tr>
                     <td>
                         <div class="d-flex px-2 py-1">
-                            <div>
-                                @* Sử dụng @Url.Content để tạo đường dẫn chính xác *@
-                                <img src="@Url.Content(customer.AvatarUrl)" class="avatar avatar-sm me-3" alt="user avatar">
-                            </div>
                             <div class="d-flex flex-column justify-content-center">
-                                <h6 class="mb-0 text-sm">@customer.CustomerName</h6>
-                                <p class="text-xs text-secondary mb-0">ID: @customer.CustomerCode</p>
+                                @* Định dạng lại ID theo yêu cầu #CID + mã *@
+                                <h6 class="mb-0 text-sm">#CID@(customer.CustomerId)</h6>
                             </div>
                         </div>
                     </td>
                     <td>
-                        <p class="text-xs mb-0">@customer.CustomerEmail</p>
-                        <p class="text-xs text-secondary mb-0">@customer.CustomerPhone</p>
+                        <p class="text-sm font-weight-bold mb-0">@customer.FullName</p>
+                    </td>
+                    <td>
+                        <p class="text-xs mb-0">@customer.Email</p>
+                    </td>
+                    <td>
+                        <p class="text-xs mb-0">@customer.Phone</p>
                     </td>
                     <td class="align-middle text-center">
-                        @* Thêm logic để đổi màu badge theo loại khách hàng *@
-                        @{
-                            string typeClass = "bg-gradient-info"; // Mặc định
-                            if (customer.CustomerType == "VIP") { typeClass = "bg-gradient-success"; }
-                            if (customer.CustomerType == "New") { typeClass = "bg-gradient-warning"; }
-                        }
-                        <span class="badge badge-sm @typeClass">@customer.CustomerType</span>
-                    </td>
-                    <td class="align-middle text-center text-sm">
-                        @* Thêm logic if/else để hiển thị badge Status chính xác *@
-                        @if (customer.CustomerStatus == "Active")
-                        {
-                            <span class="badge badge-sm bg-gradient-success">Active</span>
-                        }
-                        else
-                        {
-                            <span class="badge badge-sm bg-gradient-secondary">Inactive</span>
-                        }
+                        <span class="text-secondary text-xs font-weight-bold">@customer.Gender</span>
                     </td>
                     <td class="align-middle text-center">
-                        <span class="text-secondary text-xs font-weight-bold">@customer.TotalBooking</span>
+                        <span class="text-secondary text-xs font-weight-bold">@customer.Nationality</span>
                     </td>
                     <td class="align-middle text-center">
-                        @* Định dạng lại ngày tháng cho đẹp hơn *@
-                        <span class="text-secondary text-xs font-weight-bold">@customer.LastVisit?.ToString("dd/MM/yyyy")</span>
-                    </td>
-                    <td class="align-middle text-center">
-                        @* Thay đổi href để trỏ đến các Action thật sự, truyền vào ID của khách hàng *@
-                        <a href="@Url.Action("Details", new { id = customer.CustomerCode })" class="text-secondary font-weight-bold text-xs me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="View Details">
+                        @* Giữ nguyên các nút action *@
+                        <a href="@Url.Action("Details", new { id = customer.CustomerId })" class="text-secondary font-weight-bold text-xs me-2 view-details-btn" data-bs-toggle="modal" data-bs-placement="top" title="View Details" data-bs-target="#detailsModal">
                             <i class="material-symbols-rounded">visibility</i>
                         </a>
-                        <a href="@Url.Action("Edit", new { id = customer.CustomerCode })" class="text-secondary font-weight-bold text-xs me-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
+                        <a href="@Url.Action("Edit", new { id = customer.CustomerId })" class="text-secondary font-weight-bold text-xs me-2 edit-details-btn" data-bs-toggle="modal" data-bs-placement="top" title="Edit" data-bs-target="#detailsModal">
                             <i class="material-symbols-rounded">edit</i>
                         </a>
-                        <a href="@Url.Action("Delete", new { id = customer.CustomerCode })" class="text-secondary font-weight-bold text-xs" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
+                        <a href="#" data-id="@customer.CustomerId" data-name="@customer.FullName" class="text-secondary font-weight-bold text-xs delete-button" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
                             <i class="material-symbols-rounded">delete</i>
                         </a>
                     </td>
@@ -84,19 +67,20 @@
                 <ul class="pagination pagination-sm mb-0">
                     @* <li class="page-item disabled">
                                                 <a class="page-link px-3" href="#" tabindex="-1">Previous</a>
-                                            </li> *@
+                       </li> *@
                     @{
-                        int currentPage = ViewBag.currentPage ?? 1;
-                        int pageNum = ViewBag.pageNum ?? 1;
+                        int currentPage = ViewBag.currentPage ?? 1;//kiểm tra hiện tại đang ở trang nào, mặc định là 1
+                        int pageNum = ViewBag.pageNum ?? 1;//kiểm tra biến tổng số trang để chứa số lượng khách hàng đã lọc
                     }
 
-                    <li class="page-item @(currentPage == 1 ? "disabled" : "")" page="@(currentPage - 1)">
+                    <li class="page-item @(currentPage == 1 ? "disabled" : "")" page="@(currentPage - 1)"> @*nếu current page là 1, ở trang đầu, không thể active được, khi nhấn vào sẽ
+                                                                                                             truyền giá trị page về cho controller*@
                         <a class="page-link px-3" href="#">Previous</a>
                     </li>
 
                     @for (int i = 1; i <= pageNum; i++)
                     {
-                        <li class="page-item @(i == currentPage ? "active" : "")" page="@i">
+                        <li class="page-item @(i == currentPage ? "active" : "")" page="@i"> @*kiểm tra số thứ tự trang hiện tại có bằng currentpage không, nếu có thì để là active*@
                             <a class="page-link" href="#">@i</a>
                         </li>
                     }
@@ -111,4 +95,3 @@
             </nav>
         </div>
     </div>
-</div>

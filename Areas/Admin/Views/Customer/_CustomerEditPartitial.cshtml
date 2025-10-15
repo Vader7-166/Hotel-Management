@@ -1,0 +1,102 @@
+﻿@model Hotel_Management.Models.Customer
+@{
+    Layout = null;
+}
+
+<form asp-action="Edit" id="editCustomerForm" method="post">
+
+    <div class="modal-header">
+        <h5 class="modal-title" id="detailsModalLabel">Chỉnh sửa thông tin: <strong>@Model.FullName</strong></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+
+    <div class="modal-body">
+        <div class="container-fluid">
+
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+            <input type="hidden" asp-for="CustomerId" />
+            <input type="hidden" asp-for="CreatedAt" />
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="input-group input-group-outline">
+                        <label asp-for="FullName" class="form-label">Họ và tên</label>
+                        <input asp-for="FullName" class="form-control" />
+                    </div>
+                    <span asp-validation-for="FullName" class="text-danger ms-1"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="input-group input-group-outline">
+                        <label asp-for="BirthDate" class="form-label">Ngày sinh</label>
+                        <input asp-for="BirthDate" type="date" class="form-control" asp-format="{0:yyyy-MM-dd}" />
+                    </div>
+                    <span asp-validation-for="BirthDate" class="text-danger ms-1"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="input-group input-group-outline">
+                        <select asp-for="Gender" class="form-control" required>
+                            <option value="" selected disabled>-- Chọn giới tính --</option>
+                            <option value="Male">Nam</option>
+                            <option value="Female">Nữ</option>
+                            <option value="Other">Khác</option>
+                        </select>
+                    </div>
+                    <span asp-validation-for="Gender" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="input-group input-group-outline">
+                        <label asp-for="Idnumber" class="form-label">Số CCCD/Passport</label>
+                        <input asp-for="Idnumber" class="form-control" />
+                    </div>
+                    <span asp-validation-for="Idnumber" class="text-danger ms-1"></span>
+                </div>
+            </div>
+
+            <hr class="my-3" />
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="input-group input-group-outline">
+                        <label asp-for="Phone" class="form-label">Số điện thoại</label>
+                        <input asp-for="Phone" type="tel" class="form-control" />
+                    </div>
+                    <span asp-validation-for="Phone" class="text-danger ms-1"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="input-group input-group-outline">
+                        <label asp-for="Email" class="form-label">Email</label>
+                        <input asp-for="Email" type="email" class="form-control" />
+                    </div>
+                    <span asp-validation-for="Email" class="text-danger ms-1"></span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <div class="input-group input-group-outline">
+                    <label asp-for="Address" class="form-label">Địa chỉ</label>
+                    <input asp-for="Address" class="form-control" />
+                </div>
+                <span asp-validation-for="Address" class="text-danger ms-1"></span>
+            </div>
+
+            <div class="mb-3">
+                <div class="input-group input-group-outline">
+                    <label asp-for="Nationality" class="form-label">Quốc tịch</label>
+                    <input asp-for="Nationality" class="form-control" />
+                </div>
+                <span asp-validation-for="Nationality" class="text-danger ms-1"></span>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+        <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+    </div>
+
+</form>

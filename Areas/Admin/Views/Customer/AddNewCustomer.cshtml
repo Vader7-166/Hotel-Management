@@ -1,7 +1,4 @@
-﻿@model Hotel_Management.Models.Customers.ModelCustomer
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model Hotel_Management.Models.Customer // Sửa lại Model cho đúng với Customer.cs
 @{
     ViewBag.Title = "Add New Customer";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
@@ -14,171 +11,95 @@
                 <div class="card-header pb-0">
                     <div class="d-flex align-items-center">
                         <h5 class="mb-0">Add New Customer</h5>
-                        <a asp-controller="Customer" asp-action="CustomerList" class="btn btn-outline-primary btn-sm ms-auto">
+                        <a asp-area="Admin" asp-controller="Customer" asp-action="CustomerList" class="btn btn-outline-primary btn-sm ms-auto">
                             <i class="material-symbols-rounded text-sm">arrow_back</i>&nbsp; Back to List
                         </a>
                     </div>
                 </div>
                 <div class="card-body">
-                    <form asp-controller="Customer" asp-action="AddnewCustomer" method="post">
+                    <form asp-area="Admin" asp-controller="Customer" asp-action="AddNewCustomer" method="post">
+
+                        @* Hiển thị lỗi validation chung *@
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
                         <p class="text-uppercase text-sm">Customer Information</p>
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="input-group input-group-outline mb-3">
-                                    <label class="form-label">First Name</label>
-                                    <input type="text" class="form-control" name="FirstName" required>
+                            <div class="col-md-12">
+                                <div class="input-group input-group-outline mb-4">
+                                    <label asp-for="FullName" class="form-label"></label>
+                                    <input asp-for="FullName" type="text" class="form-control" required>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="input-group input-group-outline mb-3">
-                                    <label class="form-label">Last Name</label>
-                                    <input type="text" class="form-control" name="LastName" required>
-                                </div>
+                                <span asp-validation-for="FullName" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="input-group input-group-outline mb-3">
-                                    <label class="form-label">Email Address</label>
-                                    <input type="email" class="form-control" name="Email" required>
+                                <div class="input-group input-group-outline mb-4">
+                                    <label asp-for="Email" class="form-label"></label>
+                                    <input asp-for="Email" type="email" class="form-control" required>
                                 </div>
+                                <span asp-validation-for="Email" class="text-danger"></span>
                             </div>
                             <div class="col-md-6">
-                                <div class="input-group input-group-outline mb-3">
-                                    <label class="form-label">Phone Number</label>
-                                    <input type="tel" class="form-control" name="Phone" required>
+                                <div class="input-group input-group-outline mb-4">
+                                    <label asp-for="Phone" class="form-label"></label>
+                                    <input asp-for="Phone" type="tel" class="form-control">
                                 </div>
+                                <span asp-validation-for="Phone" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="row ">
                             <div class="col-md-6">
-                                <div class="input-group input-group-outline mb-3">
-                                    <label class="form-label"></label>
-                                    <input type="date" class="form-control" name="DateOfBirth">
+                                <div class="input-group input-group-outline mb-4">
+                                    @* <label asp-for="BirthDate" class="form-label"></label> *@
+                                    <input asp-for="BirthDate" type="date" class="form-control">
                                 </div>
+                                <span asp-validation-for="BirthDate" class="text-danger"></span>
                             </div>
                             <div class="col-md-6">
-                                <div class="input-group input-group-outline mb-3">
-                                    <label class="form-label"></label>
-                                    <select class="form-select" name="Gender">
-                                        <option value="" disabled selected hidden>Select Gender</option>
-                                        <option value="male">Male</option>
-                                        <option value="female">Female</option>
-                                        <option value="other">Other</option>
+                                <div class="input-group input-group-outline mb-4">
+                                    <select asp-for="Gender" class="form-control">
+                                        <option value="" disabled selected>Select Gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
                                     </select>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="input-group input-group-outline mb-3">
-                                    <label class="form-label">Address</label>
-                                    <input type="text" class="form-control" name="Address">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="input-group input-group-outline mb-3">
-                                    <label class="form-label">City</label>
-                                    <input type="text" class="form-control" name="City">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="input-group input-group-outline mb-3">
-                                    <label class="form-label">Country</label>
-                                    <input type="text" class="form-control" name="Country">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="input-group input-group-outline mb-3">
-                                    <label class="form-label">Postal Code</label>
-                                    <input type="text" class="form-control" name="PostalCode">
-                                </div>
+                                <span asp-validation-for="Gender" class="text-danger"></span>
                             </div>
                         </div>
 
                         <hr class="horizontal dark">
 
-                        <p class="text-uppercase text-sm">Customer Type & Status</p>
+                        <p class="text-uppercase text-sm">Identification & Location</p>
                         <div class="row">
                             <div class="col-md-6">
-                                <div class="input-group input-group-outline mb-3">
-                                    <label class="form-label"></label>
-                                    <select class="form-select" name="CustomerType">
-                                        <option value="" disabled selected hidden>Select Type</option>
-                                        <option value="vip">VIP</option>
-                                        <option value="regular">Regular</option>
-                                        <option value="new">New</option>
-                                    </select>
+                                <div class="input-group input-group-outline mb-4">
+                                    <label asp-for="Idnumber" class="form-label">ID Number (CCCD/Passport)</label>
+                                    <input asp-for="Idnumber" type="text" class="form-control">
                                 </div>
+                                <span asp-validation-for="Idnumber" class="text-danger"></span>
                             </div>
                             <div class="col-md-6">
-                                <div class="input-group input-group-outline mb-3">
-                                    <label class="form-label"></label>
-                                    <select class="form-select" name="Status">
-                                        <option value="" disabled selected hidden>Select Customer Status</option>
-                                        <option value="active">Active</option>
-                                        <option value="inactive">Inactive</option>
-                                    </select>
+                                <div class="input-group input-group-outline mb-4">
+                                    <label asp-for="Nationality" class="form-label"></label>
+                                    <input asp-for="Nationality" type="text" class="form-control">
                                 </div>
+                                <span asp-validation-for="Nationality" class="text-danger"></span>
                             </div>
                         </div>
-
-                        <hr class="horizontal dark">
-
-                        <p class="text-uppercase text-sm">Identification Documents</p>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="input-group input-group-outline mb-3">
-                                    <label class="form-label"></label>
-                                    <select class="form-select" name="IdType">
-                                        <option value="" disabled selected hidden>Select ID Type</option>
-                                        <option value="passport">Passport</option>
-                                        <option value="national_id">National ID</option>
-                                        <option value="driver_license">Driver License</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="input-group input-group-outline mb-3">
-                                    <label class="form-label">ID Number</label>
-                                    <input type="text" class="form-control" name="IdNumber">
-                                </div>
-                            </div>
-                        </div>
-
-                        <hr class="horizontal dark">
-
-                        <p class="text-uppercase text-sm">Additional Information</p>
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="input-group input-group-outline mb-3">
-                                    <label class="form-label">Special Requests / Notes</label>
-                                    <textarea class="form-control" name="Notes" rows="3"></textarea>
+                                <div class="input-group input-group-outline mb-4">
+                                    <label asp-for="Address" class="form-label"></label>
+                                    <input asp-for="Address" type="text" class="form-control">
                                 </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="ReceiveNewsletter" id="newsletterCheck">
-                                    <label class="form-check-label" for="newsletterCheck">
-                                        Subscribe to newsletter
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="AcceptTerms" id="termsCheck" required>
-                                    <label class="form-check-label" for="termsCheck">
-                                        I agree to the terms and conditions
-                                    </label>
-                                </div>
+                                <span asp-validation-for="Address" class="text-danger"></span>
                             </div>
                         </div>
 
                         <div class="d-flex justify-content-end mt-4">
-                            <button type="button" class="btn btn-light m-0 me-2" onclick="window.history.back()">Cancel</button>
+                            <a asp-area="Admin" asp-controller="Customer" asp-action="CustomerList" class="btn btn-light m-0 me-2">Cancel</a>
                             <button type="reset" class="btn btn-outline-secondary m-0 me-2">Reset</button>
                             <button type="submit" class="btn bg-gradient-primary m-0">Add Customer</button>
                         </div>
@@ -189,10 +110,6 @@
     </div>
 </div>
 @section Script {
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @* File JS của bạn đã đúng, nó xử lý giao diện và không cần thay đổi *@
     <script src="~/js/customer/AddNewCustomer.js"></script>
-}
-
-@section Styles {
-    <link href="/css/customer/AddNewCustomer.css" rel="stylesheet">
 }
