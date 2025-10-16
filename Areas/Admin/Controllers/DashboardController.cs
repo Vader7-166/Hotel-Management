@@ -78,7 +78,7 @@ namespace Hotel_Management.Areas.Admin.Controllers
             {
                 if (monthlyRevenueData.ContainsKey(item.MonthKey))
                 {
-                    monthlyRevenueData[item.MonthKey] = (decimal)item.Total / 1000000000; // Đổi sang tỉ VND
+                    monthlyRevenueData[item.MonthKey] = (decimal)item.Total / 1000000; // Đổi sang tỉ VND
                 }
             }
 
@@ -97,9 +97,9 @@ namespace Hotel_Management.Areas.Admin.Controllers
                     Room = b.BookingDetails.FirstOrDefault().Room.RoomNumber,
                     Customer = b.Customer.FullName,
                     CheckTime = "14:00",
-                    Status = b.Status == "CheckedIn" ? "Đã check-in" :
-                             b.Status == "Confirmed" ? "Chờ check-in" :
-                             b.Status == "Pending" ? "Chờ xác nhận" :
+                    Status = b.Status == "CheckedIn" ? "Checked-in" :
+                             b.Status == "Confirmed" ? "Waiting for Check-in" :
+                             b.Status == "Pending" ? "Pending" :
                              b.Status
                 })
                 .OrderBy(c => c.Room)
@@ -117,7 +117,7 @@ namespace Hotel_Management.Areas.Admin.Controllers
                     Room = b.BookingDetails.FirstOrDefault().Room.RoomNumber,
                     Customer = b.Customer.FullName,
                     CheckTime = "12:00",
-                    Status = (b.Status == "CheckedIn") ? "Chưa check-out" : "Đã check-out"
+                    Status = (b.Status == "CheckedIn") ? "Waiting for Check-out" : "Checked-out"
                 })
                 .OrderBy(c => c.Room)
                 .ToList();
