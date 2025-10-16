@@ -51,23 +51,34 @@ namespace Hotel_Management.Areas.Customer.Controllers
                 ViewBag.Error = "Invalid username or password!";
                 return View();
             }
-
-            // ✅ 4. Tìm customer tương ứng
-            var customer = _context.Customers.FirstOrDefault(c => c.CustomerId == account.CustomerId);
-
-            if (customer != null)
-            {
-                // 🧭 Lưu thông tin vào Session
-                HttpContext.Session.SetInt32("CustomerId", customer.CustomerId); // dùng ở BookingController
-                HttpContext.Session.SetString("CustomerName", customer.FullName); // hiển thị tên góc trên
-            }
-
-            // 💾 Lưu thêm thông tin tài khoản
+            //Luu thong tin tai khoan vao Session
             HttpContext.Session.SetString("Username", account.Username);
             HttpContext.Session.SetString("Role", account.Role);
 
-            // 🔁 5. Chuyển về trang chính
-            return RedirectToAction("Index", "Home", new { area = "Customer" });
+            //Neu la khach hang thi luu thong tin khach hang
+            if (account.Role == "Customer")
+            {
+                var customer = _context.Customers.FirstOrDefault(c => c.CustomerId == account.CustomerId);
+                if (customer != null)
+                {
+                    HttpContext.Session.SetInt32("CustomerId", customer.CustomerId);
+                    HttpContext.Session.SetString("FullName", customer.FullName);
+                }
+            }
+            if (account.Role == "Admin")
+            {
+                return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+            }
+            else if (account.Role == "Customer")
+            {
+                return RedirectToAction("Index", "Home", new { area = "Customer" });
+            }
+            else
+            {
+                ViewBag.Error="Invalid role! . Please contact support!";
+                return View();
+            }
+ 
         }
 
 
