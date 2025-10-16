@@ -1,4 +1,5 @@
 ﻿using Hotel_Management.Models;
+using Hotel_Management.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Hotel_Management.ViewModels;

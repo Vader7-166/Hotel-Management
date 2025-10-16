@@ -17,7 +17,7 @@ function showDeleteModal(bookingId, customerName) {
     // Lấy form trong modal
     const deleteForm = document.getElementById('deleteForm');
     // Cập nhật thuộc tính 'action' của form để trỏ đúng đến URL Delete/{id}
-    deleteForm.action = `/Admin/Booking/Delete/${bookingId}`; // Chú ý: sửa '/Admin/Booking/' nếu route của bạn khác
+    deleteForm.action = `/Admin/Booking/Delete/${bookingId}`;
 
     // Cập nhật nội dung text xác nhận
     const confirmText = document.getElementById('deleteConfirmText');

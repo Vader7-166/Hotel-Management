@@ -7,7 +7,7 @@
         data: {
             labels: viewData.dailyRevenueChart.Labels, 
             datasets: [{
-                label: 'revenue (milions VND)',
+                label: 'revenue (millions VND)',
                 data: viewData.dailyRevenueChart.Data, 
                 borderColor: '#667eea',
                 backgroundColor: 'rgba(102, 126, 234, 0.1)',
@@ -33,7 +33,7 @@
                     displayColors: false,
                     callbacks: {
                         label: function (context) {
-                            return context.parsed.y + ' millions VND';
+                            return context.parsed.y + 'M VND';
                         }
                     }
                 }
@@ -60,7 +60,7 @@
         data: {
             labels: viewData.monthlyRevenueChart.Labels,
             datasets: [{
-                label: 'Incom (billions VND)',
+                label: 'Incom (millions VND)',
                 data: viewData.monthlyRevenueChart.Data,
                 backgroundColor: [
                     'rgba(102, 126, 234, 0.8)', 'rgba(118, 75, 162, 0.8)',
@@ -81,7 +81,7 @@
                     padding: 12,
                     callbacks: {
                         label: function (context) {
-                            return context.parsed.y + 'B VND';
+                            return context.parsed.y + 'M VND';
                         }
                     }
                 }
@@ -91,7 +91,7 @@
                     beginAtZero: true,
                     grid: { borderDash: [5, 5] },
                     ticks: {
-                        callback: function (value) { return value + 'B'; }
+                        callback: function (value) { return value + 'M'; }
                     }
                 },
                 x: {

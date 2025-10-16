@@ -162,7 +162,7 @@
                             <tbody>
                                 @foreach (var item in Model.CheckInList.Take(5))
                                 {
-                                    var badgeClass = item.Status == "Đã check-in" ? "bg-success" : "bg-warning";
+                                    var badgeClass = item.Status == "Checked-in" ? "bg-success" : "bg-warning";
                                     <tr>
                                         <td><span class="fw-bold">@item.Room</span></td>
                                         <td>@item.Customer</td>
@@ -198,8 +198,7 @@
                                 {
                                     var badgeClass = item.Status switch
                                     {
-                                        "Đã check-out" => "bg-success",
-                                        "Đang dọn phòng" => "bg-info",
+                                        "Checked-out" => "bg-success",
                                         _ => "bg-secondary"
                                     };
                                     <tr>
