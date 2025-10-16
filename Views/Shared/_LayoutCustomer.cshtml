@@ -152,22 +152,24 @@
             </div>
         </div>
     </footer>
-
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
         // Hover mở dropdown (Bootstrap 5 mặc định là click)
-        document.addEventListener("DOMContentLoaded", function () {
-            const dropdown = document.querySelector('.nav-item.dropdown');
-            dropdown.addEventListener('mouseenter', function () {
-                const menu = this.querySelector('.dropdown-menu');
-                menu.classList.add('show');
-            });
-            dropdown.addEventListener('mouseleave', function () {
-                const menu = this.querySelector('.dropdown-menu');
-                menu.classList.remove('show');
+               document.addEventListener("DOMContentLoaded", function () {
+            const dropdowns = document.querySelectorAll('.nav-item.dropdown');
+            dropdowns.forEach(dropdown => {
+                dropdown.addEventListener('mouseenter', function () {
+                    const menu = this.querySelector('.dropdown-menu');
+                    menu.classList.add('show');
+                });
+                dropdown.addEventListener('mouseleave', function () {
+                    const menu = this.querySelector('.dropdown-menu');
+                    menu.classList.remove('show');
+                });
             });
         });
+
     </script>
 </body>
 </html>
