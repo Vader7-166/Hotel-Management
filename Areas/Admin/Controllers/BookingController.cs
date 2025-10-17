@@ -467,8 +467,6 @@ namespace Hotel_Management.Areas.Admin.Controllers
 
             var bookingDetail = booking.BookingDetails.FirstOrDefault();
 
-            // Tạo một đối tượng vô danh (anonymous object) để chứa dữ liệu cần thiết cho client.
-            // ??: use 1 when 1 is not null, else use 2
             var result = new
             {
                 bookingId = booking.BookingId,
@@ -494,6 +492,34 @@ namespace Hotel_Management.Areas.Admin.Controllers
         {
             return View();
         }
-        
+
+        public IActionResult GetBooking(int year, int month)
+        {
+            var startDate = new DateOnly(year, month, 1);
+            var endDate = startDate.AddMonths(1);
+
+            var bookingDetails = db.BookingDetails
+                .Include(b => b.Booking)
+                    .ThenInclude(c => c.Customer)
+                .Include(r => r.Room)
+                .Where(bd => (bd.Booking.CheckInDate < endDate && bd.Booking.CheckOutDate >= startDate))
+                .Select(bd => new CalendarViewModel
+                {
+                    BookingDetailId = bd.BookingDetailId,
+                    BookingId = bd.BookingId,
+                    CustomerName = bd.Booking.Customer.FullName,
+                    Phone = bd.Booking.Customer.Phone,
+                    Email = bd.Booking.Customer.Email,
+                    RoomNumber = bd.Room.RoomNumber,
+                    CheckInDate = bd.Booking.CheckInDate,
+                    CheckOutDate = bd.Booking.CheckOutDate,
+                    Status = bd.Booking.Status,
+                    Price = (decimal)bd.SubTotal,
+                    Notes = bd.Booking.Notes
+                }).ToList();
+
+            return Json(bookingDetails);
+        }
+
     }
 }

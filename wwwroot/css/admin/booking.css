@@ -186,6 +186,10 @@
     background-color: #4CAF50;
 }
 
+.status-checkedout {
+    background-color: #737373;
+}
+
 .table td {
     padding-left: 1.5rem;
 }
