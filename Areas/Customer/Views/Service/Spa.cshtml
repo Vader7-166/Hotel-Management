@@ -1,0 +1,173 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "~/Views/Shared/_LayoutCustomer.cshtml";
+}
+<!-- Hero Banner -->
+<div class="position-relative overflow-hidden">
+    <img src="~/images/Spa/mainSpa.jpg" alt="Spa & Wellness Banner" class="img-fluid w-100">
+    <div class="position-absolute top-50 start-50 translate-middle text-center text-white">
+        <h1 class="display-3 fw-bold text-shadow">Spa & Wellness</h1>
+        <p class="lead">Escape to Tranquility and Rejuvenation</p>
+    </div>
+</div>
+
+<!-- Introduction Section -->
+<section class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+            <h2 class="mb-4 spa-heading">Discover Inner Peace</h2>
+            <p class="lead text-muted">
+                Immerse yourself in a sanctuary of serenity where ancient healing traditions meet modern luxury.
+                Our spa offers a holistic approach to wellness, featuring premium treatments designed to restore balance,
+                rejuvenate your body, and refresh your spirit in an atmosphere of pure tranquility.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Spa Services Cards -->
+<section class="container pb-5">
+    <div class="row g-4">
+        <!-- Relax Massage -->
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm spa-card">
+                <div class="position-relative">
+                    <img src="~/images/Spa/relaxMassage.jpg" class="card-img-top" alt="Relax Massage">
+                    <div class="position-absolute top-0 end-0 m-3">
+                        <span class="badge bg-light text-dark">Most Popular</span>
+                    </div>
+                </div>
+                <div class="card-body text-center">
+                    <h5 class="card-title fw-bold">Relax Massage</h5>
+                    <p class="card-text text-muted">
+                        Melt away stress with our signature full-body massage.
+                        Choose from Swedish, deep tissue, or aromatherapy techniques.
+                    </p>
+                    <div class="my-3">
+                        <span class="h5 text-secondary">From 800.000 VND</span>
+                        <span class="text-muted"> / 1 Hour</span>
+                    </div>
+                    <a href="#" class="btn btn-spa w-100">Book Now</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hot Stone Therapy -->
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm spa-card">
+                <img src="~/images/Spa/stonetherapy.jpg" class="card-img-top" alt="Hot Stone Therapy">
+                <div class="card-body text-center">
+                    <h5 class="card-title fw-bold">Hot Stone Therapy</h5>
+                    <p class="card-text text-muted">
+                        Experience deep relaxation as smooth, heated stones are placed on key points
+                        to ease muscle tension and promote energy flow.
+                    </p>
+                    <div class="my-3">
+                        <span class="h5 text-secondary">From 1.000.000 VND</span>
+                        <span class="text-muted"> / 1.5 Hour</span>
+                    </div>
+                    <a href="#" class="btn btn-spa w-100">Book Now</a>
+                </div>
+            </div>
+        </div>
+        <!-- Sauna & Steam Room -->
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm spa-card">
+                <img src="~/images/Spa/SteamRoom.jpg" class="card-img-top" alt="Sauna & Steam Room">
+                <div class="card-body text-center">
+                    <h5 class="card-title fw-bold">Sauna & Steam Room</h5>
+                    <p class="card-text text-muted">
+                        Detoxify and cleanse your body in our traditional sauna and aromatic steam room.
+                        Perfect for post-workout recovery.
+                    </p>
+                    <div class="my-3">
+                        <span class="h5 text-secondary">From 200.000 VND</span>
+                        <span class="text-muted"> / session</span>
+                    </div>
+                    <a href="#" class="btn btn-spa w-100">Book Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Special Offer Section -->
+<section class="bg-spa py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <img src="~/images/Spa/wellnesspackage.jpg" class="img-fluid rounded shadow" alt="Spa Experience">
+            </div>
+            <div class="col-md-6">
+                <h3 class="mb-3">Wellness Package</h3>
+                <p class="text-muted mb-4">
+                    Indulge in our exclusive day spa package including massage, facial treatment,
+                    and access to all wellness facilities. A complete journey to relaxation.
+                </p>
+                <ul class="list-unstyled mb-4">
+                    <li class="mb-2">✓ 2 Hour massage therapy</li>
+                    <li class="mb-2">✓ 10 % Off Lodging</li>
+                    <li class="mb-2">✓ 20 % Off One Service</li>
+                    <li class="mb-2">✓ 20 % Off Dinner</li>
+                </ul>
+                <div class="mb-3">
+                    <span class="h4 text-se">1.500.000 VND</span>
+                    <span class="text-decoration-line-through text-muted"> 2.500.000 VND</span>
+                </div>
+                <a href="#" class="btn btn-warning btn-lg">Reserve Your Day</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .text-shadow {
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+    }
+
+    .spa-heading {
+        color: #8b7355;
+        font-weight: 300;
+        letter-spacing: 2px;
+    }
+
+    .spa-card {
+        transition: all 0.3s ease;
+        background: #fafaf8;
+    }
+
+        .spa-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(139, 115, 85, 0.2) !important;
+        }
+
+        .spa-card .card-img-top {
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .spa-card:hover .card-img-top {
+            transform: scale(1.05);
+        }
+
+    .btn-spa {
+        background: linear-gradient(135deg, #d4af37 0%, #aa8a3a 100%);
+        color: white;
+        border: none;
+        padding: 10px 30px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-spa:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+            color: white;
+        }
+
+    .bg-spa {
+        background: linear-gradient(135deg, #f5f2ed 0%, #ebe6de 100%);
+    }
+</style>
