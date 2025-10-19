@@ -1,0 +1,123 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Meet & Events";
+    Layout = "~/Views/Shared/_LayoutCustomer.cshtml";
+}
+
+<!-- Hero Banner -->
+<div class="position-relative overflow-hidden">
+    <img src="~/images/Meet&Events/main.jpg" alt="Meet & Events Banner" class="img-fluid w-100">
+    <div class="position-absolute top-50 start-50 translate-middle text-center text-white">
+        <h1 class="display-3 fw-bold text-shadow">Meet & Events</h1>
+        <p class="lead">Creating Memorable Moments for Your Special Occasions</p>
+    </div>
+</div>
+
+<!-- Introduction Section -->
+<section class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+            <h2 class="mb-4">Elevate Your Events</h2>
+            <p class="lead text-muted">
+                Whether you're planning a corporate conference, an elegant wedding celebration, or a memorable social gathering,
+                our world-class facilities and professional event planning team are here to bring your vision to life.
+                Experience exceptional service in our sophisticated venues designed for success.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Event Services Cards -->
+<section class="container pb-5">
+    <div class="row g-4">
+        <!-- Conference Package -->
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm event-card">
+                <img src="~/images/Meet&Events/conference.jpg" class="card-img-top" alt="Conference Package">
+                <div class="card-body text-center">
+                    <h5 class="card-title fw-bold">Conference Package</h5>
+                    <p class="card-text text-muted">
+                        State-of-the-art meeting rooms equipped with the latest technology,
+                        perfect for seminars, workshops, and corporate gatherings up to 200 guests.
+                    </p>
+                    <a href="#" class="btn btn-learnmore btn-outline-secondary mt-3">Learn More</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wedding Celebration -->
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm event-card">
+                <img src="~/images/Meet&Events/WeddingCelebration.jpg" class="card-img-top" alt="Wedding Celebration">
+                <div class="card-body text-center">
+                    <h5 class="card-title fw-bold">Wedding Celebration</h5>
+                    <p class="card-text text-muted">
+                        Make your dream wedding come true in our elegant ballroom.
+                        Includes personalized planning, exquisite catering, and stunning décor options.
+                    </p>
+                    <a href="#" class="btn btn-learnmore btn-outline-secondary mt-3">Learn More</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Corporate Event -->
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm event-card">
+                <img src="~/images/Meet&Events/CorporateEvent.jpg" class="card-img-top" alt="Corporate Event">
+                <div class="card-body text-center">
+                    <h5 class="card-title fw-bold">Corporate Event</h5>
+                    <p class="card-text text-muted">
+                        Host impressive product launches, team building activities, and gala dinners
+                        with our dedicated event coordination and premium catering services.
+                    </p>
+                    <a href="#" class="btn btn-learnmore btn-outline-secondary mt-3">Learn More</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact CTA -->
+<section class="bg-light py-5">
+    <div class="container text-center">
+        <h3 class="mb-3">Ready to Plan Your Event?</h3>
+        <p class="text-muted mb-4">Contact our event specialists to discuss your requirements</p>
+        <a href="#" class="btn btn-get btn-lg px-5">Get In Touch</a>
+    </div>
+</section>
+
+<style>
+    .text-shadow {
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+    }
+
+    .event-card {
+        transition: all 0.3s ease;
+    }
+
+        .event-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+        }
+
+        .event-card img {
+            transition: transform 0.3s ease;
+        }
+
+        .event-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .event-card .card-img-top {
+            height: 250px;
+            object-fit: cover;
+        }
+        .btn-learnmore:hover{
+        background: linear-gradient(135deg, #d4af37 0%, #aa8a3a 100%);
+        }
+        .btn-get{
+        background-color: #d4af37;
+        }
+</style>

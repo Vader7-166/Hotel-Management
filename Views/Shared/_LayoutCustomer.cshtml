@@ -46,14 +46,26 @@
                                asp-area="Customer" asp-controller="Booking" asp-action="Create">Booking</a>
                         </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle @(currentController == "Services" ? "active" : "")"
+                            <a class="nav-link dropdown-toggle @(currentController == "Service" ? "active" : "")"
                                href="#" id="servicesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Services
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="servicesDropdown">
-                                <li><a class="dropdown-item" href="#">Meet & Events</a></li>
-                                <li><a class="dropdown-item" href="#">Spa</a></li>
-                                <li><a class="dropdown-item" href="#">Swimming Pool</a></li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Customer" asp-controller="Service" asp-action="MeetEvents">
+                                        Meet & Events
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Customer" asp-controller="Service" asp-action="Spa">
+                                        Spa
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="Customer" asp-controller="Service" asp-action="SwimmingPool">
+                                        Swimming Pool
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                         <li class="nav-item">

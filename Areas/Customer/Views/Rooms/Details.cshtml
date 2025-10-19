@@ -1,131 +1,256 @@
 ﻿@using Hotel_Management.Models
-@model RoomType
-
+@model Room;
 @{
     Layout = "~/Views/Shared/_LayoutCustomer.cshtml";
-    ViewData["Title"] = $"Chi Tiết Phòng - {Model.TypeName}";
+    ViewData["Title"] = $"Chi Tiết Phòng {Model.RoomNumber}";
 }
 
-@section Styles {
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewData["Title"]</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         .room-detail-img {
             height: 500px;
             object-fit: cover;
-            border-radius: 10px;
+            border-radius: 15px;
         }
 
-        .feature-item {
-            padding: 15px;
+        .info-card {
             background: #f8f9fa;
-            border-radius: 8px;
-            margin-bottom: 10px;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
             transition: all 0.3s;
         }
 
-            .feature-item:hover {
+            .info-card:hover {
                 background: #e9ecef;
-                transform: translateY(-2px);
+                transform: translateY(-3px);
             }
 
-        .price-badge {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #0d6efd;
+        .status-badge {
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            border-radius: 25px;
+        }
+
+        .feature-list li {
+            padding: 12px;
+            background: #f8f9fa;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #0d6efd;
         }
 
         .booking-card {
             position: sticky;
             top: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            border-radius: 12px;
         }
     </style>
-}
+</head>
+<body>
+    <div class="container my-5">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                <li class="breadcrumb-item"><a asp-controller="Rooms" asp-action="Index">Phòng</a></li>
+                <li class="breadcrumb-item"><a asp-controller="Rooms" asp-action="RoomTypeDetails" asp-route-id="@Model.RoomTypeId">@Model.RoomType.TypeName</a></li>
+                <li class="breadcrumb-item active">Phòng @Model.RoomNumber</li>
+            </ol>
+        </nav>
 
-<div class="container my-5">
-    <div class="row g-4">
-        <!-- Hình ảnh phòng -->
-        <div class="col-lg-7">
-            <img src="/images/room/room@(Model.RoomTypeId).jpg"
-                 onerror="this.src='/images/room/default.jpg'"
-                 class="img-fluid w-100 room-detail-img"
-                 alt="@Model.TypeName" />
-        </div>
-
-        <!-- Chi tiết phòng -->
-        <div class="col-lg-5">
-            <div class="card booking-card p-4">
-                <h2 class="fw-bold mb-3 text-secondary">@Model.TypeName</h2>
-                <p class="mb-3 text-muted">@Model.Description</p>
-
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <span class="text-secondary">Sức chứa:</span>
-                    <span><i class="bi bi-people-fill"></i> @Model.MaxOccupancy người</span>
+        <div class="row">
+            <!-- Cột trái - Thông tin chi tiết -->
+            <div class="col-lg-8">
+                <!-- Hình ảnh -->
+                <div class="mb-4">
+                    <img src="/images/room/room@(Model.RoomTypeId).jpg"
+                         class="img-fluid w-100 room-detail-img"
+                         alt="Phòng @Model.RoomNumber">
                 </div>
 
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <span class="text-secondary">Giá cơ bản:</span>
-                    <span class="price-badge text-secondary">@Model.BasePrice.ToString("N0") VNĐ</span>
+                <!-- Tiêu đề và trạng thái -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h1 class="display-5 fw-bold mb-2">Phòng @Model.RoomNumber</h1>
+                        <h4 class="text-muted">Loại: @Model.RoomType.TypeName</h4>
+                    </div>
+                    <span class="status-badge @(Model.Status == "Available" ? "badge bg-success" : "badge bg-danger")">
+                        @(Model.Status == "Available" ? "Còn Trống" : "Đã Đặt")
+                    </span>
                 </div>
 
-                <div class="text-muted mb-3">
-                    <small><i class="bi bi-clock-history"></i> Cập nhật: @(Model.UpdatedAt?.ToString("dd/MM/yyyy") ?? "N/A")</small>
+                <!-- Mô tả -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0"><i class="bi bi-file-text"></i> Mô Tả Phòng</h4>
+                    </div>
+                    <div class="card-body">
+                        <p class="lead">@Model.RoomType.Description</p>
+                        <p>@Model.RoomType.Description</p>
+                    </div>
                 </div>
 
-                <form asp-area="Customer" asp-controller="Booking" asp-action="Create" method="post">
-                    <input asp-for="RoomTypeId" type="hidden" />
-
-                    <div class="mb-3">
-                        <label class="form-label">Ngày nhận phòng</label>
-                        <input type="date" name="CheckInDate" class="form-control" required />
+                <!-- Thông tin chi tiết -->
+                <div class="card mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h4 class="mb-0"><i class="bi bi-info-circle"></i> Thông Tin Chi Tiết</h4>
                     </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Ngày trả phòng</label>
-                        <input type="date" name="CheckOutDate" class="form-control" required />
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="info-card">
+                                    <i class="bi bi-door-closed fs-3 text-primary"></i>
+                                    <h6 class="mt-2 mb-1">Số Phòng</h6>
+                                    <p class="mb-0 fw-bold">@Model.RoomNumber</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-card">
+                                    <i class="bi bi-building fs-3 text-primary"></i>
+                                    <h6 class="mt-2 mb-1">Tầng</h6>
+                                    <p class="mb-0 fw-bold">Tầng @Model.Floor</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-card">
+                                    <i class="bi bi-people-fill fs-3 text-warning"></i>
+                                    <h6 class="mt-2 mb-1">Sức Chứa</h6>
+                                    <p class="mb-0 fw-bold">@Model.RoomType.MaxOccupancy người</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-card">
+                                    <i class="bi bi-cash-coin fs-3 text-success"></i>
+                                    <h6 class="mt-2 mb-1">Giá Phòng</h6>
+                                    <p class="mb-0 fw-bold text-primary">@Model.RoomType.BasePrice.ToString("N0") VNĐ/đêm</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Số lượng người</label>
-                        <select name="Guests" class="form-select" required>
-                            @for (int i = 1; i <= Model.MaxOccupancy; i++)
-                            {
-                                <option value="@i">@i người</option>
-                            }
-                        </select>
+                <!-- Tiện nghi -->
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="mb-0"><i class="bi bi-stars"></i> Tiện Nghi Phòng</h4>
                     </div>
+                    <div class="card-body">
+                        <ul class="feature-list list-unstyled">
+                            <li><i class="bi bi-wifi text-primary"></i> <strong>WiFi tốc độ cao</strong> - Miễn phí</li>
+                            <li><i class="bi bi-tv text-primary"></i> <strong>TV màn hình phẳng</strong> - Smart TV 50 inch</li>
+                            <li><i class="bi bi-snow text-primary"></i> <strong>Điều hòa không khí</strong> - Điều khiển độc lập</li>
+                            <li><i class="bi bi-cup-hot text-primary"></i> <strong>Minibar</strong> - Đầy đủ đồ uống</li>
+                            <li><i class="bi bi-door-open text-primary"></i> <strong>Phòng tắm riêng</strong> - Vòi sen & bồn tắm</li>
+                            <li><i class="bi bi-shield-check text-primary"></i> <strong>Két an toàn</strong> - Điện tử hiện đại</li>
+                            <li><i class="bi bi-telephone text-primary"></i> <strong>Điện thoại</strong> - Liên lạc nội bộ</li>
+                            <li><i class="bi bi-moisture text-primary"></i> <strong>Máy sấy tóc</strong> - Công suất cao</li>
+                        </ul>
+                    </div>
+                </div>
 
-                    <button type="submit" class="btn btn-secondary w-100 py-2 fw-bold">
-                        <i class="bi bi-calendar-check me-1"></i> Đặt phòng ngay
-                    </button>
-                </form>
+                <!-- Chính sách -->
+                <div class="card mb-4">
+                    <div class="card-header bg-warning text-dark">
+                        <h4 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Chính Sách Phòng</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="bi bi-check-circle text-success"></i> <strong>Nhận phòng:</strong> Từ 14:00</li>
+                            <li class="mb-2"><i class="bi bi-check-circle text-success"></i> <strong>Trả phòng:</strong> Trước 12:00</li>
+                            <li class="mb-2"><i class="bi bi-check-circle text-success"></i> <strong>Hủy miễn phí:</strong> Trước 24 giờ</li>
+                            <li class="mb-2"><i class="bi bi-x-circle text-danger"></i> <strong>Không hút thuốc</strong> trong phòng</li>
+                            <li class="mb-2"><i class="bi bi-check-circle text-success"></i> <strong>Thú cưng:</strong> Cho phép (phụ phí 200,000 VNĐ/đêm)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
 
-                <div class="mt-4 text-center text-secondary">
-                    <a asp-controller="Rooms" asp-action="Index" class="text-decoration-none">
-                        <i class="bi bi-arrow-left"></i> Quay lại danh sách
-                    </a>
+            <!-- Cột phải - Booking Card -->
+            <div class="col-lg-4">
+                <div class="card booking-card shadow-lg">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h4 class="mb-0">Thông Tin Đặt Phòng</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center mb-4">
+                            <div class="display-6 fw-bold text-primary">@Model.RoomType.BasePrice.ToString("N0") VNĐ</div>
+                            <small class="text-muted">/ mỗi đêm</small>
+                        </div>
+
+                        @if (Model.Status == "Available")
+                        {
+                            <div class="alert alert-success text-center">
+                                <i class="bi bi-check-circle-fill"></i> Phòng này đang trống
+                            </div>
+
+                            <div class="d-grid gap-2 mb-3">
+                                <a asp-controller="Booking"
+                                   asp-action="Create"
+                                   asp-route-roomId="@Model.RoomId"
+                                   class="btn btn-primary btn-lg">
+                                    <i class="bi bi-calendar-check-fill"></i> Đặt Phòng Ngay
+                                </a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-danger text-center">
+                                <i class="bi bi-x-circle-fill"></i> Phòng này đã được đặt
+                            </div>
+
+                            <div class="d-grid gap-2 mb-3">
+                                <a asp-controller="Rooms"
+                                   asp-action="RoomTypeDetails"
+                                   asp-route-id="@Model.RoomTypeId"
+                                   class="btn btn-primary btn-lg">
+                                    <i class="bi bi-search"></i> Tìm Phòng Khác
+                                </a>
+                            </div>
+                        }
+
+                        <div class="d-grid gap-2">
+                            <a asp-controller="Rooms"
+                               asp-action="RoomTypeDetails"
+                               asp-route-id="@Model.RoomTypeId"
+                               class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Quay Lại Danh Sách
+                            </a>
+                        </div>
+
+                        <!-- Thông tin liên hệ -->
+                        <div class="mt-4 pt-3 border-top">
+                            <h6 class="text-center mb-3">Cần Hỗ Trợ?</h6>
+                            <div class="d-grid gap-2">
+                                <a href="tel:+84123456789" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-telephone-fill"></i> 0123 456 789
+                                </a>
+                                <a href="mailto:info@hthotel.com" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-envelope-fill"></i> info@hthotel.com
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Highlights -->
+                        <div class="mt-4 pt-3 border-top">
+                            <h6 class="mb-3">Điểm Nổi Bật</h6>
+                            <ul class="list-unstyled small">
+                                <li class="mb-2"><i class="bi bi-check2 text-success"></i> Miễn phí WiFi</li>
+                                <li class="mb-2"><i class="bi bi-check2 text-success"></i> Bữa sáng buffet</li>
+                                <li class="mb-2"><i class="bi bi-check2 text-success"></i> Hủy miễn phí</li>
+                                <li class="mb-2"><i class="bi bi-check2 text-success"></i> Dọn phòng hàng ngày</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-@section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const checkIn = document.querySelector('input[name="CheckInDate"]');
-            const checkOut = document.querySelector('input[name="CheckOutDate"]');
-            checkIn.addEventListener('change', function() {
-                const date = new Date(this.value);
-                if (!isNaN(date)) {
-                    const nextDay = new Date(date);
-                    nextDay.setDate(date.getDate() + 1);
-                    checkOut.min = nextDay.toISOString().split('T')[0];
-                }
-            });
-        });
-    </script>
-}
+</body>
+</html>
