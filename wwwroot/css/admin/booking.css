@@ -182,6 +182,14 @@
     background-color: #6c757d;
 }
 
+.status-checkedin {
+    background-color: #4CAF50;
+}
+
+.status-checkedout {
+    background-color: #737373;
+}
+
 .table td {
     padding-left: 1.5rem;
 }
@@ -240,31 +248,28 @@ label {
     box-shadow: none;
 }
 
-    .resetBtn:hover {
-        background-color: #5d5d5d !important;
-        border-color: #5d5d5d !important;
-        box-shadow: 0 8px 14px -8px rgba(105, 105, 105, 0.3), 0 3px 18px 0 rgba(105, 105, 105, 0.1), 0 7px 8px -4px rgba(105, 105, 105, 0.18) !important;
-    }
+.resetBtn:hover {
+    background-color: #696969 !important;
+    border-color: #5d5d5d !important;
+    box-shadow: 0 8px 14px -8px rgba(105, 105, 105, 0.3), 0 3px 18px 0 rgba(105, 105, 105, 0.1), 0 7px 8px -4px rgba(105, 105, 105, 0.18) !important;
+}
 
-    .resetBtn:active {
-        background-color: #888888 !important;
-        border-color: #888888 !important;
-    }
+.resetBtn:focus {
+    background-color: #696969 !important;
+    border-color: #5d5d5d !important;
+}
 
-    .resetBtn:focus {
-        background-color: #5d5d5d !important;
-        border-color: #5d5d5d !important;
-        box-shadow: 0 0 0 0.25rem rgba(105, 105, 105, 0.25) !important;
-    }
+.resetBtn:hover .bi-arrow-clockwise {
+    color: #000;
+}
 
-    .resetBtn:active,
-    .resetBtn:focus,
-    .resetBtn:active:hover {
-        opacity: 1 !important;
-    }
+.active > .page-link {
+    background-color: #1A73E8;
+    border-color: #1A73E8;
+    color: #fff;
+}
 
 /* --- MEDIA QUERIES (RESPONSIVE) --- */
-
 @media (max-width: 992px) {
     .calendar-container {
         flex-direction: column;

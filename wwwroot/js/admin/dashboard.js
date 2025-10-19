@@ -1,14 +1,14 @@
 ﻿document.addEventListener('DOMContentLoaded', function () {
-    // Biểu đồ doanh thu theo ngày
-    const revenueData = viewData.revenuePerDay
+ 
+    // Revenue chart by day
     const revenueCtx = document.getElementById('revenueChart').getContext('2d');
     const revenueChart = new Chart(revenueCtx, {
         type: 'line',
         data: {
-            labels: ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'],
+            labels: viewData.dailyRevenueChart.Labels, 
             datasets: [{
-                label: 'revenue (milions VND)',
-                data: revenueData,
+                label: 'revenue (millions VND)',
+                data: viewData.dailyRevenueChart.Data, 
                 borderColor: '#667eea',
                 backgroundColor: 'rgba(102, 126, 234, 0.1)',
                 borderWidth: 3,
@@ -24,9 +24,7 @@
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: {
-                    display: false
-                },
+                legend: { display: false },
                 tooltip: {
                     backgroundColor: 'rgba(0, 0, 0, 0.8)',
                     padding: 12,
@@ -35,7 +33,7 @@
                     displayColors: false,
                     callbacks: {
                         label: function (context) {
-                            return context.parsed.y + ' milions VND';
+                            return context.parsed.y + 'M VND';
                         }
                     }
                 }
@@ -43,41 +41,31 @@
             scales: {
                 y: {
                     beginAtZero: true,
-                    grid: {
-                        borderDash: [5, 5]
-                    },
+                    grid: { borderDash: [5, 5] },
                     ticks: {
-                        callback: function (value) {
-                            return value + 'M';
-                        }
+                        callback: function (value) { return value + 'M'; }
                     }
                 },
                 x: {
-                    grid: {
-                        display: false
-                    }
+                    grid: { display: false }
                 }
             }
         }
     });
 
-    // Biểu đồ doanh thu theo tháng
-    const monthlyData = viewData.revenueMonthly
+    //Revenue Chart by month
     const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
     const monthlyChart = new Chart(monthlyCtx, {
         type: 'bar',
         data: {
-            labels: ['T5', 'T6', 'T7', 'T8', 'T9', 'T10'],
+            labels: viewData.monthlyRevenueChart.Labels,
             datasets: [{
-                label: 'Incom (billions VND)',
-                data: monthlyData,
+                label: 'Incom (millions VND)',
+                data: viewData.monthlyRevenueChart.Data,
                 backgroundColor: [
-                    'rgba(102, 126, 234, 0.8)',
-                    'rgba(118, 75, 162, 0.8)',
-                    'rgba(240, 147, 251, 0.8)',
-                    'rgba(245, 87, 108, 0.8)',
-                    'rgba(79, 172, 254, 0.8)',
-                    'rgba(0, 242, 254, 0.8)'
+                    'rgba(102, 126, 234, 0.8)', 'rgba(118, 75, 162, 0.8)',
+                    'rgba(240, 147, 251, 0.8)', 'rgba(245, 87, 108, 0.8)',
+                    'rgba(79, 172, 254, 0.8)', 'rgba(0, 242, 254, 0.8)'
                 ],
                 borderRadius: 8,
                 borderWidth: 0
@@ -87,15 +75,13 @@
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: {
-                    display: false
-                },
+                legend: { display: false },
                 tooltip: {
                     backgroundColor: 'rgba(0, 0, 0, 0.8)',
                     padding: 12,
                     callbacks: {
                         label: function (context) {
-                            return context.parsed.y + 'B VND';
+                            return context.parsed.y + 'M VND';
                         }
                     }
                 }
@@ -103,19 +89,13 @@
             scales: {
                 y: {
                     beginAtZero: true,
-                    grid: {
-                        borderDash: [5, 5]
-                    },
+                    grid: { borderDash: [5, 5] },
                     ticks: {
-                        callback: function (value) {
-                            return value + 'B';
-                        }
+                        callback: function (value) { return value + 'M'; }
                     }
                 },
                 x: {
-                    grid: {
-                        display: false
-                    }
+                    grid: { display: false }
                 }
             }
         }
@@ -123,15 +103,18 @@
 
     // Animate occupancy circle
     const circle = document.getElementById('occupancyCircle');
-    const radius = circle.r.baseVal.value;
-    const circumference = radius * 2 * Math.PI;
-    const occupancyRate = viewData.occupancyRate;
-    const offset = circumference - (occupancyRate / 100) * circumference;
+    if (circle) {
+        const radius = circle.r.baseVal.value;
+        const circumference = radius * 2 * Math.PI;
+        const occupancyRate = viewData.occupancyRate;
+        const offset = circumference - (occupancyRate / 100) * circumference;
 
-    circle.style.strokeDasharray = `${circumference} ${circumference}`;
-    circle.style.strokeDashoffset = circumference;
+        circle.style.strokeDasharray = `${circumference} ${circumference}`;
+        circle.style.strokeDashoffset = circumference;
 
-    setTimeout(() => {
-        circle.style.strokeDashoffset = offset;
-    }, 100);
+        setTimeout(() => {
+            circle.style.transition = 'stroke-dashoffset 0.8s ease-out';
+            circle.style.strokeDashoffset = offset;
+        }, 100);
+    }
 });

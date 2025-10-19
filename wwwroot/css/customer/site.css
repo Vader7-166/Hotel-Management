@@ -1,15 +1,18 @@
-﻿/* ===== FONT ===== */
+﻿/* =========================================================
+   🔤 FONT & GLOBAL STYLE
+   ========================================================= */
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Open+Sans:wght@400;500;600&display=swap');
 
 body {
-    font-family: Raleway, sans-serif;
+    font-family: 'Open Sans', sans-serif;
     color: #222;
     background-color: #fff;
     scroll-behavior: smooth;
 }
 
-
-/* ===== HEADER ===== */
+/* =========================================================
+   🧭 HEADER & NAVBAR
+   ========================================================= */
 .navbar {
     background-color: #fff;
     border-bottom: 1px solid #ddd;
@@ -17,6 +20,7 @@ body {
     box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 
+/* Logo thương hiệu */
 .navbar-brand {
     font-family: 'Playfair Display', serif;
     font-size: 28px;
@@ -26,10 +30,11 @@ body {
     letter-spacing: 1px;
 }
 
-.navbar-brand img {
-    height: 55px;
-}
+    .navbar-brand img {
+        height: 55px;
+    }
 
+/* Liên kết điều hướng */
 .navbar-nav .nav-link {
     font-weight: 300;
     color: #000 !important;
@@ -42,7 +47,7 @@ body {
         color: #c19b51 !important;
     }
 
-
+/* Nút “Book Now” trên navbar */
 .btn-book {
     background-color: #c19b51;
     color: white !important;
@@ -50,12 +55,16 @@ body {
     padding: 8px 20px;
     border-radius: 4px;
     text-transform: uppercase;
+    transition: background-color 0.3s ease;
 }
 
     .btn-book:hover {
         background-color: #a77e3e;
     }
-/* ===== BUTTON GOLD ===== */
+
+/* =========================================================
+   🟡 BUTTON STYLES
+   ========================================================= */
 .btn-gold {
     background-color: #c19b51 !important;
     color: #fff !important;
@@ -72,8 +81,9 @@ body {
         color: #fff !important;
     }
 
-
-/* ===== DROPDOWN (Services) ===== */
+/* =========================================================
+   📋 DROPDOWN MENU (trong navbar Services)
+   ========================================================= */
 .navbar-nav .nav-item .nav-link {
     color: #333;
     font-weight: 500;
@@ -95,18 +105,24 @@ body {
     color: #fff;
 }
 
-/* ===== FOOTER ===== */
+
+/* =========================================================
+   🦶 FOOTER
+   ========================================================= */
 footer {
     background-color: #0c2340;
     color: #fff;
     padding-top: 50px;
     padding-bottom: 30px;
+    margin-top: 60px;
 }
 
+    /* Logo ở footer */
     footer .logo-footer img {
         height: 70px;
     }
 
+    /* Liên kết trong footer */
     footer a {
         color: #c9c9c9;
         text-decoration: none;
@@ -117,12 +133,14 @@ footer {
             color: #c19b51;
         }
 
+    /* Tiêu đề cột trong footer */
     footer h6 {
         font-weight: 600;
         color: #fff;
         margin-bottom: 20px;
     }
 
+/* Icon mạng xã hội */
 .social-icons a {
     display: inline-block;
     margin-right: 10px;
@@ -140,6 +158,7 @@ footer {
         background-color: #a77e3e;
     }
 
+/* Dòng bản quyền cuối footer */
 .footer-bottom {
     border-top: 1px solid #1e3b63;
     margin-top: 40px;
@@ -148,3 +167,72 @@ footer {
     font-size: 14px;
     text-align: center;
 }
+
+/* =========================================================
+   🧾 TABLES (MyBookings, Bookings List)
+   ========================================================= */
+
+/* Căn giữa bảng bookings */
+.table-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 40px; /* tạo khoảng cách với footer */
+}
+
+/* Nếu bảng nằm trực tiếp trong container */
+.table {
+    margin: 0 auto; /* căn giữa bảng */
+}
+
+/* Giữ bảng không bị tràn khi màn nhỏ */
+.table-responsive {
+    overflow-x: auto;
+}
+
+/* Tiêu đề phần bảng (MyBookings) */
+.section-title {
+    color: #c19b51;
+    border-bottom: 3px solid #c19b51;
+    display: inline-block;
+    padding-bottom: 6px;
+    margin-bottom: 15px;
+    font-family: 'Playfair Display', serif;
+    letter-spacing: 1px;
+}
+
+/* Responsive cho bảng */
+@media (max-width: 768px) {
+    .table th, .table td {
+        font-size: 14px;
+        white-space: nowrap;
+    }
+
+    .table {
+        width: 100%;
+    }
+}
+
+/* =========================================================
+   👤 MY PROFILE PAGE
+   ========================================================= */
+
+/* Container của profile page */
+.profile-container {
+    margin-bottom: 60px; /* tạo khoảng cách với footer */
+}
+
+/* Thẻ hiển thị thông tin người dùng */
+.profile-card {
+    max-width: 600px;
+    margin: 0 auto; /* căn giữa card */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    background-color: #fff;
+    padding: 25px;
+}
+
+
+/* =========================================================
+
+   ✅ END OF FILE
+   ========================================================= */

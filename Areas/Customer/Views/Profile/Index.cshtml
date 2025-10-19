@@ -1,0 +1,42 @@
+﻿@{
+    ViewData["Title"] = "My Profile";
+    
+    Layout = "~/Views/Shared/_LayoutCustomer.cshtml"; // ✅ Dùng layout chính của trang Customer
+}
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+
+<div class="container mt-4 profile-container">
+    <h2 class="text-center mb-4">My Profile</h2>
+
+    <!-- Hiển thị thông tin người dùng -->
+    <div class="card profile-card shadow-sm p-4">
+        <div class="row">
+            <div class="col-md-4 text-center">
+                <img src="~/images/Hung.png" alt="Avatar" class="img-fluid rounded-circle mb-3" width="150" />
+                <h4>@ViewBag.FullName</h4>
+                <p class="text-muted">@ViewBag.Username</p>
+            </div>
+
+            <div class="col-md-8">
+                <dl class="row">
+                    <dt class="col-sm-4">Full Name</dt>
+                    <dd class="col-sm-8">@ViewBag.FullName</dd>
+
+                    <dt class="col-sm-4">Email</dt>
+                    <dd class="col-sm-8">@ViewBag.Email</dd>
+
+                    <dt class="col-sm-4">Phone</dt>
+                    <dd class="col-sm-8">@ViewBag.Phone</dd>
+
+                    <dt class="col-sm-4">Address</dt>
+                    <dd class="col-sm-8">@ViewBag.Address</dd>
+                </dl>
+
+                <a asp-area="Customer" asp-controller="Profile" asp-action="Edit" method="get" class="btn btn-warning">Edit Profile</a>
+
+            </div>
+        </div>
+    </div>
+
+</div>
