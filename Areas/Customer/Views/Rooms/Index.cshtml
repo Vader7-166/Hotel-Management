@@ -40,15 +40,14 @@
                     <h5 class="card-title text-center fw-bold">@roomType.TypeName</h5>
                     <p class="card-text flex-grow-1">@roomType.Description</p>
 
-                    <div class="text-center mt-auto">
-                        <a asp-area="Customer"
-                           asp-controller="Rooms"
-                           asp-action="Details"
-                           asp-route-id="@roomType.RoomTypeId"
-                                   class="btn btn-outline-secondary w-100 mt-3">
-                           Xem Chi Tiết
-                        </a>
-                    </div>
+                            <div class="text-center mt-auto">
+                                <a asp-controller="Rooms"
+                                   asp-action="RoomTypeDetails"
+                                   asp-route-id="@roomType.RoomTypeId"
+                                   class="btn btn-read-more btn-secondary w-100">
+                                    Xem Các Phòng
+                                </a>
+                            </div>
                 </div>
             </div>
         </div>

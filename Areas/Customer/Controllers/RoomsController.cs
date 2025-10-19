@@ -15,15 +15,36 @@ namespace Hotel_Management.Areas.Customer.Controllers
         [HttpGet("Details/{id}")]
         public IActionResult Details(int id)
         {
+            // Lấy danh sách tất cả phòng
+            var rooms = GetAllRooms();
+            var room = rooms.FirstOrDefault(r => r.RoomId == id);
+
+            if (room == null)
+            {
+                return NotFound();
+            }
+
+            // Gán kiểu phòng tương ứng (nếu cần)
             var roomTypes = GetRoomTypes();
-            var roomType = roomTypes.FirstOrDefault(r => r.RoomTypeId == id);
+            room.RoomType = roomTypes.FirstOrDefault(rt => rt.RoomTypeId == room.RoomTypeId);
+
+            return View(room); // ✅ Truyền Room thay vì RoomType
+        }
+        [Route("Customer/Room/RoomType/{id}")]
+        public IActionResult RoomTypeDetails(int id)
+        {
+            var roomType = GetRoomTypes().FirstOrDefault(r => r.RoomTypeId == id);
 
             if (roomType == null)
             {
                 return NotFound();
             }
 
-            return View(roomType);
+            // Lấy danh sách phòng thuộc kiểu phòng này
+            var rooms = GetRoomsByRoomTypeId(id);
+
+            ViewBag.RoomType = roomType;
+            return View(rooms);
         }
 
         // Method để lấy danh sách room types (tái sử dụng)
@@ -122,6 +143,50 @@ namespace Hotel_Management.Areas.Customer.Controllers
                     UpdatedAt = null
                 }
             };
+        }
+        private List<Room> GetAllRooms()
+        {
+            var rooms = new List<Room>();
+            int roomId = 1;
+
+            // Tạo phòng cho mỗi loại (mỗi loại có 3-5 phòng)
+            var roomCounts = new Dictionary<int, int>
+            {
+                {1, 4}, {2, 5}, {3, 4}, {4, 3}, {5, 3},
+                {6, 2}, {7, 3}, {8, 3}, {9, 4}
+            };
+
+            foreach (var roomType in GetRoomTypes())
+            {
+                int roomCount = roomCounts[roomType.RoomTypeId];
+
+                for (int i = 1; i <= roomCount; i++)
+                {
+                    var floor = (roomId - 1) / 10 + 1;
+                    var roomNumber = $"{floor}{(roomId % 10).ToString().PadLeft(2, '0')}";
+
+                    rooms.Add(new Room
+                    {
+                        RoomId = roomId,
+                        RoomTypeId = roomType.RoomTypeId,
+                        RoomNumber = roomNumber,
+                        Floor = floor,
+                        Status = i % 3 == 0 ? "Occupied" : "Available",
+                        CreatedAt = DateTime.Now.AddMonths(-6),
+                        UpdatedAt = DateTime.Now.AddDays(-i),
+                        RoomType = roomType
+                    });
+
+                    roomId++;
+                }
+            }
+
+            return rooms;
+        }
+
+        private List<Room> GetRoomsByRoomTypeId(int roomTypeId)
+        {
+            return GetAllRooms().Where(r => r.RoomTypeId == roomTypeId).ToList();
         }
     }
 }
