@@ -99,6 +99,28 @@
                         </ul>
                     </div>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" id="accountCollapseToggle" data-bs-toggle="collapse" href="#accountSubmenu">
+                        <i class="material-symbols-rounded opacity-5">table_view</i>
+                        <span class="nav-link-text ms-1">Employee Account</span>
+                    </a>
+                    <div class="collapse" id="accountSubmenu">
+                        <ul class="nav nav-sm flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="EmployeeManagement" asp-action="EmployeeAccountList">
+                                    <i class="material-symbols-rounded opacity-5">table_view</i>
+                                    <span class="nav-link-text ms-1">Employee Account</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="EmployeeManagement" asp-action="AddnewEmployeesAccount">
+                                    <i class="material-symbols-rounded opacity-5">Patient_List</i>
+                                    <span class="nav-link-text ms-3">Add Employee Account</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
                 <li class="nav-item mt-3">
                     <h6 class="ps-4 ms-2 text-uppercase text-xs text-dark font-weight-bolder opacity-5">Account pages</h6>
                 </li>

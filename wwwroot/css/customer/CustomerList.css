@@ -12,29 +12,36 @@
     border-radius: 15% !important;
 }
 
-.form-control {
-    padding: 0.5rem;
-}
-
+.form-control,
 .form-select {
-    padding: 0.5rem 1rem 0.5rem .85rem;
+    padding: 0.5rem 1rem 0.5rem 0.85rem;
+    border: 1px solid #d2d6da; /* Bỏ !important nếu file CSS này được tải sau file Bootstrap */
+    border-radius: 0.5rem; /* Bỏ !important */
 }
 
-.form-select {
-    border: 1px solid #d2d6da !important;
-    border-radius: 0.5rem !important;
-}
-
+    /* BƯỚC 2: Gộp nhóm các style :focus chung.
+  Đây là cách Bootstrap 5 khuyến khích để tạo hiệu ứng focus.
+*/
+    .form-control:focus,
     .form-select:focus {
-        /*    border-color: #d63384 !important;*/
-        box-shadow: 0 0 0 0.15rem #d63384 !important;
-        outline: 0 !important;
+        /* Giữ màu border gốc khi focus để chỉ có box-shadow thay đổi */
+        border-color: #e91e63;
+        /* Sử dụng màu RGBA để tạo hiệu ứng glow có độ mờ, trông sẽ đẹp hơn.
+      Đây là màu #d63384 của bạn với 40% độ trong suốt.
+    */
+        box-shadow: 0 0 0 0.15rem #e91e63;
+        /* Bỏ outline mặc định của trình duyệt */
+        outline: 0;
     }
 
-/*.table > :not(caption) > * > * {
-    color: #212529;
-}
-*/
+
 label {
     font-size: 1rem;
 }
+
+/* Thêm hiệu ứng đổi màu nền khi di chuột qua một hàng */
+#customerTable tbody tr:hover {
+    background-color: #f1f1f1; /* Màu nền khi hover */
+    transition: background-color 0.2s ease-in-out;
+}
+

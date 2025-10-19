@@ -1,0 +1,88 @@
+﻿@model IEnumerable<Hotel_Management.Models.Account>
+@{
+    ViewData["Title"] = "Employee Management";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header pb-0">
+                    <div class="d-lg-flex">
+                        <div>
+                            <h5 class="mb-0">Employee & Admin List</h5>
+                            <p class="text-sm mb-0">Manage employee and admin accounts.</p>
+                        </div>
+                        <div class="ms-auto my-auto mt-lg-0 mt-4">
+                            <div class="ms-auto my-auto">
+                                <a asp-area="Admin" asp-controller="EmployeeManagement" asp-action="AddNewEmployeeAccount" class="btn bg-gradient-primary btn-sm mb-0">
+                                    +&nbsp; New Employee
+                                </a>
+                                <button type="button" class="btn btn-outline-primary btn-sm mb-0" data-bs-toggle="modal" data-bs-target="#importModal">
+                                    <i class="material-symbols-rounded text-sm">file_upload</i>&nbsp;&nbsp;Import
+                                </button>
+                                <button class="btn btn-outline-primary btn-sm export mb-0" onclick="exportData()">
+                                    <i class="material-symbols-rounded text-sm">file_download</i>&nbsp;&nbsp;Export
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body px-0 pb-0">
+                    <div class="px-4 pb-3">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="input-group input-group-outline">
+                                    <label class="form-label">Search by Username / Email</label>
+                                    <input type="text" class="form-control" id="searchAccountInput">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group input-group-outline">
+                                    <select class="form-control" id="roleFilter" autocomplete="off">
+                                        <option value="">All Roles</option>
+                                        <option value="Admin">Admin</option>
+                                        <option value="Employee">Employee</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn bg-gradient-info w-100" id="filterAccountButton">
+                                    <i class="material-symbols-rounded">filter_list</i> Filter
+                                </button>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-outline-secondary w-100" id="resetAccountButton">
+                                    <i class="material-symbols-rounded">refresh</i> Reset
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="account-table-container">
+                        @* gọi đến partitial bảng mặc đinh, bảng này sẽ in ra hết các tài khoản có role là Admin hoặc Employee *@
+                        <partial name="_AccountListPartial" /> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Giữ nguyên các modal và form anti-forgery *@
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg"><div class="modal-content"></div></div>
+</div>
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog"><div class="modal-content"></div></div>
+</div>
+<form id="antiForgeryForm" class="d-none">@Html.AntiForgeryToken()</form>
+
+@section Styles {
+    <link href="~/css/customer/CustomerList.css" rel="stylesheet">
+}
+@section Script {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @* SỬ DỤNG FILE JS MỚI *@
+    <script src="~/js/admin/EmployeeAccountList.js"></script>
+}

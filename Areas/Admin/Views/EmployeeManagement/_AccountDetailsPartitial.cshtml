@@ -1,0 +1,84 @@
+﻿@model Hotel_Management.Models.Account
+
+@{
+    Layout = null;
+}
+
+@if (Model != null)
+{
+    // Phần Header của Modal
+    <div class="modal-header">
+        <h5 class="modal-title">Account Details: <strong>@Model.Username</strong></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+
+    // Phần Body của Modal
+    <div class="modal-body">
+        <h6 class="text-primary fw-bold">Account Information</h6>
+        <ul class="list-group list-group-flush mb-4">
+            <li class="list-group-item d-flex justify-content-between">
+                <span class="fw-semibold">Username:</span>
+                <span>@Model.Username</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+                <span class="fw-semibold">Email:</span>
+                <span>@Model.Email</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+                <span class="fw-semibold">Role:</span>
+                <span>
+                    @if (Model.Role == "Admin")
+                    {
+                        <span class="badge bg-gradient-success">Admin</span>
+                    }
+                    else if (Model.Role == "Employee")
+                    {
+                        <span class="badge bg-gradient-info">Employee</span>
+                    }
+                </span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+                <span class="fw-semibold">Status:</span>
+                <span>
+                    @if (Model.IsActive == true)
+                    {
+                        <span class="badge bg-light text-success">Active</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-light text-danger">Inactive</span>
+                    }
+                </span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+                <span class="fw-semibold">Created At:</span>
+                <span>@Model.CreatedAt.ToString("g")</span>
+            </li>
+        </ul>
+
+        <h6 class="text-primary fw-bold">Associated Person</h6>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between">
+                <span class="fw-semibold">Full Name:</span>
+                [cite_start]@* Thử lấy FullName từ Employee, nếu không có thì lấy từ Customer [cite: 2] *@
+                <span>@(Model.Employee?.FullName ?? Model.Customer?.FullName ?? "N/A")</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+                <span class="fw-semibold">Position:</span>
+                <span>@(Model.Employee?.Position ?? "N/A")</span>
+            </li>
+        </ul>
+    </div>
+
+    // Phần Footer của Modal
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <a href="@Url.Action("Edit", "EmployeeManagement", new { id = Model.Username })" class="btn btn-primary edit-details-btn">
+            <i class="material-symbols-rounded">edit</i>&nbsp;Edit
+        </a>
+    </div>
+}
+else
+{
+    // Xử lý trường hợp không tìm thấy tài khoản
+}

@@ -1,55 +1,53 @@
-﻿@model IEnumerable<Hotel_Management.Models.Customer>
-@{
-}
+﻿@model IEnumerable<Hotel_Management.Models.Account>
+
 <div class="table-responsive">
-    <table class="table table-flush" id="customerTable">
+    <table class="table table-flush" id="accounts-table">
         <thead class="thead-light">
             <tr>
-                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">ID</th>
+                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7">Username</th>
                 <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2">Full Name</th>
                 <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2">Email</th>
-                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2">Phone</th>
-                <th class="text-uppercase text-secondary text-xs font-weight-bolder text-center opacity-7">Gender</th>
-                <th class="text-uppercase text-secondary text-xs font-weight-bolder text-center opacity-7">Nationality</th>
+                <th class="text-uppercase text-secondary text-xs font-weight-bolder opacity-7 ps-2">Role</th>
                 <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var customer in Model)
+            @foreach (var account in Model)
             {
                 <tr>
                     <td>
-                        <div class="d-flex px-2 py-1">
-                            <div class="d-flex flex-column justify-content-center">
-                                @* Định dạng lại ID theo yêu cầu #CID + mã *@
-                                <h6 class="mb-0 text-sm">#CID@(customer.CustomerId)</h6>
-                            </div>
-                        </div>
+                        <h6 class="mb-0 text-sm px-2 py-1">@account.Username</h6>
                     </td>
                     <td>
-                        <p class="text-sm font-weight-bold mb-0">@customer.FullName</p>
+                        @* Thử lấy FullName từ Employee, nếu không có thì lấy từ Customer *@
+                        <p class="text-sm font-weight-bold mb-0">@(account.Employee?.FullName ?? account.Customer?.FullName ?? "N/A")</p>
                     </td>
                     <td>
-                        <p class="text-xs mb-0">@customer.Email</p>
+                        <p class="text-xs mb-0">@account.Email</p>
                     </td>
                     <td>
-                        <p class="text-xs mb-0">@customer.Phone</p>
+                        @if (account.Role == "Admin")
+                        {
+                            <span class="badge badge-sm bg-gradient-success">Admin</span>
+                        }
+                        else if (account.Role == "Employee")
+                        {
+                            <span class="badge badge-sm bg-gradient-info">Employee</span>
+                        }
                     </td>
                     <td class="align-middle text-center">
-                        <span class="text-secondary text-xs font-weight-bold">@customer.Gender</span>
-                    </td>
-                    <td class="align-middle text-center">
-                        <span class="text-secondary text-xs font-weight-bold">@customer.Nationality</span>
-                    </td>
-                    <td class="align-middle text-center">
-                        @* Giữ nguyên các nút action *@
-                        <a href="@Url.Action("Details", new { id = customer.CustomerId })" class="text-secondary font-weight-bold text-xs me-2 view-details-btn" data-bs-toggle="modal" data-bs-placement="top" title="View Details" data-bs-target="#detailsModal">
+                        @* Nút View *@
+                        <a href="@Url.Action("Details", "EmployeeManagement", new { username = account.Username })" class="text-secondary font-weight-bold text-xs me-2 view-details-btn" data-bs-toggle="modal" data-bs-placement="top" title="View Details" data-bs-target="#detailsModal">
                             <i class="material-symbols-rounded">visibility</i>
                         </a>
-                        <a href="@Url.Action("Edit", new { id = customer.CustomerId })" class="text-secondary font-weight-bold text-xs me-2 edit-details-btn" data-bs-toggle="modal" data-bs-placement="top" title="Edit" data-bs-target="#detailsModal">
+
+                        @* Nút Edit *@
+                        <a href="@Url.Action("Edit", "EmployeeManagement", new { username = account.Username })" class="text-secondary font-weight-bold text-xs me-2 edit-details-btn" data-bs-toggle="modal" data-bs-placement="top" title="Edit" data-bs-target="#detailsModal"">
                             <i class="material-symbols-rounded">edit</i>
                         </a>
-                        <a href="#" data-id="@customer.CustomerId" data-name="@customer.FullName" class="text-secondary font-weight-bold text-xs delete-button" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete">
+
+                        @* Nút Delete (giữ nguyên href="#" vì logic JS dùng data-id) *@
+                        <a href="#" data-id="@account.Username" data-name="@account.Username" class="text-secondary font-weight-bold text-xs delete-account-btn" title="Delete">
                             <i class="material-symbols-rounded">delete</i>
                         </a>
                     </td>
@@ -58,6 +56,8 @@
         </tbody>
     </table>
 </div>
+
+@* Thêm pagination ở đây nếu bạn cần, logic tương tự _CustomerListPartial.cshtml *@
 <!-- Pagination -->
 <div id="paginationContainer">
     <div class="border-top py-3 px-4">
@@ -73,14 +73,16 @@
                         int pageNum = ViewBag.pageNum ?? 1;//kiểm tra biến tổng số trang để chứa số lượng khách hàng đã lọc
                     }
 
-                    <li class="page-item @(currentPage == 1 ? "disabled" : "")" page="@(currentPage - 1)"> @*nếu current page là 1, ở trang đầu, không thể active được, khi nhấn vào sẽ
+                    <li class="page-item @(currentPage == 1 ? "disabled" : "")" page="@(currentPage - 1)">
+                        @*nếu current page là 1, ở trang đầu, không thể active được, khi nhấn vào sẽ
                                                                                                              truyền giá trị page về cho controller*@
                         <a class="page-link px-3" href="#">Previous</a>
                     </li>
 
                     @for (int i = 1; i <= pageNum; i++)
                     {
-                        <li class="page-item @(i == currentPage ? "active" : "")" page="@i"> @*kiểm tra số thứ tự trang hiện tại có bằng currentpage không, nếu có thì để là active*@
+                        <li class="page-item @(i == currentPage ? "active" : "")" page="@i">
+                            @*kiểm tra số thứ tự trang hiện tại có bằng currentpage không, nếu có thì để là active*@
                             <a class="page-link" href="#">@i</a>
                         </li>
                     }
