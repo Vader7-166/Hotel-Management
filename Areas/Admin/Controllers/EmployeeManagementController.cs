@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Hotel_Management.Models;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Hotel_Management.Models;
+using Hotel_Management.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Hotel_Management.Areas.Admin.Controllers
 {
@@ -40,9 +43,96 @@ namespace Hotel_Management.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public IActionResult AddnewEmployeesAccount()
+        public IActionResult AddNewEmployeeAccount()
         {
-            return View();
+            // Tạo một ViewModel rỗng và truyền nó vào View
+            var model = new AddNewEmployeeViewModel();
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddNewEmployeeAccount(AddNewEmployeeViewModel model)
+        {
+            // 1. Kiểm tra validation từ ViewModel
+            if (ModelState.IsValid)
+            {
+                // 2. Kiểm tra nghiệp vụ (Username/Email có bị trùng không)
+                if (await db.Accounts.AnyAsync(a => a.Username == model.Username))
+                {
+                    ModelState.AddModelError("Username", "This username is already taken.");
+                }
+                if (await db.Accounts.AnyAsync(a => a.Email == model.Email))
+                {
+                    ModelState.AddModelError("Email", "This email is already in use.");
+                }
+
+                // Nếu vẫn còn lỗi sau khi kiểm tra, trả về View
+                if (!ModelState.IsValid)
+                {
+                    return View(model);
+                }
+
+                // 3. Sử dụng Transaction để đảm bảo an toàn
+                using (var transaction = await db.Database.BeginTransactionAsync())
+                {
+                    try
+                    {
+                        // 3a. Tạo và lưu Employee
+                        var newEmployee = new Employee
+                        {
+                            FullName = model.FullName,
+                            Position = model.Position,
+                            Email = model.Email,
+                            CreatedAt = DateTime.Now
+                        };
+                        db.Employees.Add(newEmployee);
+                        await db.SaveChangesAsync();
+
+                        // 3b. Tạo và lưu Account, liên kết với Employee vừa tạo
+                        var newAccount = new Account
+                        {
+                            Username = model.Username,
+                            PasswordHash = HashPassword(model.Password),
+                            Email = model.Email,
+                            Role = model.Role,
+                            EmployeeId = newEmployee.EmployeeId, // Liên kết khóa ngoại
+                            IsActive = true,
+                            CreatedAt = DateTime.Now
+                        };
+                        db.Accounts.Add(newAccount);
+                        await db.SaveChangesAsync();
+
+                        // 3c. Commit transaction
+                        await transaction.CommitAsync();
+
+                        TempData["SuccessMessage"] = "Employee account created successfully!";
+                        return RedirectToAction("EmployeeAccountList");
+                    }
+                    catch (Exception)
+                    {
+                        // 3d. Nếu lỗi, rollback transaction
+                        await transaction.RollbackAsync();
+                        ModelState.AddModelError(string.Empty, "An unexpected error occurred.");
+                    }
+                }
+            }
+
+            // 4. Nếu ModelState không hợp lệ ngay từ đầu, trả về View với các lỗi
+            return View(model);
+        }
+
+        // Hàm HashPassword của bạn
+        private string HashPassword(string password)
+        {
+            using (SHA256 sha = SHA256.Create())
+            {
+                var bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(password));
+                var sb = new StringBuilder();
+                foreach (var b in bytes)
+                    sb.Append(b.ToString("x2"));
+                return sb.ToString();
+            }
         }
 
         [HttpGet]

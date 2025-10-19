@@ -1,0 +1,100 @@
+﻿@model Hotel_Management.ViewModels.AddNewEmployeeViewModel
+@{
+    ViewData["Title"] = "Add New Employee Account";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="card">
+        <div class="card-header">
+            <h5>Add New Employee Account</h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="AddNewEmployeeAccount" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <p class="text-uppercase text-sm">Personal Information</p>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="input-group input-group-outline">
+                            <label asp-for="FullName" class="form-label"></label>
+                            <input asp-for="FullName" class="form-control" />
+                        </div>
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="input-group input-group-outline">
+                            <label asp-for="Position" class="form-label"></label>
+                            <input asp-for="Position" class="form-control" />
+                        </div>
+                        <span asp-validation-for="Position" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <hr class="horizontal dark">
+
+                <p class="text-uppercase text-sm">Account Information</p>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="input-group input-group-outline">
+                            <label asp-for="Username" class="form-label"></label>
+                            <input asp-for="Username" class="form-control" />
+                        </div>
+                        <span asp-validation-for="Username" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="input-group input-group-outline">
+                            <label asp-for="Email" class="form-label"></label>
+                            <input asp-for="Email" class="form-control" />
+                        </div>
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="input-group input-group-outline">
+                            <label asp-for="Password" class="form-label"></label>
+                            <input asp-for="Password" class="form-control" />
+                        </div>
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="input-group input-group-outline">
+                            <label asp-for="ConfirmPassword" class="form-label"></label>
+                            <input asp-for="ConfirmPassword" class="form-control" />
+                        </div>
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="input-group input-group-outline">
+                            <select asp-for="Role" class="form-control">
+                                <option value="" selected disabled>Select Role</option>
+                                <option value="Employee">Employee</option>
+                                <option value="Admin">Admin</option>
+                            </select>
+                        </div>
+                        <span asp-validation-for="Role" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="submit" class="btn bg-gradient-primary m-0">Create Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<form id="antiForgeryForm" class="d-none">@Html.AntiForgeryToken()</form>
+
+@section Styles {
+    <link href="~/css/customer/CustomerList.css" rel="stylesheet">
+}
+@section Script {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @* SỬ DỤNG FILE JS MỚI *@
+    <script src="~/js/admin/AddNewEmployee.js"></script>
+}
