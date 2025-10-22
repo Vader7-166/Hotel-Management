@@ -48,15 +48,26 @@
     });
 
     // THAY ĐỔI 3: Gán sự kiện 'click' cho các nút phân trang trong container mới
+    // Sửa lại logic click phân trang
     $('body').on('click', '.account-table-container .pagination a', function (e) {
-        e.preventDefault();
-        // Logic phân trang giữ nguyên, chỉ đổi selector cha
-        var page = $(this).attr('href').split('pageIndex=')[1];
+        e.preventDefault(); // Ngăn hành vi mặc định của thẻ <a>
+
+        // Tìm thẻ <li> cha gần nhất của thẻ <a> được click
+        var li = $(this).closest('li');
+
+        // Nếu thẻ <li> bị vô hiệu hóa (disabled) hoặc đang active, thì không làm gì cả
+        if (li.hasClass('disabled') || li.hasClass('active')) {
+            return;
+        }
+
+        // Đọc số trang từ thuộc tính 'page' của thẻ <li>
+        var page = li.attr('page');
+
+        // Nếu 'page' tồn tại (luôn luôn là số), gọi hàm loadPage
         if (page) {
             loadPage(parseInt(page));
         }
     });
-
     // THAY ĐỔI 4: Gán sự kiện 'click' cho nút Reset mới
     $('#resetAccountButton').on('click', function () {
         $('#searchAccountInput').val('');
@@ -171,67 +182,76 @@
     });
 
     // Sự kiện hiển thị modal xác nhận xóa
-    $('body').on('click', '.delete-account-btn', function (e) { // Đổi selector nếu bạn dùng class khác
-        e.preventDefault();
+    $('body').on('click', '.delete-account-btn', function (e) {
+        e.preventDefault(); // Ngăn hành vi mặc định của thẻ <a>
 
-        const customerId = $(this).data('id');
-        const customerName = $(this).data('name');
-        const url = `/Admin/Customer/Delete/${customerId}`; // Xây dựng URL cho action POST
+        // Lấy thông tin tài khoản từ thuộc tính data-*
+        const accountId = $(this).data('id'); // Đây là Username
+        const accountName = $(this).data('name');
+        const deleteUrl = `/Admin/EmployeeManagement/Delete/${accountId}`; // Xây dựng URL cho action POST
 
-        const modalContent = $('#detailsModal .modal-content');
+        // Target đến đúng vùng nội dung của modal xác nhận
+        const modalContent = $('#confirmationModal .modal-content');
 
-        // Tạo HTML cho modal xác nhận
+        // Tạo mã HTML cho hộp thoại xác nhận
         const confirmationHtml = `
         <div class="modal-header">
-            <h5 class="modal-title">Confirm Deletion</h5>
+            <h5 class="modal-title" id="confirmationModalLabel">Xác nhận Xóa</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <p>Are you sure you want to delete customer: <strong>${customerName}</strong>?</p>
-            <p class="text-danger">This action cannot be undone.</p>
+            <p>Bạn có chắc muốn xóa tài khoản: <strong>${accountName}</strong>?</p>
+            <p class="text-danger"><small>Hành động này không thể hoàn tác.</small></p>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <form id="deleteConfirmForm" action="${url}" method="post" class="d-inline">
-                <button type="submit" class="btn btn-danger">Delete</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+            
+            <form id="deleteConfirmForm" action="${deleteUrl}" method="post" class="d-inline">
+                <button type="submit" class="btn btn-danger">Xóa Tài Khoản</button>
             </form>
         </div>
     `;
 
-        // Cập nhật và hiển thị modal
+        // Đổ nội dung HTML vào modal và hiển thị modal
         modalContent.html(confirmationHtml);
-        $('#detailsModal').modal('show');
+        $('#confirmationModal').modal('show');
     });
 
-    // Sự kiện submit form xóa
+
+    // === AJAX ĐỂ SUBMIT FORM XÓA ===
+    // Sử dụng event delegation trên modal đã tồn tại ở view chính
     $('#confirmationModal').on('submit', '#deleteConfirmForm', function (e) {
-        e.preventDefault();
+        e.preventDefault(); // Ngăn form submit theo cách thông thường
 
         const form = $(this);
-        const url = form.attr('action');
+        const url = form.attr('action'); // Lấy URL từ thuộc tính action của form
 
-        // Lấy Anti-Forgery Token từ form ẩn và gộp vào dữ liệu gửi đi
+        // Lấy Anti-Forgery Token từ form ẩn trên trang chính
         const antiForgeryToken = $('#antiForgeryForm input[name=__RequestVerificationToken]').val();
-        const formData = form.serialize() + '&__RequestVerificationToken=' + antiForgeryToken;
 
+        // Gửi yêu cầu AJAX POST
         $.ajax({
             type: 'POST',
             url: url,
-            data: formData,
+            // Chỉ cần gửi token, ID đã nằm trong URL rồi
+            data: { __RequestVerificationToken: antiForgeryToken },
             success: function (response) {
-                if (response.success) {
-                    $('#detailsModal').modal('hide');
-                    alert(response.message); // Hoặc dùng Toastr
+                $('#confirmationModal').modal('hide'); // Đóng modal xác nhận
 
-                    // Tải lại bảng dữ liệu ở trang hiện tại
-                    const currentPage = parseInt($('ul.pagination li.active').attr('page')) || 1;
+                if (response.success) {
+                    alert(response.message); // Hiển thị thông báo thành công
+
+                    // Tải lại trang hiện tại của bảng để cập nhật sau khi xóa
+                    const currentPage = parseInt($('.account-table-container .pagination .active').text()) || 1;
                     loadPage(currentPage);
                 } else {
-                    alert(response.message);
+                    alert(response.message); // Hiển thị thông báo lỗi từ controller
                 }
             },
             error: function () {
-                alert('An error occurred while trying to delete.');
+                // Xử lý lỗi mạng hoặc lỗi server
+                alert('Đã có lỗi xảy ra trong quá trình xóa tài khoản.');
+                $('#confirmationModal').modal('hide');
             }
         });
     });

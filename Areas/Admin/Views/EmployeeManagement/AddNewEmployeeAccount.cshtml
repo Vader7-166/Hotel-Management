@@ -30,6 +30,45 @@
                         </div>
                         <span asp-validation-for="Position" class="text-danger"></span>
                     </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="input-group input-group-outline">
+                            <label asp-for="Phone" class="form-label"></label>
+                            <input asp-for="Phone" class="form-control" />
+                        </div>
+                        <span asp-validation-for="Phone" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="input-group input-group-outline">
+                            <label asp-for="Address" class="form-label"></label>
+                            <input asp-for="Address" class="form-control" />
+                        </div>
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="input-group input-group-outline">
+                            <label asp-for="BirthDate" class="form-label"></label>
+                            <input asp-for="BirthDate" type="date" class="form-control" />
+                        </div>
+                        <span asp-validation-for="BirthDate" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="input-group input-group-outline">
+                            <select asp-for="Gender" class="form-control">
+                                <option value="" selected disabled>Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <span asp-validation-for="Gender" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="input-group input-group-outline">
+                            <label asp-for="HireDate" class="form-label"></label>
+                            <input asp-for="HireDate" type="date" class="form-control" />
+                        </div>
+                        <span asp-validation-for="HireDate" class="text-danger"></span>
+                    </div>
                 </div>
 
                 <hr class="horizontal dark">

@@ -84,7 +84,13 @@ namespace Hotel_Management.Areas.Admin.Controllers
                             FullName = model.FullName,
                             Position = model.Position,
                             Email = model.Email,
-                            CreatedAt = DateTime.Now
+                            HireDate = model.HireDate,
+                            CreatedAt = DateTime.Now,
+
+                            Phone = model.Phone,
+                            Address = model.Address,
+                            Gender = model.Gender,
+                            BirthDate = model.BirthDate
                         };
                         db.Employees.Add(newEmployee);
                         await db.SaveChangesAsync();
@@ -99,6 +105,7 @@ namespace Hotel_Management.Areas.Admin.Controllers
                             EmployeeId = newEmployee.EmployeeId, // Liên kết khóa ngoại
                             IsActive = true,
                             CreatedAt = DateTime.Now
+
                         };
                         db.Accounts.Add(newAccount);
                         await db.SaveChangesAsync();
@@ -141,19 +148,19 @@ namespace Hotel_Management.Areas.Admin.Controllers
             // Lấy tên đăng nhập của người dùng hiện tại từ Session
             var loggedInUsername = HttpContext.Session.GetString("Username");
 
-            // Bắt đầu truy vấn với bộ lọc gốc
+            // Bắt đầu truy vấn (Giữ nguyên)
             IQueryable<Account> query = db.Accounts
                                           .Include(a => a.Customer)
                                           .Include(a => a.Employee)
                                           .Where(a => a.Role == "Admin" || a.Role == "Employee");
 
-            // Nếu đã lấy được tên đăng nhập, thêm điều kiện để loại trừ chính tài khoản đó
+            // Lọc loại trừ (Giữ nguyên)
             if (!string.IsNullOrEmpty(loggedInUsername))
             {
                 query = query.Where(a => a.Username != loggedInUsername);
             }
 
-            // --- Các bộ lọc khác giữ nguyên ---
+            // Các bộ lọc (Giữ nguyên)
             if (!string.IsNullOrEmpty(searchQuery))
             {
                 query = query.Where(a => a.Username.Contains(searchQuery) || a.Email.Contains(searchQuery));
@@ -163,14 +170,27 @@ namespace Hotel_Management.Areas.Admin.Controllers
                 query = query.Where(a => a.Role == role);
             }
 
-            // --- Logic phân trang giữ nguyên ---
-            int pageSize = 10;
+            // 1. Đếm tổng số record THỎA MÃN ĐIỀU KIỆN
+            var totalItems = await query.CountAsync();
+
+            // 2. Tính toán số trang
+            int pageSize = 3; // mặc định tối đa 10 record trên 1 page
+            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
+
+            // Đảm bảo luôn là "Page 1 / 1" ngay cả khi không có record nào
+            if (totalPages == 0) totalPages = 1;
+
+            // 3. Đưa thông tin vào ViewBag để View có thể đọc
+            ViewBag.currentPage = pageIndex;
+            ViewBag.pageNum = totalPages;
+
+            // --- KẾT THÚC PHẦN SỬA ĐỔI ---
+
+            // Logic lấy dữ liệu phân trang (Giữ nguyên)
             var pagedResult = await query.OrderBy(a => a.Role).ThenBy(a => a.Username)
                                          .Skip((pageIndex - 1) * pageSize)
                                          .Take(pageSize)
                                          .ToListAsync();
-
-            // ... (Phần ViewBag giữ nguyên) ...
 
             return PartialView("_AccountListPartial", pagedResult);
         }
@@ -179,11 +199,11 @@ namespace Hotel_Management.Areas.Admin.Controllers
         // Action xử lý việc xóa (sẽ được gọi bằng AJAX POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(string username) // <-- Đổi tên ở đây
+        public async Task<IActionResult> Delete(string id) // <-- id ở đây là username
         {
             try
             {
-                var accountToDelete = await db.Accounts.FindAsync(username); //tìm trong Account có dòng nào có giá trị username
+                var accountToDelete = await db.Accounts.FindAsync(id); //tìm trong Account có dòng nào có giá trị username
                                                                              
                 if (accountToDelete == null)
                 {

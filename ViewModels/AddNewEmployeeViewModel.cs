@@ -9,6 +9,15 @@ namespace Hotel_Management.ViewModels
 
         [Required(ErrorMessage = "Position is required.")]
         public string Position { get; set; }
+        public string? Phone { get; set; }
+        public string? Address { get; set; }
+        public string? Gender { get; set; }
+
+        [DataType(DataType.Date)] // Giúp hiển thị đúng kiểu date picker
+        public DateOnly? BirthDate { get; set; }
+
+        [DataType(DataType.Date)] // Giúp hiển thị đúng kiểu date picker
+        public DateOnly? HireDate { get; set; }
 
         // --- Thuộc tính từ lớp Account ---
         [Required(ErrorMessage = "Username is required.")]

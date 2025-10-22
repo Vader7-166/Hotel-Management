@@ -62,7 +62,7 @@
 <div id="paginationContainer">
     <div class="border-top py-3 px-4">
         <div class="d-flex justify-content-between align-items-center">
-            <p class="text-sm mb-0">Showing 1 to 3 of 3 entries</p>
+            <p class="text-sm mb-0">Page <strong>@ViewBag.currentPage</strong> / <strong>@ViewBag.pageNum</strong></p>
             <nav aria-label="Page navigation">
                 <ul class="pagination pagination-sm mb-0">
                     @* <li class="page-item disabled">
@@ -90,9 +90,6 @@
                     <li class="page-item @(currentPage == pageNum ? "disabled" : "")" page="@(currentPage + 1)">
                         <a class="page-link px-3" href="#">Next</a>
                     </li>
-                    @* <li class="page-item">
-                                                <a class="page-link px-3" href="#">Next</a>
-                                            </li> *@
                 </ul>
             </nav>
         </div>
