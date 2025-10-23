@@ -89,7 +89,7 @@ namespace Hotel_Management.Areas.Admin.Controllers
                 TotalBookings = allBookings.Count(),
                 ConfirmedBookings = allBookings.Count(b => b.Status == "Confirmed"),
                 PendingBookings = allBookings.Count(b => b.Status == "Pending"),
-                TodaysCheckIns = allBookings.Count(b => b.CheckInDate == today && b.Status != "Cancelled")
+                TodaysCheckIns = allBookings.Count(b => b.CheckInDate == today && b.Status != "CheckedIn")
             };
 
             return View(viewModel);

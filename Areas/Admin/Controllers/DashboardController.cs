@@ -29,6 +29,16 @@ namespace Hotel_Management.Areas.Admin.Controllers
             viewModel.RevenueToday =(decimal)db.Invoices.Where(i => DateOnly.FromDateTime(i.InvoiceDate) == today && i.PaymentStatus == "Paid").Sum(i => i.TotalAmount);
             // Change to milions VND
             viewModel.RevenueToday /= 1000000;
+            // Calculate profit compared to yesterday
+            var revenueYesterday = (decimal)db.Invoices.Where(i => DateOnly.FromDateTime(i.InvoiceDate) == yesterday && i.PaymentStatus == "Paid").Sum(i => i.TotalAmount);
+            decimal percentDiff = 0;
+            if (viewModel.RevenueToday != 0)
+            {
+                percentDiff = (viewModel.RevenueToday - revenueYesterday) / viewModel.RevenueToday * 100;
+            }
+            viewModel.RevenueCompareToYesterday = percentDiff;
+
+            // Calculate new checkin
             var newCheckInToday = db.Bookings.Count(b => b.CheckInDate == today && b.Status != "Cancelled");
             viewModel.MoreThanYesterday = newCheckInToday;
 

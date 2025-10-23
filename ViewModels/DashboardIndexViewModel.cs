@@ -28,8 +28,9 @@
         public int TotalRoom { get; set; }
         public int CurrentlyRenting { get; set; }
         public int AvailableRooms { get; set; }
-        public decimal RevenueToday { get; set; }
         public int MoreThanYesterday { get; set; }
+        public decimal RevenueToday { get; set; }
+        public decimal RevenueCompareToYesterday { get; set; }
 
         // 2. Data for chart
         public ChartDataViewModel DailyRevenueChart { get; set; }
