@@ -25,10 +25,21 @@
     <!-- CSS Files -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
     <link id="pagestyle" href="~/css/admin/material-dashboard.css?v=3.2.0" rel="stylesheet" />
+    <link href="~/css/admin/hamburger.css" rel="stylesheet"/>
     @RenderSection("Styles", required: false)
 </head>
 
 <body class="g-sidenav-show  bg-gray-100">
+    <!-- Nút Hamburger Menu -->
+    <button class="sidenav-toggler" id="sidenavToggler" type="button">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Overlay khi mở sidebar trên mobile -->
+    <div class="sidenav-overlay" id="sidenavOverlay"></div>
+
     <!-- SideNavbar start -->
     <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-radius-lg fixed-start ms-2  bg-white my-2" id="sidenav-main">
         <div class="sidenav-header">
@@ -176,6 +187,7 @@
         <!-- End main -->
     </main>
     <script src="~/js/admin/bootstrap.bundle.min.js"></script>
+    <script src="~/js/admin/hamburger.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const collapseElement = document.getElementById('customerSubmenu'); // Phần tử DIV (Submenu)
