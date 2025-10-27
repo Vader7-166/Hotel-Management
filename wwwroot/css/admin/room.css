@@ -1,0 +1,80 @@
+﻿.room-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+    .room-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3) !important;
+    }
+
+.btn-group > .btn {
+    border-radius: 0.375rem !important;
+}
+
+    .btn-group > .btn:first-child {
+        margin-left: 0px;
+    }
+
+.bg-success-subtle {
+    background-color: #d1e7dd !important;
+}
+
+.bg-danger-subtle {
+    background-color: #f8d7da !important;
+}
+
+.bg-warning-subtle {
+    background-color: #fff3cd !important;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/* Hiệu ứng highlight khi nhảy đến tầng */
+.highlight-floor {
+    animation: highlightAnimation 2s ease;
+}
+
+@@keyframes highlightAnimation {
+    0% {
+        box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.7);
+    }
+
+    50% {
+        box-shadow: 0 0 20px 10px rgba(13, 110, 253, 0.4);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(13, 110, 253, 0);
+    }
+}
+
+/* Sticky navigation */
+.sticky-top {
+    position: sticky;
+    background: white;
+}
+
+/* Badge position cho số phòng */
+.btn-group .btn {
+    margin: 2px;
+}
+
+.position-relative .badge {
+    font-size: 0.65rem;
+}
+
+/* Responsive cho thanh navigation */
+@@media (max-width: 768px) {
+    .btn-group {
+        width: 100%;
+    }
+
+        .btn-group .btn {
+            font-size: 0.85rem;
+            padding: 0.375rem 0.75rem;
+        }
+}
+
