@@ -5,27 +5,16 @@
     const sidenavOverlay = document.getElementById('sidenavOverlay');
     const iconSidenav = document.getElementById('iconSidenav');
 
-    // Debug
-    console.log('Sidebar elements:', {
-        toggler: sidenavToggler,
-        sidenav: sidenav,
-        overlay: sidenavOverlay,
-        iconClose: iconSidenav
-    });
-
     // Hàm toggle sidebar
     function toggleSidebar(e) {
         e.preventDefault();
         e.stopPropagation();
-        console.log('Toggle sidebar clicked');
         sidenav.classList.toggle('show');
         sidenavOverlay.classList.toggle('show');
-        console.log('Sidebar classes:', sidenav.classList);
     }
 
     // Hàm đóng sidebar
     function closeSidebar() {
-        console.log('Close sidebar');
         sidenav.classList.remove('show');
         sidenavOverlay.classList.remove('show');
     }
@@ -33,9 +22,6 @@
     // Mở/đóng sidebar khi click nút hamburger
     if (sidenavToggler) {
         sidenavToggler.addEventListener('click', toggleSidebar);
-        console.log('Hamburger button listener added');
-    } else {
-        console.error('Hamburger button not found!');
     }
 
     // Đóng sidebar khi click vào overlay

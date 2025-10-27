@@ -1,5 +1,345 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model Hotel_Management.ViewModels.RoomManagementViewModel
 @{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    ViewBag.Title = "Quản Lý Phòng";
 }
+
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h2><i class="bi bi-door-closed"></i> Quản Lý Phòng</h2>
+        </div>
+        <div class="col-md-6 text-end">
+            <button type="button" class="btn btn-primary" onclick="openAddRoomModal()">
+                <i class="bi bi-plus-circle"></i> Thêm Phòng Mới
+            </button>
+        </div>
+    </div>
+
+    <!-- Chú thích trạng thái -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <span class="me-3"><i class="bi bi-circle-fill text-success"></i> Phòng trống</span>
+                    <span class="me-3"><i class="bi bi-circle-fill text-danger"></i> Đã đặt</span>
+                    <span class="me-3"><i class="bi bi-circle-fill text-warning"></i> Bảo trì</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thanh điều hướng nhảy tầng nhanh -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm sticky-top" style="top: 20px; z-index: 100;">
+                <div class="card-body py-3">
+                    <div class="d-flex align-items-center justify-content-between flex-wrap">
+                        <h6 class="mb-0 me-3"><i class="bi bi-signpost-split"></i> Nhảy đến tầng:</h6>
+                        <div class="btn-group flex-wrap" role="group" aria-label="Floor navigation">
+                            @foreach (var floor in Model.Floors.OrderBy(f => f.FloorNumber))
+                            {
+                                var roomCount = floor.Rooms.Count;
+                                var availableCount = floor.Rooms.Count(r => r.Status == "Available");
+                                var occupiedCount = floor.Rooms.Count(r => r.Status == "Occupied");
+
+                                <button type="button"
+                                        class="btn btn-outline-primary position-relative"
+                                        onclick="scrollToFloor(@floor.FloorNumber)">
+                                    <i class="bi bi-building"></i> Tầng @floor.FloorNumber
+                                </button>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Thông tin tổng quan -->
+                    <div class="mt-3 pt-3 border-top">
+                        <div class="row text-center">
+                            <div class="col-md-3 col-6">
+                                <h5 class="text-primary mb-0">@Model.Floors.Sum(f => f.Rooms.Count)</h5>
+                                <small class="text-muted">Tổng phòng</small>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <h5 class="text-success mb-0">@Model.Floors.Sum(f => f.Rooms.Count(r => r.Status == "Available"))</h5>
+                                <small class="text-muted">Phòng trống</small>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <h5 class="text-danger mb-0">@Model.Floors.Sum(f => f.Rooms.Count(r => r.Status == "Occupied"))</h5>
+                                <small class="text-muted">Đã đặt</small>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <h5 class="text-warning mb-0">@Model.Floors.Sum(f => f.Rooms.Count(r => r.Status == "Maintenance"))</h5>
+                                <small class="text-muted">Bảo trì</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Danh sách phòng theo tầng -->
+    @foreach (var floor in Model.Floors)
+    {
+        var availableCount = floor.Rooms.Count(r => r.Status == "Available");
+        var occupiedCount = floor.Rooms.Count(r => r.Status == "Occupied");
+        var maintenanceCount = floor.Rooms.Count(r => r.Status == "Maintenance");
+
+        <div class="card mb-4 floor-section" id="floor-@floor.FloorNumber">
+            <div class="card-header bg-primary text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0"><i class="bi bi-building"></i> Tầng @floor.FloorNumber</h4>
+                    <div>
+                        <span class="badge bg-success me-1">Trống: @availableCount</span>
+                        <span class="badge bg-danger me-1">Đặt: @occupiedCount</span>
+                        @if (maintenanceCount > 0)
+                        {
+                            <span class="badge bg-warning">Bảo trì: @maintenanceCount</span>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    @foreach (var room in floor.Rooms)
+                    {
+                        var statusClass = room.Status == "Available" ? "success" :
+                        room.Status == "Occupied" ? "danger" : "warning";
+                        var iconClass = room.Status == "Available" ? "bi-house-door" :
+                        room.Status == "Occupied" ? "bi-house-door-fill" : "bi-tools";
+
+                        <div class="col-xl-1 col-lg-2 col-md-2 col-sm-3 col-6">
+                            <div class="room-card text-center p-3 border rounded shadow-sm cursor-pointer bg-@statusClass-subtle"
+                                 onclick="viewRoomDetails(@room.RoomId)">
+                                <i class="bi @iconClass fs-1 text-@statusClass"></i>
+                                <div class="mt-2">
+                                    <strong>@room.RoomNumber</strong>
+                                </div>
+                                <small class="text-muted">@room.RoomType.TypeName</small>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Modal Chi Tiết/Chỉnh Sửa Phòng -->
+<div class="modal fade" id="roomModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="roomModalLabel">Chi Tiết Phòng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="roomModalBody">
+                <!-- Nội dung sẽ được load bằng AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Script {
+    <script>
+        // Scroll đến tầng cụ thể
+        function scrollToFloor(floorNumber) {
+            var element = document.getElementById('floor-' + floorNumber);
+            if (element) {
+                var offset = 100; // Khoảng cách từ top (để không bị che bởi thanh navigation)
+                var elementPosition = element.getBoundingClientRect().top;
+                var offsetPosition = elementPosition + window.pageYOffset - offset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+
+                // Hiệu ứng highlight
+                element.classList.add('highlight-floor');
+                setTimeout(function() {
+                    element.classList.remove('highlight-floor');
+                }, 2000);
+            }
+        }
+
+        // Scroll về đầu trang
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        function viewRoomDetails(roomId) {
+            $.ajax({
+                url: '@Url.Action("Details", "Room")/' + roomId,
+                type: 'GET',
+                success: function(data) {
+                    $('#roomModalBody').html(data);
+                    $('#roomModalLabel').text('Chi Tiết Phòng');
+                    var modal = new bootstrap.Modal(document.getElementById('roomModal'));
+                    modal.show();
+                },
+                error: function() {
+                    alert('Không thể tải thông tin phòng!');
+                }
+            });
+        }
+
+        function openAddRoomModal() {
+            $.ajax({
+                url: '@Url.Action("Details", "Room")/0',
+                type: 'GET',
+                success: function(data) {
+                    $('#roomModalBody').html(data);
+                    $('#roomModalLabel').text('Thêm Phòng Mới');
+                    var modal = new bootstrap.Modal(document.getElementById('roomModal'));
+                    modal.show();
+                },
+                error: function() {
+                    alert('Không thể mở form thêm phòng!');
+                }
+            });
+        }
+
+        function saveRoom(isEdit) {
+            var form = $('#roomForm');
+            var url = isEdit ? '@Url.Action("Edit", "Room")' : '@Url.Action("Create", "Room")';
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: form.serialize(),
+                success: function(response) {
+                    if (response.success) {
+                        alert(response.message);
+                        location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function() {
+                    alert('Có lỗi xảy ra!');
+                }
+            });
+        }
+
+        function deleteRoom(roomId) {
+            if (confirm('Bạn có chắc chắn muốn xóa phòng này?')) {
+                $.ajax({
+                    url: '@Url.Action("Delete", "Room")/' + roomId,
+                    type: 'POST',
+                    data: { __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() },
+                    success: function(response) {
+                        if (response.success) {
+                            alert(response.message);
+                            location.reload();
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function() {
+                        alert('Có lỗi xảy ra khi xóa phòng!');
+                    }
+                });
+            }
+        }
+
+        // Highlight tầng đang xem khi scroll
+        $(window).scroll(function() {
+            $('.floor-section').each(function() {
+                var elementTop = $(this).offset().top;
+                var elementBottom = elementTop + $(this).outerHeight();
+                var viewportTop = $(window).scrollTop();
+                var viewportBottom = viewportTop + $(window).height();
+
+                if (elementBottom > viewportTop && elementTop < viewportBottom) {
+                    var floorNumber = $(this).attr('id').replace('floor-', '');
+                    // Có thể thêm logic highlight button tương ứng nếu muốn
+                }
+            });
+        });
+    </script>
+}
+<style>
+    .room-card {
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .room-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3) !important;
+    }
+
+    .btn-group > .btn {
+        border-radius: 0.375rem !important;
+    }
+
+    .btn-group >.btn:first-child {
+        margin-left: 0px;
+    }
+
+    .bg-success-subtle {
+        background-color: #d1e7dd !important;
+    }
+
+    .bg-danger-subtle {
+        background-color: #f8d7da !important;
+    }
+
+    .bg-warning-subtle {
+        background-color: #fff3cd !important;
+    }
+
+    .cursor-pointer {
+        cursor: pointer;
+    }
+
+    /* Hiệu ứng highlight khi nhảy đến tầng */
+    .highlight-floor {
+        animation: highlightAnimation 2s ease;
+    }
+
+    @@keyframes highlightAnimation {
+        0% {
+            box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.7);
+        }
+
+        50% {
+            box-shadow: 0 0 20px 10px rgba(13, 110, 253, 0.4);
+        }
+
+        100% {
+            box-shadow: 0 0 0 0 rgba(13, 110, 253, 0);
+        }
+    }
+
+    /* Sticky navigation */
+    .sticky-top {
+        position: sticky;
+        background: white;
+    }
+
+    /* Badge position cho số phòng */
+    .btn-group .btn {
+        margin: 2px;
+    }
+
+    .position-relative .badge {
+        font-size: 0.65rem;
+    }
+
+    /* Responsive cho thanh navigation */
+    @@media (max-width: 768px) {
+        .btn-group {
+            width: 100%;
+        }
+
+            .btn-group .btn {
+                font-size: 0.85rem;
+                padding: 0.375rem 0.75rem;
+            }
+    }
+</style>

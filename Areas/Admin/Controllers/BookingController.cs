@@ -396,7 +396,7 @@ namespace Hotel_Management.Areas.Admin.Controllers
                     // 1. Tìm booking cần xóa, TẢI KÈM TẤT CẢ DỮ LIỆU CON
                     var bookingToDelete = await db.Bookings
                         .Include(b => b.BookingDetails) // Tải kèm chi tiết booking
-                        .Include(b => b.ServiceUsages)  // QUAN TRỌNG: Tải kèm các dịch vụ đã sử dụng
+                        .Include(b => b.ServiceUsages)  // Tải kèm các dịch vụ đã sử dụng
                         .FirstOrDefaultAsync(b => b.BookingId == id);
 
                     if (bookingToDelete == null)
