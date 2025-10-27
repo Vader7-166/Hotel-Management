@@ -225,7 +225,7 @@ namespace Hotel_Management.Areas.Admin.Controllers
                 }
 
                 db.Customers.Remove(customer);
-                await db.SaveChangesAsync();
+                await db.SaveChangesAsync(); //chú ý có lỗi xảy ra với ràng buộc khóa ngoại
 
                 return Json(new { success = true, message = "Customer has been deleted successfully." });
             }

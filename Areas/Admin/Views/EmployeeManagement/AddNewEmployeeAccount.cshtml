@@ -17,55 +17,63 @@
                 <p class="text-uppercase text-sm">Personal Information</p>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <div class="input-group input-group-outline">
-                            <label asp-for="FullName" class="form-label"></label>
-                            <input asp-for="FullName" class="form-control" />
+                        <div class="form-floating">
+                            @* SỬA: Thêm placeholder và đổi vị trí label *@
+                            <input asp-for="FullName" class="form-control" placeholder="Full Name" />
+                            <label asp-for="FullName"></label>
                         </div>
                         <span asp-validation-for="FullName" class="text-danger"></span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <div class="input-group input-group-outline">
-                            <label asp-for="Position" class="form-label"></label>
-                            <input asp-for="Position" class="form-control" />
+                        <div class="form-floating">
+                            @* SỬA: Thêm placeholder và đổi vị trí label *@
+                            <input asp-for="Position" class="form-control" placeholder="Position" />
+                            <label asp-for="Position"></label>
                         </div>
                         <span asp-validation-for="Position" class="text-danger"></span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <div class="input-group input-group-outline">
-                            <label asp-for="Phone" class="form-label"></label>
-                            <input asp-for="Phone" class="form-control" />
+                        <div class="form-floating">
+                            @* SỬA: Thêm placeholder và đổi vị trí label *@
+                            <input asp-for="Phone" class="form-control" placeholder="Phone" />
+                            <label asp-for="Phone"></label>
                         </div>
                         <span asp-validation-for="Phone" class="text-danger"></span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <div class="input-group input-group-outline">
-                            <label asp-for="Address" class="form-label"></label>
-                            <input asp-for="Address" class="form-control" />
+                        <div class="form-floating">
+                            @* SỬA: Thêm placeholder và đổi vị trí label *@
+                            <input asp-for="Address" class="form-control" placeholder="Address" />
+                            <label asp-for="Address"></label>
                         </div>
                         <span asp-validation-for="Address" class="text-danger"></span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <div class="input-group input-group-outline">
-                            <label asp-for="BirthDate" class="form-label"></label>
+                        <div class="form-floating">
+                            @* SỬA: Đổi vị trí label (input type="date" không cần placeholder) *@
                             <input asp-for="BirthDate" type="date" class="form-control" />
+                            <label asp-for="BirthDate"></label>
                         </div>
                         <span asp-validation-for="BirthDate" class="text-danger"></span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <div class="input-group input-group-outline">
+                        <div class="form-floating">
+                            @* SỬA: Đổi vị trí label *@
                             <select asp-for="Gender" class="form-control">
                                 <option value="" selected disabled>Select Gender</option>
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
                                 <option value="Other">Other</option>
                             </select>
+                            <label asp-for="Gender"></label>
                         </div>
                         <span asp-validation-for="Gender" class="text-danger"></span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <div class="input-group input-group-outline">
-                            <label asp-for="HireDate" class="form-label"></label>
+                        <div class="form-floating">
+                            @* SỬA: Đổi vị trí label *@
                             <input asp-for="HireDate" type="date" class="form-control" />
+                            <label asp-for="HireDate"></label>
                         </div>
                         <span asp-validation-for="HireDate" class="text-danger"></span>
                     </div>
@@ -76,44 +84,50 @@
                 <p class="text-uppercase text-sm">Account Information</p>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <div class="input-group input-group-outline">
-                            <label asp-for="Username" class="form-label"></label>
-                            <input asp-for="Username" class="form-control" />
+                        <div class="form-floating">
+                            @* SỬA: Thêm placeholder và đổi vị trí label *@
+                            <input asp-for="Username" class="form-control" placeholder="Username" />
+                            <label asp-for="Username"></label>
                         </div>
                         <span asp-validation-for="Username" class="text-danger"></span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <div class="input-group input-group-outline">
-                            <label asp-for="Email" class="form-label"></label>
-                            <input asp-for="Email" class="form-control" />
+                        <div class="form-floating">
+                            @* SỬA: Thêm placeholder và đổi vị trí label *@
+                            <input asp-for="Email" class="form-control" placeholder="Email" />
+                            <label asp-for="Email"></label>
                         </div>
                         <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <div class="input-group input-group-outline">
-                            <label asp-for="Password" class="form-label"></label>
-                            <input asp-for="Password" class="form-control" />
+                        <div class="form-floating">
+                            @* SỬA: Thêm placeholder và đổi vị trí label *@
+                            <input asp-for="Password" class="form-control" placeholder="Password" />
+                            <label asp-for="Password"></label>
                         </div>
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <div class="input-group input-group-outline">
-                            <label asp-for="ConfirmPassword" class="form-label"></label>
-                            <input asp-for="ConfirmPassword" class="form-control" />
+                        <div class="form-floating">
+                            @* SỬA: Thêm placeholder và đổi vị trí label *@
+                            <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm Password" />
+                            <label asp-for="ConfirmPassword"></label>
                         </div>
                         <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <div class="input-group input-group-outline">
+                        <div class="form-floating">
+                            @* SỬA: Đổi vị trí label *@
                             <select asp-for="Role" class="form-control">
                                 <option value="" selected disabled>Select Role</option>
                                 <option value="Employee">Employee</option>
                                 <option value="Admin">Admin</option>
                             </select>
+                            <label asp-for="Role"></label>
                         </div>
                         <span asp-validation-for="Role" class="text-danger"></span>
                     </div>
@@ -127,13 +141,34 @@
     </div>
 </div>
 
-<form id="antiForgeryForm" class="d-none">@Html.AntiForgeryToken()</form>
-
 @section Styles {
+    @* Bạn có thể giữ hoặc xóa file CSS này. 
+       Nếu giữ, nó có thể ảnh hưởng giao diện `form-floating` của bạn *@
     <link href="~/css/customer/CustomerList.css" rel="stylesheet">
+    <style>
+        :root {
+            --custom-form-padding-left: 1rem;
+        }
+
+        .form-floating input.form-control {
+            padding-left: var(--custom-form-padding-left);
+        }
+
+        .form-floating select.form-control {
+            padding-left: var(--custom-form-padding-left);
+        }
+
+        .form-floating > label {
+            padding-left: var(--custom-form-padding-left);
+        }
+    </style>
 }
 @section Script {
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    @* SỬ DỤNG FILE JS MỚI *@
-    <script src="~/js/admin/AddNewEmployee.js"></script>
+    @* <script src="~/js/admin/AddNewEmployee.js"></script> *@
+
+    @{
+        @* Thêm các script validation (cần thiết cho asp-validation-for) *@
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

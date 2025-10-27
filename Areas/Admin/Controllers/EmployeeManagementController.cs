@@ -174,7 +174,7 @@ namespace Hotel_Management.Areas.Admin.Controllers
             var totalItems = await query.CountAsync();
 
             // 2. Tính toán số trang
-            int pageSize = 3; // mặc định tối đa 10 record trên 1 page
+            int pageSize = 1; // mặc định tối đa 10 record trên 1 page
             var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
 
             // Đảm bảo luôn là "Page 1 / 1" ngay cả khi không có record nào
@@ -184,7 +184,6 @@ namespace Hotel_Management.Areas.Admin.Controllers
             ViewBag.currentPage = pageIndex;
             ViewBag.pageNum = totalPages;
 
-            // --- KẾT THÚC PHẦN SỬA ĐỔI ---
 
             // Logic lấy dữ liệu phân trang (Giữ nguyên)
             var pagedResult = await query.OrderBy(a => a.Role).ThenBy(a => a.Username)

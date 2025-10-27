@@ -1,0 +1,278 @@
+﻿@* @model Hotel_Management.Models.Account
+@{
+    ViewData["Title"] = "My Profile";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@section Styles {
+    <style>
+        .profile-group {
+            margin-bottom: 1.5rem;
+        }
+        .profile-label {
+            font-size: 0.8rem;     
+            font-weight: 600;         
+            color: #6c757d;         
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+        }
+        .profile-value {
+            font-size: 1rem;          
+            font-weight: 500;
+            color: #344767;           
+        }
+    </style>
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="m-0">Profile Details</h5>
+
+                    <a asp-action="EditAdminProfile" asp-controller="AdminProfile" class="btn btn-sm bg-gradient-primary m-0">
+                        <i class="material-symbols-rounded opacity-10" style="font-size: 1rem; vertical-align: text-bottom;">edit</i>
+                        Edit Profile
+                    </a>
+                </div>
+                <div class="card-body">
+
+                    @if (Model.Employee != null)
+                    {
+                        <p class="text-uppercase text-sm">Personal Information</p>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="profile-group">
+                                    <div class="profile-label">Full Name</div>
+                                    <div class="profile-value">@Model.Employee.FullName</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="profile-group">
+                                    <div class="profile-label">Position</div>
+                                    <div class="profile-value">@Model.Employee.Position</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="profile-group">
+                                    <div class="profile-label">Phone Number</div>
+                                    <div class="profile-value">@(Model.Employee.Phone ?? "N/A")</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="profile-group">
+                                    <div class="profile-label">Address</div>
+                                    <div class="profile-value">@(Model.Employee.Address ?? "N/A")</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="profile-group">
+                                    <div class="profile-label">Gender</div>
+                                    <div class="profile-value">@(Model.Employee.Gender ?? "N/A")</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="profile-group">
+                                    <div class="profile-label">Birth Date</div>
+                                    <div class="profile-value">@(Model.Employee.BirthDate?.ToString("dd/MM/yyyy") ?? "N/A")</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="profile-group">
+                                    <div class="profile-label">Hire Date</div>
+                                    <div class="profile-value">@(Model.Employee.HireDate?.ToString("dd/MM/yyyy") ?? "N/A")</div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-light text-dark" role="alert">
+                            No personal employee details are linked to this admin account.
+                        </div>
+                    }
+
+                    <hr class="horizontal dark mt-3 mb-4">
+
+                    <p class="text-uppercase text-sm">Account Information</p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="profile-group">
+                                <div class="profile-label">Username</div>
+                                <div class="profile-value">@Model.Username</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="profile-group">
+                                <div class="profile-label">Email</div>
+                                <div class="profile-value">@Model.Email</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="profile-group">
+                                <div class="profile-label">Account Created</div>
+                                <div class="profile-value">@Model.CreatedAt.ToString("g")</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="profile-group">
+                                <div class="profile-label">Last Updated</div>
+                                <div class="profile-value">@(Model.UpdatedAt?.ToString("g") ?? "Never")</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div> <div class="col-lg-4 mt-4 mt-lg-0">
+            <div class="card">
+                <div class="card-body text-center">
+                    <span class="avatar avatar-xxl rounded-circle mb-3">
+                        <i class="material-symbols-rounded" style="font-size: 4rem;">admin_panel_settings</i>
+                    </span>
+                    <h5 class="mb-0">@Model.Employee?.FullName</h5>
+                    <p class="text-muted">@Model.Username</p>
+
+                    <span class="badge badge-lg bg-gradient-success">@Model.Role</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>  *@
+
+@model Hotel_Management.Models.Account
+@{
+    ViewData["Title"] = "My Profile";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@section Styles {
+    <style>
+        .profile-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #6c757d;
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-value {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #344767;
+        }
+    </style>
+}
+
+<div class="container-fluid py-4">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="m-0">Profile Details</h5>
+
+                    <a asp-action="EditAdminProfile" asp-controller="AdminProfile" class="btn btn-sm bg-gradient-primary m-0">
+                        <i class="material-symbols-rounded opacity-10" style="font-size: 1rem; vertical-align: text-bottom;">edit</i>
+                        Edit Profile
+                    </a>
+                </div>
+                <div class="card-body">
+
+                    @if (Model.Employee != null)
+                    {
+                        <p class="text-uppercase text-sm">Personal Information</p>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="profile-group">
+                                    <div class="profile-label">Full Name</div>
+                                    <div class="profile-value">@Model.Employee.FullName</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="profile-group">
+                                    <div class="profile-label">Position</div>
+                                    <div class="profile-value">@Model.Employee.Position</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="profile-group">
+                                    <div class="profile-label">Phone Number</div>
+                                    <div class="profile-value">@(Model.Employee.Phone ?? "N/A")</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="profile-group">
+                                    <div class="profile-label">Address</div>
+                                    <div class="profile-value">@(Model.Employee.Address ?? "N/A")</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="profile-group">
+                                    <div class="profile-label">Gender</div>
+                                    <div class="profile-value">@(Model.Employee.Gender ?? "N/A")</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="profile-group">
+                                    <div class="profile-label">Birth Date</div>
+                                    <div class="profile-value">@(Model.Employee.BirthDate?.ToString("dd/MM/yyyy") ?? "N/A")</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="profile-group">
+                                    <div class="profile-label">Hire Date</div>
+                                    <div class="profile-value">@(Model.Employee.HireDate?.ToString("dd/MM/yyyy") ?? "N/A")</div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-light text-dark" role="alert">
+                            No personal employee details are linked to this admin account.
+                        </div>
+                    }
+
+                    <hr class="horizontal dark mt-3 mb-4">
+
+                    <p class="text-uppercase text-sm">Account Information</p>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="profile-group">
+                                <div class="profile-label">Username</div>
+                                <div class="profile-value">@Model.Username</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="profile-group">
+                                <div class="profile-label">Email</div>
+                                <div class="profile-value">@Model.Email</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="profile-group">
+                                <div class="profile-label">Account Created</div>
+                                <div class="profile-value">@Model.CreatedAt.ToString("g")</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="profile-group">
+                                <div class="profile-label">Last Updated</div>
+                                <div class="profile-value">@(Model.UpdatedAt?.ToString("g") ?? "Never")</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
