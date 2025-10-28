@@ -6,7 +6,7 @@
         $('.input-group .form-control').each(function () {
             const input = $(this);
             const inputGroup = input.closest('.input-group');
-            if (input.val() && input.val().trim() !== '') {
+            if ((input.val() && input.val().trim() !== '') || input.is('[type=date]')) {
                 inputGroup.addClass('is-filled');
             } else {
                 inputGroup.removeClass('is-filled');
@@ -15,15 +15,12 @@
     }
 
     // Gắn sự kiện vào 'body' để nó hoạt động với cả các element được tạo sau này bằng AJAX
-    $('body').on('focus', '.input-group .form-control', function () {
-        $(this).closest('.input-group').addClass('is-focused');
-    });
-
     $('body').on('blur', '.input-group .form-control', function () {
         const input = $(this);
         const inputGroup = input.closest('.input-group');
         inputGroup.removeClass('is-focused');
-        if (input.val() && input.val().trim() !== '') {
+
+        if ((input.val() && input.val().trim() !== '') || input.is('[type=date]')) {
             inputGroup.addClass('is-filled');
         } else {
             inputGroup.removeClass('is-filled');

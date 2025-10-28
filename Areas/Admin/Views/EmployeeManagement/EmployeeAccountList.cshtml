@@ -76,6 +76,7 @@
 <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
     <div class="modal-dialog"><div class="modal-content"></div></div>
 </div>
+
 <form id="antiForgeryForm" class="d-none">@Html.AntiForgeryToken()</form>
 
 @section Styles {
@@ -84,5 +85,5 @@
 @section Script {
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     @* SỬ DỤNG FILE JS MỚI *@
-    <script src="~/js/admin/EmployeeAccountList.js"></script>
+    <script src="~/js/admin/EmployeeAccountList.js" asp-append-version="true"></script>
 }

@@ -1,0 +1,140 @@
+﻿@model Hotel_Management.Models.Account
+@{
+    ViewData["Title"] = "Edit Profile";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="container-fluid py-4">
+    <div class="card">
+        <div class="card-header">
+            <h5>Edit Profile</h5>
+        </div>
+        <div class="card-body">
+            @if (Model.Employee == null)
+            {
+                <div class="alert alert-danger" role="alert">
+                    <strong>Lỗi:</strong> Tài khoản này không được liên kết với
+                    hồ sơ nhân viên (Employee) nên không thể chỉnh sửa.
+                </div>
+            }
+            else
+            {
+                <form asp-action="EditAdminProfile" method="post" id="editProfileForm">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <input type="hidden" asp-for="Username" />
+                    <input type="hidden" asp-for="EmployeeId" />
+                    <input type="hidden" asp-for="Employee.EmployeeId" />
+
+                    <input type="hidden" asp-for="Employee.Position" />
+                    <input type="hidden" asp-for="Employee.Salary" />
+                    <input type="hidden" asp-for="Employee.HireDate" />
+
+
+                    <p class="text-uppercase text-sm">Account Information</p>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input asp-for="Username" class="form-control" placeholder="Username" readonly />
+                                <label asp-for="Username"></label>
+                            </div>
+                            <span asp-validation-for="Username" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input asp-for="Email" class="form-control" placeholder="Email" />
+                                <label asp-for="Email"></label>
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <hr class="horizontal dark">
+
+                    <p class="text-uppercase text-sm">Personal Information</p>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input asp-for="Employee.FullName" class="form-control" placeholder="Full Name" />
+                                <label asp-for="Employee.FullName"></label>
+                            </div>
+                            <span asp-validation-for="Employee.FullName" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input asp-for="Employee.Phone" class="form-control" placeholder="Phone" />
+                                <label asp-for="Employee.Phone"></label>
+                            </div>
+                            <span asp-validation-for="Employee.Phone" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input asp-for="Employee.Address" class="form-control" placeholder="Address" />
+                                <label asp-for="Employee.Address"></label>
+                            </div>
+                            <span asp-validation-for="Employee.Address" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <select asp-for="Employee.Gender" class="form-control">
+                                    <option value="">Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <label asp-for="Employee.Gender"></label>
+                            </div>
+                            <span asp-validation-for="Employee.Gender" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input asp-for="Employee.BirthDate" type="date" class="form-control" />
+                                <label asp-for="Employee.BirthDate"></label>
+                            </div>
+                            <span asp-validation-for="Employee.BirthDate" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end mt-4">
+                        <a class="btn btn-outline-secondary m-0 me-2">Cancel</a>
+                        <button type="submit" class="btn bg-gradient-primary m-0">Save Changes</button>
+                    </div>
+                </form>
+            }
+        </div>
+    </div>
+</div>
+
+<form id="antiForgeryForm" class="d-none">@Html.AntiForgeryToken()</form>
+
+@section Styles {
+    <link href="~/css/customer/CustomerList.css" rel="stylesheet">
+    <style>
+        :root {
+            --custom-form-padding-left: 1rem;
+        }
+
+        .form-floating input.form-control {
+            padding-left: var(--custom-form-padding-left);
+        }
+
+        .form-floating select.form-control {
+            padding-left: var(--custom-form-padding-left);
+        }
+
+        .form-floating > label {
+            padding-left: var(--custom-form-padding-left);
+        }
+    </style>
+}
+
+
+@section Script {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @{
+        // Bật script validation (rất quan trọng)
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    @* <script src="~/js/admin/AdminProfileEdit.js"></script> *@
+}

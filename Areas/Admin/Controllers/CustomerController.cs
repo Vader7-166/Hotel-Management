@@ -87,9 +87,6 @@ namespace Hotel_Management.Areas.Admin.Controllers
             return PartialView("_CustomerListPartial", result);
         }
 
-        // =============================================================
-        // CÁC ACTION CỦA BẠN ĐÃ ĐƯỢC GIỮ LẠI BÊN DƯỚI
-        // =============================================================
 
         public IActionResult Index()
         {
@@ -164,7 +161,7 @@ namespace Hotel_Management.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken] // Rất quan trọng để chống tấn công CSRF
+        [ValidateAntiForgeryToken] 
         public async Task<IActionResult> Edit(int id, GlobalCustomer customerViewModel)
         {
             //logic thay đối dữ liệu
@@ -216,23 +213,85 @@ namespace Hotel_Management.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
-            try
+            // 1. Bắt đầu Giao dịch (Transaction) để đảm bảo an toàn "Tất cả hoặc không có gì"
+            using (var transaction = await db.Database.BeginTransactionAsync())
             {
-                var customer = await db.Customers.FindAsync(id);
-                if (customer == null)
+                try
                 {
-                    return Json(new { success = false, message = "Customer not found." });
+                    // 2. Tải Customer (Cha) VÀ TẤT CẢ các bảng "con", "cháu" liên quan
+                    var customerToDelete = await db.Customers
+                        .Include(c => c.Accounts) // Tải Accounts (Con)
+                        .Include(c => c.Bookings) // Tải Bookings (Con)
+                            .ThenInclude(b => b.BookingDetails) // Tải BookingDetails (Cháu)
+                                .ThenInclude(bd => bd.Room) // Tải Room (để cập nhật status)
+                        .Include(c => c.Bookings)
+                            .ThenInclude(b => b.ServiceUsages) // Tải ServiceUsage (Cháu)
+                        .Include(c => c.Bookings)
+                            .ThenInclude(b => b.Invoice) // Tải Invoices (Cháu)
+                        .FirstOrDefaultAsync(c => c.CustomerId == id);
+
+                    if (customerToDelete == null)
+                    {
+                        await transaction.RollbackAsync();
+                        return Json(new { success = false, message = "Customer not found." });
+                    }
+
+                    // 3. Xóa "từ dưới lên" (Cháu -> Con -> Cha)
+
+                    // 3a. Xóa tất cả "Cháu" (ServiceUsages, Invoices, BookingDetails)
+                    foreach (var booking in customerToDelete.Bookings)
+                    {
+                        // Xóa Dịch vụ đã dùng
+                        if (booking.ServiceUsages != null && booking.ServiceUsages.Any())
+                            db.ServiceUsages.RemoveRange(booking.ServiceUsages);
+
+                        // Xóa Hóa đơn
+                        if (booking.Invoice != null)
+                            db.Invoices.Remove(booking.Invoice);
+
+                        // Xóa Chi tiết Đặt phòng (VÀ cập nhật trạng thái phòng)
+                        if (booking.BookingDetails != null && booking.BookingDetails.Any())
+                        {
+                            foreach (var detail in booking.BookingDetails)
+                            {
+                                // Logic nghiệp vụ: Cập nhật lại phòng thành "Available"
+                                if (detail.Room != null)
+                                {
+                                    detail.Room.Status = "Available"; // Giả định "Available" là tên trạng thái
+                                }
+                            }
+                            db.BookingDetails.RemoveRange(booking.BookingDetails);
+                        }
+                    }
+
+                    // 3b. Xóa "Con" (Bookings, Accounts)
+                    if (customerToDelete.Bookings != null && customerToDelete.Bookings.Any())
+                        db.Bookings.RemoveRange(customerToDelete.Bookings);
+
+                    if (customerToDelete.Accounts != null && customerToDelete.Accounts.Any())
+                        db.Accounts.RemoveRange(customerToDelete.Accounts);
+
+                    // 3c. Xóa "Cha" (Customer)
+                    db.Customers.Remove(customerToDelete);
+
+                    // 4. Lưu tất cả thay đổi vào CSDL
+                    await db.SaveChangesAsync();
+
+                    // 5. Hoàn tất giao dịch (Commit)
+                    await transaction.CommitAsync();
+
+                    return Json(new { success = true, message = "Customer and all related data have been permanently deleted." });
                 }
+                catch (Exception ex)
+                {
+                    // 6. Nếu có bất kỳ lỗi nào, hủy bỏ mọi thay đổi
+                    await transaction.RollbackAsync();
 
-                db.Customers.Remove(customer);
-                await db.SaveChangesAsync();
+                    // Ghi log lỗi (rất quan trọng để debug)
+                    // Log.Error(ex, "Error deleting customer " + id); 
 
-                return Json(new { success = true, message = "Customer has been deleted successfully." });
-            }
-            catch (Exception ex)
-            {
-                // Ghi log lỗi (nếu cần)
-                return Json(new { success = false, message = "An error occurred while deleting." });
+                    return Json(new { success = false, message = "An error occurred. The operation has been rolled back. Error: " + ex.Message });
+                }
             }
         }
     }
