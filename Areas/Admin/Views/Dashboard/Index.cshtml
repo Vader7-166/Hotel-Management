@@ -1,6 +1,8 @@
-﻿@model Hotel_Management.ViewModels.DashboardIndexViewModel
-@using System.Text.Json
+﻿@model DashboardIndexViewModel
 @using System.Globalization
+@using System.Text.Json
+@using Hotel_Management.Models
+@using Hotel_Management.ViewModels
 @{
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
     ViewBag.Title = "Dashboard";
@@ -83,7 +85,9 @@
                         <div>
                             <p class="text-muted text-sm mb-1">Today revenue</p>
                             <h4 class="mb-0 fw-bold">@($"{Model.RevenueToday.ToString("0.0", CultureInfo.InvariantCulture)}M")</h4>
-                            <small class="text-success fw-bold">+12.5%</small>
+                            <small class="fw-bold @(Model.RevenueCompareToYesterday >= 0 ? "text-success" : "text-danger")">
+                                @(Model.RevenueCompareToYesterday >= 0 ? "+" : "-")@Math.Abs(Model.RevenueCompareToYesterday)%
+                            </small>
                         </div>
                         <div class="icon-box bg-gradient-red text-white"><span class="material-symbols-rounded">payments</span></div>
                     </div>
