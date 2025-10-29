@@ -33,7 +33,7 @@
                             <small class="text-muted">Đã đặt</small>
                         </div>
                         <div class="col-md-3 col-6">
-                            <h5 class="text-warning mb-0">@Model.Floors.Sum(f => f.Rooms.Count(r => r.Status == "Maintenance"))</h5>
+                            <h5 class="text-warning mb-0">@Model.Floors.Sum(f => f.Rooms.Count(r => r.Status == "Maintained"))</h5>
                             <small class="text-muted">Bảo trì</small>
                         </div>
                     </div>
@@ -47,7 +47,7 @@
 {
     var availableCount = floor.Rooms.Count(r => r.Status == "Available");
     var occupiedCount = floor.Rooms.Count(r => r.Status == "Occupied");
-    var maintenanceCount = floor.Rooms.Count(r => r.Status == "Maintenance");
+    var MaintainedCount = floor.Rooms.Count(r => r.Status == "Maintained");
 
     <div class="card mb-4 floor-section" id="floor-@floor.FloorNumber">
         <div class="card-header bg-primary text-white">
@@ -56,9 +56,9 @@
                 <div>
                     <span class="badge bg-success me-1">Trống: @availableCount</span>
                     <span class="badge bg-danger me-1">Đặt: @occupiedCount</span>
-                    @if (maintenanceCount > 0)
+                    @if (MaintainedCount > 0)
                     {
-                        <span class="badge bg-warning">Bảo trì: @maintenanceCount</span>
+                        <span class="badge bg-warning">Bảo trì: @MaintainedCount</span>
                     }
                 </div>
             </div>
