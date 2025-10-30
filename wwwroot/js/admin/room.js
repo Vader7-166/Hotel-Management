@@ -26,6 +26,7 @@ function scrollToTop() {
     });
 }
 
+// Ajax Room Details
 function viewRoomDetails(roomId) {
     $.ajax({
         url: `/Admin/Room/Details?id=${roomId}`,
@@ -42,6 +43,7 @@ function viewRoomDetails(roomId) {
     });
 }
 
+// Ajax Create Room
 function openAddRoomModal() {
     $.ajax({
         url: `/Admin/Room/Create`,
@@ -58,6 +60,7 @@ function openAddRoomModal() {
     });
 }
 
+// Ajax save room
 function saveRoom(isEdit) {
     console.log('Hàm saveRoom đã được gọi! Đang chỉnh sửa: ' + isEdit);
     var form = $('#roomForm');
@@ -87,6 +90,7 @@ function saveRoom(isEdit) {
     });
 }
 
+// Ajax delete room
 function deleteRoom(roomId) {
     if (confirm('Bạn có chắc chắn muốn xóa phòng này?')) {
         $.ajax({
@@ -109,32 +113,16 @@ function deleteRoom(roomId) {
     }
 }
 
-// Highlight tầng đang xem khi scroll
-$(window).scroll(function () {
-    $('.floor-section').each(function () {
-        var elementTop = $(this).offset().top;
-        var elementBottom = elementTop + $(this).outerHeight();
-        var viewportTop = $(window).scrollTop();
-        var viewportBottom = viewportTop + $(window).height();
-
-        if (elementBottom > viewportTop && elementTop < viewportBottom) {
-            var floorNumber = $(this).attr('id').replace('floor-', '');
-        }
-    });
-});
-// Hàm này dùng để tải lại nội dung bảng
+// Reload room table without reload a whole page
 function loadRoomLayout() {
     console.log("Đang tải lại bảng phòng...");
 
-    // Giả sử trang Index.cshtml của bạn có một <div> với ID này
-    // để chứa bảng
-    var container = $("#room-layout-container");
 
+    var container = $("#room-layout-container");
     $.ajax({
-        url: '/Admin/Room/_GetRoomLayout', // Đường dẫn tới Action mới
+        url: '/Admin/Room/_GetRoomLayout',
         type: 'GET',
         success: function (tableHtml) {
-            // Thay thế HTML cũ của bảng bằng HTML mới
             container.html(tableHtml);
         },
         error: function () {

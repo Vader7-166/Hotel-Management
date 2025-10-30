@@ -38,29 +38,25 @@ namespace Hotel_Management.Areas.Admin.Controllers
             return View(viewModel);
         }
         // Hàm này để nạp lại danh sách loại phòng cho dropdown
-        // (Dùng khi validation thất bại)
         private async Task PopulateRoomTypes(RoomDetailViewModel viewModel)
         {
             viewModel.AvailableRoomTypes = await db.RoomTypes
-                                             .OrderBy(rt => rt.TypeName)
-                                             .Select(rt => new SelectListItem
-                                             {
-                                                 Value = rt.RoomTypeId.ToString(),
-                                                 Text = rt.TypeName
-                                             })
-                                             .ToListAsync();
+                                        .Select(rt => new SelectListItem
+                                        {
+                                            Value = rt.RoomTypeId.ToString(),
+                                            Text = $"{rt.TypeName} ({rt.Rooms.Count(r => r.Status == "Available")} available)"
+                                        }).ToListAsync();
         }
+
         [HttpGet]
-        public IActionResult Details(int id)
+        public async  Task<IActionResult> Details(int id)
         {
             var availableRoomTypesList = db.RoomTypes
-                                           .OrderBy(rt => rt.TypeName)
                                            .Select(rt => new SelectListItem
                                            {
                                                Value = rt.RoomTypeId.ToString(),
-                                               Text = rt.TypeName
-                                           })
-                                           .ToList();
+                                               Text = $"{rt.TypeName} ({rt.Rooms.Count(r => r.Status == "Available")} available)"
+                                           }).ToList();
 
             RoomDetailViewModel viewModel;
 
@@ -82,6 +78,28 @@ namespace Hotel_Management.Areas.Admin.Controllers
                     Floor = room.Floor ?? 1,
                     Note = room.Note ?? ""
                 };
+                // 2. Tìm thông tin booking nếu phòng không có sẵn
+                if (room.Status == "Occupied" || room.Status == "CheckedIn" || room.Status == "Reserved")
+                {
+                    var today = DateOnly.FromDateTime(DateTime.Now);
+
+                    // Tìm booking đang hoạt động hoặc sắp tới của phòng này
+                    var activeBooking = await db.BookingDetails
+                        .Include(bd => bd.Booking.Customer) // JOIN đến Bảng Customer
+                        .Where(bd => bd.RoomId == id &&
+                                     (bd.Booking.Status == "CheckedIn" || bd.Booking.Status == "Confirmed") &&
+                                     bd.Booking.CheckOutDate >= today)
+                        .OrderBy(bd => bd.Booking.CheckInDate) // Lấy booking sớm nhất
+                        .FirstOrDefaultAsync();
+
+                    // 3. Nếu tìm thấy, gán thông tin vào ViewModel
+                    if (activeBooking != null)
+                    {
+                        viewModel.CustomerName = activeBooking.Booking.Customer.FullName;
+                        viewModel.CheckInDate = activeBooking.Booking.CheckInDate;
+                        viewModel.CheckOutDate = activeBooking.Booking.CheckOutDate;
+                    }
+                }
             }
             else // Trường hợp Tạo mới (Create)
             {
@@ -95,7 +113,7 @@ namespace Hotel_Management.Areas.Admin.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(RoomDetailViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 await PopulateRoomTypes(model);
                 return PartialView("_RoomDetail", model);
@@ -170,7 +188,7 @@ namespace Hotel_Management.Areas.Admin.Controllers
                 }
 
                 var isBooked = await db.BookingDetails
-                    .AnyAsync(bd => bd.RoomId == id && bd.Booking.Status == "Active");
+                    .AnyAsync(bd => bd.RoomId == id && bd.Booking.Status == "CheckedIn");
                 if (isBooked)
                 {
                     return Json(new { success = false, message = "Không thể xóa phòng đang có khách!" });
