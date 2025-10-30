@@ -143,7 +143,7 @@ namespace Hotel_Management.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> AccountTableAndPagination(int pageIndex = 1, string searchQuery = "", string role = "")
+        public async Task<IActionResult> AccountTableAndPagination(int pageIndex = 1, string searchQuery = "", string role = "", string position = "" )
         {
             // Lấy tên đăng nhập của người dùng hiện tại từ Session
             var loggedInUsername = HttpContext.Session.GetString("Username");
@@ -168,6 +168,11 @@ namespace Hotel_Management.Areas.Admin.Controllers
             if (!string.IsNullOrEmpty(role))
             {
                 query = query.Where(a => a.Role == role);
+            }
+            if (!string.IsNullOrEmpty(position))
+            {
+                // Lọc dựa trên cột Position trong bảng Employee liên quan
+                query = query.Where(a => a.Employee.Position == position);
             }
 
             // 1. Đếm tổng số record THỎA MÃN ĐIỀU KIỆN
@@ -283,6 +288,31 @@ namespace Hotel_Management.Areas.Admin.Controllers
             }
 
             return PartialView("_AccountEditPartial", accountViewModel);
+        }
+
+        //lấy ra các role dựa trên kết quả đã lọc, ban đầu sẽ là null
+        [HttpGet]
+        public async Task<IActionResult> GetPositionsByRole(string role)
+        {
+            // Bắt đầu truy vấn từ bảng Accounts, tải kèm Employee
+            IQueryable<Account> query = db.Accounts.Include(a => a.Employee);
+
+            // 1. Nếu một role cụ thể được chọn (Admin hoặc Employee)
+            if (!string.IsNullOrEmpty(role))
+            {
+                query = query.Where(a => a.Role == role);
+            }
+
+            // 2. Từ kết quả đã lọc, lấy ra các Vị trí (Position)
+            var positions = await query
+                .Where(a => a.Employee != null && !string.IsNullOrEmpty(a.Employee.Position)) // Lọc bỏ các Employee rỗng
+                .Select(a => a.Employee.Position) // Chỉ chọn cột Position
+                .Distinct() // Lấy các giá trị duy nhất
+                .OrderBy(p => p) // Sắp xếp theo ABC
+                .ToListAsync();
+
+            // 3. Trả về danh sách dưới dạng JSON
+            return Json(positions);
         }
     }
 }

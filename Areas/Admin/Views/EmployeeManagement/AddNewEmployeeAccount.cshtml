@@ -26,8 +26,25 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <div class="form-floating">
-                            @* SỬA: Thêm placeholder và đổi vị trí label *@
-                            <input asp-for="Position" class="form-control" placeholder="Position" />
+                            <select asp-for="Position" class="form-select">
+                                <option value="" selected disabled>Select a Position...</option>
+
+                                <optgroup label="Admin Roles (Quản lý)">
+                                    <option value="General Manager">General Manager</option>
+                                    <option value="Hotel Manager">Hotel Manager</option>
+                                    <option value="Operations Manager">Operations Manager</option>
+                                    <option value="IT Administrator">IT Administrator</option>
+                                    <option value="Finance Manager">Finance Manager</option>
+                                </optgroup>
+
+                                <optgroup label="Employee Roles (Nhân viên)">
+                                    <option value="Receptionist">Receptionist (Lễ tân)</option>
+                                    <option value="Housekeeper">Housekeeper (Buồng phòng)</option>
+                                    <option value="Concierge">Concierge (Hỗ trợ)</option>
+                                    <option value="Waiter">Waiter (Phục vụ)</option>
+                                    <option value="Security Guard">Security Guard (Bảo vệ)</option>
+                                </optgroup>
+                            </select>
                             <label asp-for="Position"></label>
                         </div>
                         <span asp-validation-for="Position" class="text-danger"></span>
