@@ -1,0 +1,301 @@
+﻿/* =========================================================
+   📸 INSTAGRAM GRID (responsive & neat)
+   ========================================================= */
+
+.instagram-section {
+    background-color: #fff;
+    color: #222;
+}
+
+/* Grid container */
+.insta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    /* grid-auto-rows sets a base row height; images fill and crop via object-fit */
+    grid-auto-rows: 180px;
+    gap: 18px;
+    align-items: stretch;
+}
+
+/* each item fills its grid cell */
+.insta-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+    /* allow some items to span 2 columns and 2 rows (bigger) */
+    .insta-item.span-2 {
+        grid-column: span 2;
+        grid-row: span 2;
+    }
+
+/* responsive: on narrow screens don't span too much */
+@media (max-width: 900px) {
+    .insta-item.span-2 {
+        grid-column: span 2;
+        grid-row: span 1;
+        grid-auto-rows: 160px;
+    }
+}
+
+@media (max-width: 600px) {
+    .insta-grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 160px;
+    }
+
+    .insta-item.span-2 {
+        grid-column: span 2;
+        grid-row: span 1;
+    }
+}
+
+/* image styles: cover and fill container */
+.insta-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* crop to cover */
+    display: block;
+    transition: transform .45s ease, opacity .35s ease;
+}
+
+/* hover effect */
+.insta-item:hover img {
+    transform: scale(1.06);
+    opacity: 0.95;
+}
+
+/* overlay Instagram icon on hover */
+.insta-item::after {
+    content: "\f16d"; /* bi-instagram (Bootstrap Icons) won't render via content; we'll use a pseudo overlay below */
+    pointer-events: none;
+}
+
+/* Better overlay using absolute element inside item */
+.insta-item .insta-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 28px;
+    opacity: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0.35) 100%);
+    transition: opacity .25s ease;
+    text-decoration: none;
+}
+
+.insta-item:hover .insta-overlay {
+    opacity: 1;
+}
+
+/* small round icon */
+.insta-overlay .icon {
+    background: rgba(0,0,0,0.45);
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255,255,255,0.12);
+}
+
+/* caption / badge (optional) */
+.insta-badge {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    background: rgba(0,0,0,0.45);
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+}
+/* =========================================================
+   💬 FEEDBACK CAROUSEL (CUSTOM NAVIGATION)
+   ========================================================= */
+
+/* Card hiển thị feedback */
+.feedback-card {
+    border-radius: 16px;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    background-color: #fff;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+    .feedback-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+    }
+
+/* Nút prev/next – làm tròn, ra ngoài card */
+.carousel-control-prev,
+.carousel-control-next {
+    width: 5%;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: #c19b51; /* vàng ánh kim */
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    background-size: 50%;
+    filter: brightness(1.1);
+    transition: all 0.3s ease;
+}
+
+    .carousel-control-prev-icon:hover,
+    .carousel-control-next-icon:hover {
+        background-color: #a77e3e;
+        transform: scale(1.1);
+    }
+
+/* Đẩy nút ra ngoài vùng card */
+.carousel-control-prev {
+    left: -70px;
+}
+
+.carousel-control-next {
+    right: -70px;
+}
+
+/* Ẩn nền xám cũ */
+.carousel-control-prev,
+.carousel-control-next {
+    opacity: 1;
+}
+
+/* Chấm điều hướng phía dưới */
+.carousel-indicators [data-bs-target] {
+    width: 10px;
+    height: 10px;
+    background-color: #c19b51;
+    border-radius: 50%;
+    opacity: 0.5;
+    margin: 0 5px;
+    transition: 0.3s;
+}
+
+.carousel-indicators .active {
+    opacity: 1;
+    transform: scale(1.3);
+}
+
+/* Responsive: dịch nút gần lại nếu màn nhỏ */
+@media (max-width: 768px) {
+    .carousel-control-prev {
+        left: -30px;
+    }
+
+    .carousel-control-next {
+        right: -30px;
+    }
+}
+/* Đưa các chấm xuống dưới card */
+.carousel-indicators {
+    position: relative;
+    margin-top: 25px; /* tạo khoảng cách với card feedback */
+    bottom: 0 !important; /* bỏ định vị mặc định */
+    justify-content: center;
+}
+
+    /* Căn giữa chấm, không che text */
+    .carousel-indicators [data-bs-target] {
+        width: 10px;
+        height: 10px;
+        background-color: #c19b51;
+        border-radius: 50%;
+        opacity: 0.5;
+        margin: 0 6px;
+        transition: 0.3s;
+    }
+
+    .carousel-indicators .active {
+        opacity: 1;
+        transform: scale(1.3);
+    }
+/* =========================================================
+   🏨 HERO CAROUSEL
+   ========================================================= */
+
+#heroCarousel {
+    position: relative;
+    height: 90vh;
+    overflow: hidden;
+}
+
+.hero-img {
+    height: 90vh;
+    object-fit: cover;
+    filter: brightness(0.85);
+}
+
+.carousel-caption {
+    bottom: 30%;
+}
+
+.hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 64px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    transition: color 0.8s ease;
+}
+
+.hero-subtitle {
+    font-size: 22px;
+    margin-top: 10px;
+    transition: color 0.8s ease;
+}
+
+/* Trạng thái chữ sáng hoặc tối tùy ảnh */
+.carousel-item[data-text="light"] .hero-title,
+.carousel-item[data-text="light"] .hero-subtitle {
+    color: #fff;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+}
+
+.carousel-item[data-text="dark"] .hero-title,
+.carousel-item[data-text="dark"] .hero-subtitle {
+    color: #222;
+    text-shadow: 2px 2px 6px rgba(255,255,255,0.5);
+}
+
+/* Nút điều hướng */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: rgba(0,0,0,0.4);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    transition: 0.3s;
+}
+
+    .carousel-control-prev-icon:hover,
+    .carousel-control-next-icon:hover {
+        background-color: #c19b51;
+    }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 40px;
+    }
+
+    .hero-subtitle {
+        font-size: 16px;
+    }
+}
+
+.filter-section {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}

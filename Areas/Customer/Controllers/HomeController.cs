@@ -10,6 +10,7 @@ namespace Hotel_Management.Areas.Customer.Controllers
         [Route("Customer/Index")]
         public IActionResult Index()
         {
+            
             return View();
         }
     }
