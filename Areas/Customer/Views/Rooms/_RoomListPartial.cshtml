@@ -11,27 +11,27 @@
     // Kiểm tra trạng thái phòng
     var isAvailable = room.Status == "Available";
     var buttonclass = isAvailable ? "btn btn-success fw-bold " : " btn btn-danger fw-bold";
-    var textclass = isAvailable ? "color : #14FF53" : "color : #0B0F0A" ;
+    var textclass = isAvailable ? "color : #14FF53" : "color : #0B0F0A";
 
 
     <div class="col-md-6 col-lg-4">
         <div class="card room-card h-100 shadow-sm">
             <div class="position-relative">
-                <img src="/images/room/room@(room.RoomTypeId).jpg" class="card-img-top room-image" alt="Phòng @room.RoomNumber">
+                <img src="/images/room/room@(room.RoomTypeId).jpg" class="card-img-top room-image" alt="Room @room.RoomNumber">
             </div>
             <div class="card-body d-flex flex-column">
                 <h5 class="card-title fw-bold mb-3">
-                    <i class="bi bi-door-closed text-primary"></i> Phòng @room.RoomNumber
+                    <i class="bi bi-door-closed text-primary"></i> Room @room.RoomNumber
                 </h5>
 
                 <span class="room-status @buttonclass mb-2" style=@textclass>
-                    @(isAvailable ? "Còn trống" : "Đã đặt")
+                    @(isAvailable ? "Available" : "Booked")
                 </span>
 
                 <div class="d-grid gap-2 mt-auto bold">
                     <a asp-controller="Rooms" asp-action="Details" asp-route-id="@room.RoomId"
                        class="btn btn-outline-secondary" style="background: #D1AD0F">
-                       Xem Chi Tiết
+                        View Details
                     </a>
                 </div>
             </div>
