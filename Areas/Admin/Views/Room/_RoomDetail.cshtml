@@ -1,0 +1,110 @@
+﻿@model Hotel_Management.ViewModels.RoomDetailViewModel
+
+<form id="roomForm">
+    @Html.AntiForgeryToken()
+
+    <input asp-for="RoomId" type="hidden" />
+
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+
+    <div class="row g-3">
+        <div class="col-md-6">
+            <div class="form-floating">
+                <input asp-for="RoomNumber" class="form-control" placeholder="VD: 101, 201..." />
+                <label asp-for="RoomNumber">Số Phòng <span class="text-danger">*</span></label>
+                <span asp-validation-for="RoomNumber" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-floating">
+                <input asp-for="Floor" class="form-control" type="number" min="1" placeholder="VD: 1, 2..." />
+                <label asp-for="Floor">Tầng <span class="text-danger">*</span></label>
+                <span asp-validation-for="Floor" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-floating">
+                <select asp-for="RoomTypeId" class="form-select" asp-items="@Model.AvailableRoomTypes">
+                    <option value="">-- Chọn loại phòng --</option>
+                </select>
+                <label asp-for="RoomTypeId">Loại Phòng <span class="text-danger">*</span></label>
+                <span asp-validation-for="RoomTypeId" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-floating">
+                <select asp-for="Status" class="form-select">
+                    <option value="Available">Phòng trống</option>
+                    <option value="Occupied">Đã đặt</option>
+                    <option value="Maintenance">Bảo trì</option>
+                </select>
+                <label asp-for="Status">Trạng Thái <span class="text-danger">*</span></label>
+                <span asp-validation-for="Status" class="text-danger"></span>
+            </div>
+        </div>
+        @if (!string.IsNullOrEmpty(Model.CustomerName))
+        {
+            <div class="col-md-6">
+                <h6 class="text-danger"><i class="bi bi-person"></i> Thông tin khách</h6>
+                <table class="table table-sm table-borderless">
+                    <tr><td><strong>Khách hàng:</strong></td><td>@Model.CustomerName</td></tr>
+                    <tr><td><strong>Check-in:</strong></td><td>@Model.CheckInDate?.ToString("dd/MM/yyyy")</td></tr>
+                    <tr><td><strong>Check-out:</strong></td><td>@Model.CheckOutDate?.ToString("dd/MM/yyyy")</td></tr>
+                </table>
+            </div>
+        }
+
+        <div class="col-12">
+            <div class="form-floating">
+                <textarea asp-for="Note" class="form-control" placeholder="Ghi chú về phòng..." style="height: 100px"></textarea>
+                <label asp-for="Note">Ghi Chú</label>
+                <span asp-validation-for="Note" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer mt-3">
+        @if (Model.RoomId > 0)
+        {
+            <button type="button" class="btn btn-danger me-auto" onclick="deleteRoom(@Model.RoomId)">
+                <i class="bi bi-trash"></i> Xóa
+            </button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            <button type="button" class="btn btn-primary" onclick="saveRoom(true)">
+                <i class="bi bi-save"></i> Cập Nhật
+            </button>
+        }
+        else
+        {
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            <button type="button" class="btn btn-primary" onclick="saveRoom(false)">
+                <i class="bi bi-plus-circle"></i> Thêm Mới
+            </button>
+        }
+    </div>
+</form>
+
+<style>
+    /* FIXED */
+    #roomForm .form-control,
+    #roomForm .form-select {
+        border: 1px solid #ced4da; 
+        border-radius: 0.375rem;
+    }
+
+    #roomForm .form-floating > .form-control,
+    #roomForm .form-floating > .form-select,
+    #roomForm .form-floating > label {
+        padding: 1rem 1.1rem;
+    }
+
+    #roomForm .form-control:focus,
+    #roomForm .form-select:focus {
+        border-color: #86b7fe; 
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25); 
+    }
+
+</style>

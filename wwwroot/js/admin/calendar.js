@@ -9,15 +9,21 @@ document.addEventListener('DOMContentLoaded', function () {
 // Lấy dữ liệu booking cho một tháng cụ thể từ Controller
 async function fetchBookings(year, month) {
     try {
-        const response = await fetch(`/Admin/Booking/GetBooking?year=${year}&month=${month}`);
-        if (!response.ok) throw new Error('Failed to fetch data');
-        bookings = await response.json();
+        const data = await $.ajax({
+            url: `/Admin/Booking/GetBooking?year=${year}&month=${month}`,
+            type: 'GET',
+            dataType: 'json'
+        });
+        bookings = data;
         console.log("Dữ liệu booking nhận được:", bookings);
+        return data;
     } catch (error) {
         console.error('Error fetching bookings:', error);
         bookings = [];
+        return [];
     }
 }
+
 
 // Render toàn bộ giao diện lịch
 async function renderCalendar() {

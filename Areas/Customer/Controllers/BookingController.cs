@@ -14,7 +14,7 @@ namespace Hotel_Management.Areas.Customer.Controllers
         [Route("Customer/Booking/Index")]
         public IActionResult Index()
         {
-            ViewBag.RoomTypes=_context.RoomTypes.ToList();
+            ViewBag.RoomTypes = _context.RoomTypes.ToList();
             return View();
         }
 
@@ -55,7 +55,7 @@ namespace Hotel_Management.Areas.Customer.Controllers
         {
             // kiểm tra xem người dùng đã đăng nhập chưa
             var customerId = HttpContext.Session.GetInt32("CustomerId");
-            
+
             if (customerId == null)
             {
                 // Nếu chưa đăng nhập, chuyển hướng về trang đăng nhập
@@ -159,19 +159,19 @@ namespace Hotel_Management.Areas.Customer.Controllers
 
             if (room == null)
                 return NotFound();
-            var services=_context.Services.ToList();
+            var services = _context.Services.ToList();
 
             ViewBag.Room = room;
             ViewBag.Services = services;
             ViewBag.CheckIn = checkIn.ToString("yyyy-MM-dd");
             ViewBag.CheckOut = checkOut.ToString("yyyy-MM-dd");
-            
+
             return View();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("Customer/Booking/Create")]
-        public IActionResult Create(Booking booking, int roomId, int[] selectedServices )
+        public IActionResult Create(Booking booking, int roomId, int[] selectedServices)
         {
             var customerId = HttpContext.Session.GetInt32("CustomerId");
             if (customerId == null)
@@ -207,7 +207,7 @@ namespace Hotel_Management.Areas.Customer.Controllers
             };
 
             _context.BookingDetails.Add(detail);
-            
+
 
             // 🧩 Thêm các dịch vụ khách chọn
             foreach (var serviceId in selectedServices)

@@ -71,9 +71,9 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark" href="../pages/notifications.html">
-                        <i class="material-symbols-rounded opacity-5">notifications</i>
-                        <span class="nav-link-text ms-1">Notifications</span>
+                    <a class="nav-link text-dark" asp-controller="Room" asp-action="Index">
+                        <i class="bi bi-house-door material-symbols-rounded opacity-5" style="padding-bottom: 5.5px;"></i>
+                        <span class="nav-link-text ms-1">Room Management</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -95,37 +95,25 @@
                                     <span class="nav-link-text ms-3">Add New Customer</span>
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Customer" asp-action="CustomerSegmentation">
-                                    <i class="material-symbols-rounded opacity-5">Patient_List</i>
-                                    <span class="nav-link-text ms-3">Customer Segmentation</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Customer" asp-action="CustomerReport">
-                                    <i class="material-symbols-rounded opacity-5">Patient_List</i>
-                                    <span class="nav-link-text ms-3">Customer Reports</span>
-                                </a>
-                            </li>
                         </ul>
                     </div>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-dark" id="accountCollapseToggle" data-bs-toggle="collapse" href="#accountSubmenu">
                         <i class="material-symbols-rounded opacity-5">table_view</i>
-                        <span class="nav-link-text ms-1">Employee Account</span>
+                        <span class="nav-link-text ms-1">Employee Management</span>
                     </a>
                     <div class="collapse" id="accountSubmenu">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="EmployeeManagement" asp-action="EmployeeAccountList">
                                     <i class="material-symbols-rounded opacity-5">table_view</i>
-                                    <span class="nav-link-text ms-1">Employee Account</span>
+                                    <span class="nav-link-text ms-3">Employee Account</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="EmployeeManagement" asp-action="AddnewEmployeesAccount">
-                                    <i class="material-symbols-rounded opacity-5">Patient_List</i>
+                                <a class="nav-link text-dark" asp-controller="EmployeeManagement" asp-action="AddNewEmployeeAccount">
+                                    <i class="material-symbols-rounded opacity-5">Person_add</i>
                                     <span class="nav-link-text ms-3">Add Employee Account</span>
                                 </a>
                             </li>
@@ -136,7 +124,7 @@
                     <h6 class="ps-4 ms-2 text-uppercase text-xs text-dark font-weight-bolder opacity-5">Account pages</h6>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark" href="../pages/profile.html">
+                    <a class="nav-link text-dark" asp-area="Admin" asp-controller="AdminProfile" asp-action="ShowAdminProfile">
                         <i class="material-symbols-rounded opacity-5">person</i>
                         <span class="nav-link-text ms-1">Profile</span>
                     </a>
@@ -172,7 +160,7 @@
                     <ul class="navbar-nav d-flex align-items-center  justify-content-end ms-auto">
                         <!-- Start Account-->
                         <li class="nav-item d-flex align-items-center">
-                            <a href="#" class="nav-link text-body font-weight-bold px-0">
+                            <a asp-area="Admin" asp-controller="AdminProfile" asp-action="ShowAdminProfile" class="nav-link text-body font-weight-bold px-0">
                                 <i class="material-symbols-rounded">account_circle</i>
                             </a>
                         </li>
@@ -187,27 +175,58 @@
         <!-- End main -->
     </main>
     <script src="~/js/admin/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="~/js/admin/hamburger.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const collapseElement = document.getElementById('customerSubmenu'); // Phần tử DIV (Submenu)
-            const toggleLink = document.getElementById('customerCollapseToggle'); // Phần tử A (Nút bấm)
+            // Lấy URL hiện tại
+            const currentPath = window.location.pathname.toLowerCase();
 
-            if (collapseElement && toggleLink) {
+            // Lấy tất cả các nav-link trong sidebar
+            const navLinks = document.querySelectorAll('.sidenav .nav-link:not([data-bs-toggle])');
 
-                // 1. Khi menu bắt đầu mở (show.bs.collapse)
-                collapseElement.addEventListener('show.bs.collapse', function () {
-                    // Đặt màu nền tối và chữ trắng (trạng thái active/mở)
-                    toggleLink.classList.add('bg-gradient-dark', 'text-white', 'active');
-                    toggleLink.classList.remove('text-dark'); // Đảm bảo chữ trắng hiển thị rõ
+            // Tìm link khớp chính xác nhất với current path
+            let bestMatch = null;
+            let bestMatchLength = 0;
+
+            navLinks.forEach(link => {
+                const href = link.getAttribute('href');
+
+                // Bỏ qua các link không hợp lệ
+                if (!href || href === '#' || href.startsWith('javascript:') || href.startsWith('../')) {
+                    return;
+                }
+
+                // Chuyển href thành lowercase để so sánh
+                const linkPath = href.toLowerCase();
+
+                // Kiểm tra nếu current path khớp với link
+                // Ưu tiên link dài hơn (cụ thể hơn)
+                if (currentPath === linkPath || currentPath.endsWith(linkPath)) {
+                    if (linkPath.length > bestMatchLength) {
+                        bestMatch = link;
+                        bestMatchLength = linkPath.length;
+                    }
+                }
+            });
+
+            // Nếu tìm thấy match, highlight nó
+            if (bestMatch) {
+                // Xóa active class khỏi tất cả các nav-link
+                navLinks.forEach(l => {
+                    l.classList.remove('active', 'bg-gradient-dark', 'text-white');
+                    l.classList.add('text-dark');
                 });
 
-                // 2. Khi menu bắt đầu đóng (hide.bs.collapse)
-                collapseElement.addEventListener('hide.bs.collapse', function () {
-                    // Đặt lại màu nền trong suốt và chữ tối (trạng thái bình thường)
-                    toggleLink.classList.remove('bg-gradient-dark', 'text-white', 'active');
-                    toggleLink.classList.add('text-dark');
-                });
+                // Thêm active class cho link khớp nhất
+                bestMatch.classList.add('active', 'bg-gradient-dark', 'text-white');
+                bestMatch.classList.remove('text-dark');
+
+                // Nếu link này nằm trong submenu, tự động mở submenu (nhưng không highlight cha)
+                const parentCollapse = bestMatch.closest('.collapse');
+                if (parentCollapse) {
+                    parentCollapse.classList.add('show');
+                }
             }
         });
     </script>

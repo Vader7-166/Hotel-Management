@@ -31,22 +31,18 @@ function showDeleteModal(bookingId, customerName) {
 
 // Booking Detail Modal
 async function viewBookingDetails(bookingId) {
-    const modalBody = document.getElementById('modalBody');
+    const $modalBody = $('#modalBody');
 
     if (detailsModal) {
         detailsModal.show();
     }
-    try {
-        const response = await fetch(`/Admin/Booking/GetBookingDetails/${bookingId}`);
 
-        if (!response.ok) {
-            modalBody.innerHTML = `<div class="alert alert-danger">Error: Could not fetch booking details. Status: ${response.status}</div>`;
-            return;
-        }
-
-        const data = await response.json();
-
-        modalBody.innerHTML = `
+    $.ajax({
+        url: `/Admin/Booking/GetBookingDetails/${bookingId}`,
+        type: 'GET',
+        dataType: 'json',
+        success: function (data) {
+            $modalBody.html(`
             <div class="row">
                 <div class="col-md-6">
                     <h6><i class="bi bi-bookmark"></i> Booking Information</h6>
@@ -80,11 +76,17 @@ async function viewBookingDetails(bookingId) {
                 </div>
                 ` : ''}
             </div>
-        `;
-    } catch (error) {
-        console.error("Fetch error:", error);
-        modalBody.innerHTML = '<div class="alert alert-danger">A network error occurred while fetching details.</div>';
-    }
+        `);
+        },
+        error: function (xhr, status, error) {
+            console.error("Error fetching details:", error);
+            modalBody.html(`
+                <div class="alert alert-danger">
+                    Error: Could not fetch booking details. Status: ${xhr.status}
+                </div>
+            `);
+        }
+    });
 }
 
 // Hàm helper để lấy CSS class cho status (tái sử dụng từ view)
