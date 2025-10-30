@@ -1,8 +1,116 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-﻿
-    @{
-        Layout = "~/Views/Shared/_LayoutCustomer.cshtml";
+﻿@{
+    Layout = "~/Views/Shared/_LayoutCustomer.cshtml";
+    var room = ViewBag.Room;
+    var services = ViewBag.Services as List<Hotel_Management.Models.Service>;
+}
+
+<div class="container mt-5 mb-5">
+    <h2 class="text-center mb-4">Confirm Your Booking</h2>
+
+    <form asp-action="Create" method="post">
+        <input type="hidden" name="roomId" value="@room.RoomId" />
+
+        <!-- ROOM DETAILS -->
+        <div class="card p-4 mb-4 shadow-sm">
+            <h5 class="fw-bold mb-3">Room Details</h5>
+            <p><strong>Room Type:</strong> @room.RoomType.TypeName</p>
+            <p><strong>Room Number:</strong> @room.RoomNumber</p>
+            <p><strong>Price:</strong> @room.RoomType.BasePrice.ToString("N0") VND / night</p>
+
+            <div class="row mt-3">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-semibold">Check-in Date</label>
+                    <input type="date" name="CheckInDate" class="form-control"
+                           value="@ViewBag.CheckIn" required />
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-semibold">Check-out Date</label>
+                    <input type="date" name="CheckOutDate" class="form-control"
+                           value="@ViewBag.CheckOut" required />
+                </div>
+            </div>
+
+            <!-- EXTRA SERVICES -->
+            <div class="card p-4 mb-4 shadow-sm">
+                <h5 class="fw-bold mb-3">Select Extra Services</h5>
+                @if (services != null && services.Any())
+                {
+                    <div class="row">
+                        @foreach (var s in services)
+                        {
+                            <div class="col-md-4 mb-3">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" name="selectedServices" value="@s.ServiceId" id="service_@s.ServiceId" />
+                                    <label class="form-check-label" for="service_@s.ServiceId">
+                                        <strong>@s.ServiceName</strong> - @s.UnitPrice.ToString("N0") VND
+                                    </label>
+                                    <small class="text-muted d-block">@s.Description</small>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">No extra services available.</p>
+                }
+            </div>
+
+            <!-- NOTES -->
+            <div class="card p-4 shadow-sm mb-4">
+                <h5 class="fw-bold mb-3">Additional Notes</h5>
+                <textarea name="Notes" class="form-control" rows="3" placeholder="Add any special requests..."></textarea>
+            </div>
+
+            <!-- CONFIRM BUTTON -->
+            <div class="text-end">
+                <button type="submit" class="btn btn-gold px-5 py-2">Confirm Booking</button>
+            </div>
+    </form>
+</div>
+
+<style>
+    .btn-gold {
+        background-color: #c19b51;
+        color: #fff;
+        font-weight: 600;
+        border: none;
+        transition: 0.3s;
     }
-﻿
+
+        .btn-gold:hover {
+            background-color: #a77e3e;
+            color: #fff;
+        }
+
+    .card {
+        border-radius: 10px;
+        border: 1px solid #eee;
+    }
+
+    label.form-label {
+        font-weight: 500;
+    }
+</style>
+<script>
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+    const checkIn = document.querySelector('input[name="CheckInDate"]');
+    const checkOut = document.querySelector('input[name="CheckOutDate"]');
+
+    checkIn.min = todayStr;
+    checkOut.min = todayStr;
+
+    checkIn.addEventListener("change", () => {
+        const inDate = new Date(checkIn.value);
+        const minOut = new Date(inDate);
+        minOut.setDate(minOut.getDate() + 1);
+        const minStr = minOut.toISOString().split("T")[0];
+        checkOut.min = minStr;
+
+        if (!checkOut.value || new Date(checkOut.value) <= inDate) {
+            checkOut.value = minStr;
+        }
+    });
+</script>
+
