@@ -86,18 +86,17 @@
 
                 <!-- Mô tả -->
                 <div class="card mb-4">
-                    <div class="card-header bg-primary text-white">
+                    <div class="card-header text-white" style="background: linear-gradient(135deg,#d4af37,#aa8a3a)">
                         <h4 class="mb-0"><i class="bi bi-file-text"></i> Mô Tả Phòng</h4>
                     </div>
                     <div class="card-body">
-                        <p class="lead">@Model.RoomType.Description</p>
-                        <p>@Model.RoomType.Description</p>
+                        <p class="lead bold">@Model.RoomType.Description</p>
                     </div>
                 </div>
 
                 <!-- Thông tin chi tiết -->
                 <div class="card mb-4">
-                    <div class="card-header bg-info text-white">
+                    <div class="card-header text-white" style="background: linear-gradient(135deg,#d4af37,#aa8a3a)">
                         <h4 class="mb-0"><i class="bi bi-info-circle"></i> Thông Tin Chi Tiết</h4>
                     </div>
                     <div class="card-body">
@@ -136,7 +135,7 @@
 
                 <!-- Tiện nghi -->
                 <div class="card mb-4">
-                    <div class="card-header bg-success text-white">
+                    <div class="card-header text-white" style="background: linear-gradient(135deg,#d4af37,#aa8a3a)">
                         <h4 class="mb-0"><i class="bi bi-stars"></i> Tiện Nghi Phòng</h4>
                     </div>
                     <div class="card-body">
@@ -155,7 +154,7 @@
 
                 <!-- Chính sách -->
                 <div class="card mb-4">
-                    <div class="card-header bg-warning text-dark">
+                    <div class="card-header text-dark" style="background: linear-gradient(135deg,#d4af37,#aa8a3a)">
                         <h4 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Chính Sách Phòng</h4>
                     </div>
                     <div class="card-body">
@@ -173,29 +172,41 @@
             <!-- Cột phải - Booking Card -->
             <div class="col-lg-4">
                 <div class="card booking-card shadow-lg">
-                    <div class="card-header bg-primary text-white text-center">
+                    <div class="card-header text-white text-center" style="background: linear-gradient(135deg,#d4af37,#aa8a3a)">
                         <h4 class="mb-0">Thông Tin Đặt Phòng</h4>
                     </div>
                     <div class="card-body">
                         <div class="text-center mb-4">
-                            <div class="display-6 fw-bold text-primary">@Model.RoomType.BasePrice.ToString("N0") VNĐ</div>
+                            <div class="display-6 fw-bold" style="color: #d4af37">@Model.RoomType.BasePrice.ToString("N0") VNĐ</div>
                             <small class="text-muted">/ mỗi đêm</small>
                         </div>
 
                         @if (Model.Status == "Available")
                         {
                             <div class="alert alert-success text-center">
-                                <i class="bi bi-check-circle-fill"></i> Phòng này đang trống
+                                <i class="bi bi-check-circle-fill"></i> This room is available
                             </div>
 
-                            <div class="d-grid gap-2 mb-3">
-                                <a asp-controller="Booking"
-                                   asp-action="Create"
-                                   asp-route-roomId="@Model.RoomId"
-                                   class="btn btn-primary btn-lg">
-                                    <i class="bi bi-calendar-check-fill"></i> Đặt Phòng Ngay
-                                </a>
-                            </div>
+                            <form id="bookingForm" method="get" asp-area="Customer" asp-controller="Booking" asp-action="Create">
+                                <input type="hidden" name="roomId" value="@Model.RoomId" />
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-semibold">Check-in Date</label>
+                                        <input type="date" id="checkIn" name="checkIn" class="form-control" required />
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label fw-semibold">Check-out Date</label>
+                                        <input type="date" id="checkOut" name="checkOut" class="form-control" required />
+                                    </div>
+                                </div>
+
+                                <div class="d-grid gap-2 mb-3">
+                                    <button type="submit" id="bookNowBtn" class="btn btn-primary btn-lg">
+                                        <i class="bi bi-calendar-check-fill"></i> Book Now
+                                    </button>
+                                </div>
+                            </form>
                         }
                         else
                         {
@@ -207,7 +218,7 @@
                                 <a asp-controller="Rooms"
                                    asp-action="RoomTypeDetails"
                                    asp-route-id="@Model.RoomTypeId"
-                                   class="btn btn-primary btn-lg">
+                                   class="btn btn-lg" style="background: linear-gradient(135deg,#d4af37,#aa8a3a)">
                                     <i class="bi bi-search"></i> Tìm Phòng Khác
                                 </a>
                             </div>
@@ -227,10 +238,10 @@
                             <h6 class="text-center mb-3">Cần Hỗ Trợ?</h6>
                             <div class="d-grid gap-2">
                                 <a href="tel:+84123456789" class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-telephone-fill"></i> 0123 456 789
+                                    <i class="bi bi-telephone-fill"></i> 036 290 9853
                                 </a>
                                 <a href="mailto:info@hthotel.com" class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-envelope-fill"></i> info@hthotel.com
+                                    <i class="bi bi-envelope-fill"></i> sales@hanoihotel.com.vn
                                 </a>
                             </div>
                         </div>
@@ -250,6 +261,49 @@
             </div>
         </div>
     </div>
+    <!-- ✅ Date validation script -->
+    <script>
+        const today = new Date();
+        const todayStr = today.toISOString().split('T')[0];
+        const checkIn = document.getElementById("checkIn");
+        const checkOut = document.getElementById("checkOut");
+
+        // Disable past dates
+        checkIn.min = todayStr;
+        checkOut.min = todayStr;
+
+        // Automatically set checkout at least one day after checkin
+        checkIn.addEventListener("change", () => {
+            const inDate = new Date(checkIn.value);
+            const minOut = new Date(inDate);
+            minOut.setDate(minOut.getDate() + 1);
+            const minStr = minOut.toISOString().split("T")[0];
+            checkOut.min = minStr;
+
+            if (!checkOut.value || new Date(checkOut.value) <= inDate) {
+                checkOut.value = minStr;
+            }
+        });
+
+        // ✅ Intercept submit to ensure both dates are passed correctly
+        document.getElementById("bookingForm").addEventListener("submit", (e) => {
+            const checkInVal = checkIn.value;
+            const checkOutVal = checkOut.value;
+
+            if (!checkInVal || !checkOutVal) {
+                e.preventDefault();
+                alert("⚠️ Please select both check-in and check-out dates!");
+                return;
+            }
+
+            if (new Date(checkOutVal) <= new Date(checkInVal)) {
+                e.preventDefault();
+                alert("⚠️ Check-out date must be after check-in date!");
+                return;
+            }
+        });
+    </script>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
