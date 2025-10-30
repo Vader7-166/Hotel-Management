@@ -1,0 +1,61 @@
+﻿/* =========================================================
+   🦶 FOOTER
+   ========================================================= */
+footer {
+    background-color: #0c2340;
+    color: #fff;
+    padding-top: 50px;
+    padding-bottom: 30px;
+    margin-top: 60px;
+}
+
+    /* Logo ở footer */
+    footer .logo-footer img {
+        height: 70px;
+    }
+
+    /* Liên kết trong footer */
+    footer a {
+        color: #c9c9c9;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+        footer a:hover {
+            color: #c19b51;
+        }
+
+    /* Tiêu đề cột trong footer */
+    footer h6 {
+        font-weight: 600;
+        color: #fff;
+        margin-bottom: 20px;
+    }
+
+/* Icon mạng xã hội */
+.social-icons a {
+    display: inline-block;
+    margin-right: 10px;
+    color: #fff;
+    background-color: #c19b51;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    text-align: center;
+    line-height: 36px;
+    transition: 0.3s;
+}
+
+    .social-icons a:hover {
+        background-color: #a77e3e;
+    }
+
+/* Dòng bản quyền cuối footer */
+.footer-bottom {
+    border-top: 1px solid #1e3b63;
+    margin-top: 40px;
+    padding-top: 15px;
+    color: #aaa;
+    font-size: 14px;
+    text-align: center;
+}

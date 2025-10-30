@@ -28,30 +28,30 @@
         </div>
 
         <div class="row room-showcase">
-           @foreach (var roomType in Model)
+            @foreach (var roomType in Model)
             {
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card h-100 shadow-sm">
-                <img src="/images/room/room@(roomType.RoomTypeId).jpg"
-                     class="card-img-top"
-                     alt="Ảnh phòng @roomType.TypeName"
-                     style="height: 250px; object-fit: cover;">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title text-center fw-bold">@roomType.TypeName</h5>
-                    <p class="card-text flex-grow-1">@roomType.Description</p>
+                        <img src="/images/room/room@(roomType.RoomTypeId).jpg"
+                             class="card-img-top"
+                             alt="Ảnh phòng @roomType.TypeName"
+                             style="height: 250px; object-fit: cover;">
+                        <div class="card-body d-flex flex-column" style="background : #2F6A82">
+                            <h5 class="card-title text-center fw-bold" style="color : #FFFC58">@roomType.TypeName</h5>
+                            <p class="card-text text-center flex-grow-1" style="color : #FFFC58">@roomType.Description</p>
 
                             <div class="text-center mt-auto">
                                 <a asp-controller="Rooms"
                                    asp-action="RoomTypeDetails"
                                    asp-route-id="@roomType.RoomTypeId"
-                                   class="btn btn-read-more btn-secondary w-100">
+                                   class="btn w-100" style="background : #FFDA39">
                                     Xem Các Phòng
                                 </a>
                             </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        }
+            }
         </div>
     </div>
 

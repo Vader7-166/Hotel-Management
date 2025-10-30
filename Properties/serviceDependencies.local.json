@@ -1,5 +1,9 @@
 {
   "dependencies": {
+    "secrets1": {
+      "type": "secrets.user",
+      "dynamicId": null
+    },
     "mssql1": {
       "secretStore": "LocalSecretsFile",
       "resourceId": null,
