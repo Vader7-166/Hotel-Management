@@ -179,24 +179,54 @@
     <script src="~/js/admin/hamburger.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const collapseElement = document.getElementById('customerSubmenu'); // Phần tử DIV (Submenu)
-            const toggleLink = document.getElementById('customerCollapseToggle'); // Phần tử A (Nút bấm)
+            // Lấy URL hiện tại
+            const currentPath = window.location.pathname.toLowerCase();
 
-            if (collapseElement && toggleLink) {
+            // Lấy tất cả các nav-link trong sidebar
+            const navLinks = document.querySelectorAll('.sidenav .nav-link:not([data-bs-toggle])');
 
-                // 1. Khi menu bắt đầu mở (show.bs.collapse)
-                collapseElement.addEventListener('show.bs.collapse', function () {
-                    // Đặt màu nền tối và chữ trắng (trạng thái active/mở)
-                    toggleLink.classList.add('bg-gradient-dark', 'text-white', 'active');
-                    toggleLink.classList.remove('text-dark'); // Đảm bảo chữ trắng hiển thị rõ
+            // Tìm link khớp chính xác nhất với current path
+            let bestMatch = null;
+            let bestMatchLength = 0;
+
+            navLinks.forEach(link => {
+                const href = link.getAttribute('href');
+
+                // Bỏ qua các link không hợp lệ
+                if (!href || href === '#' || href.startsWith('javascript:') || href.startsWith('../')) {
+                    return;
+                }
+
+                // Chuyển href thành lowercase để so sánh
+                const linkPath = href.toLowerCase();
+
+                // Kiểm tra nếu current path khớp với link
+                // Ưu tiên link dài hơn (cụ thể hơn)
+                if (currentPath === linkPath || currentPath.endsWith(linkPath)) {
+                    if (linkPath.length > bestMatchLength) {
+                        bestMatch = link;
+                        bestMatchLength = linkPath.length;
+                    }
+                }
+            });
+
+            // Nếu tìm thấy match, highlight nó
+            if (bestMatch) {
+                // Xóa active class khỏi tất cả các nav-link
+                navLinks.forEach(l => {
+                    l.classList.remove('active', 'bg-gradient-dark', 'text-white');
+                    l.classList.add('text-dark');
                 });
 
-                // 2. Khi menu bắt đầu đóng (hide.bs.collapse)
-                collapseElement.addEventListener('hide.bs.collapse', function () {
-                    // Đặt lại màu nền trong suốt và chữ tối (trạng thái bình thường)
-                    toggleLink.classList.remove('bg-gradient-dark', 'text-white', 'active');
-                    toggleLink.classList.add('text-dark');
-                });
+                // Thêm active class cho link khớp nhất
+                bestMatch.classList.add('active', 'bg-gradient-dark', 'text-white');
+                bestMatch.classList.remove('text-dark');
+
+                // Nếu link này nằm trong submenu, tự động mở submenu (nhưng không highlight cha)
+                const parentCollapse = bestMatch.closest('.collapse');
+                if (parentCollapse) {
+                    parentCollapse.classList.add('show');
+                }
             }
         });
     </script>
