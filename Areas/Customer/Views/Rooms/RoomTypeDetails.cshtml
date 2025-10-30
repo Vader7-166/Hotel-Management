@@ -2,22 +2,22 @@
 @{
     Layout = "~/Views/Shared/_LayoutCustomer.cshtml";
     var roomType = ViewBag.RoomType as RoomType;
-    ViewData["Title"] = $"Phòng {roomType.TypeName}";
+    ViewData["Title"] = $"Room {roomType.TypeName}";
 }
 
 <div class="room-type-header text-white py-5 mb-5" style="background: linear-gradient(135deg,#d4af37,#aa8a3a)">
     <div class="container">
-        <h1 class="fw-bold">Phòng @roomType.TypeName</h1>
+        <h1 class="fw-bold">Room @roomType.TypeName</h1>
         <p class="lead">@roomType.Description</p>
     </div>
 </div>
 
 <div class="container mb-5">
-    <h3 class="mb-4">Danh Sách Phòng</h3>
+    <h3 class="mb-4">Room List</h3>
     <div id="roomList" class="row g-4 text-center">
         <div class="text-center text-muted py-5">
             <div class="spinner-border text-warning"></div>
-            <p class="mt-2">Đang tải phòng...</p>
+            <p class="mt-2">Loading rooms...</p>
         </div>
     </div>
 
@@ -27,7 +27,7 @@
 
     <div class="text-center mt-5">
         <a asp-controller="Rooms" asp-action="Index" class="btn btn-secondary">
-            <i class="bi bi-arrow-left"></i> Quay lại danh sách loại phòng
+            <i class="bi bi-arrow-left"></i> Back to Room Types
         </a>
     </div>
 </div>

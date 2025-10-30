@@ -2,7 +2,7 @@
 @model Room;
 @{
     Layout = "~/Views/Shared/_LayoutCustomer.cshtml";
-    ViewData["Title"] = $"Chi Tiết Phòng {Model.RoomNumber}";
+    ViewData["Title"] = $"Room {Model.RoomNumber} Details";
 }
 
 <!DOCTYPE html>
@@ -56,10 +56,10 @@
         <!-- Breadcrumb -->
         <nav aria-label="breadcrumb" class="mb-4">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
-                <li class="breadcrumb-item"><a asp-controller="Rooms" asp-action="Index">Phòng</a></li>
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="breadcrumb-item"><a asp-controller="Rooms" asp-action="Index">Rooms</a></li>
                 <li class="breadcrumb-item"><a asp-controller="Rooms" asp-action="RoomTypeDetails" asp-route-id="@Model.RoomTypeId">@Model.RoomType.TypeName</a></li>
-                <li class="breadcrumb-item active">Phòng @Model.RoomNumber</li>
+                <li class="breadcrumb-item active">Room @Model.RoomNumber</li>
             </ol>
         </nav>
 
@@ -70,24 +70,24 @@
                 <div class="mb-4">
                     <img src="/images/room/room@(Model.RoomTypeId).jpg"
                          class="img-fluid w-100 room-detail-img"
-                         alt="Phòng @Model.RoomNumber">
+                         alt="Room @Model.RoomNumber">
                 </div>
 
                 <!-- Tiêu đề và trạng thái -->
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div>
-                        <h1 class="display-5 fw-bold mb-2">Phòng @Model.RoomNumber</h1>
-                        <h4 class="text-muted">Loại: @Model.RoomType.TypeName</h4>
+                        <h1 class="display-5 fw-bold mb-2">Room @Model.RoomNumber</h1>
+                        <h4 class="text-muted">Type: @Model.RoomType.TypeName</h4>
                     </div>
                     <span class="status-badge @(Model.Status == "Available" ? "badge bg-success" : "badge bg-danger")">
-                        @(Model.Status == "Available" ? "Còn Trống" : "Đã Đặt")
+                        @(Model.Status == "Available" ? "Available" : "Booked")
                     </span>
                 </div>
 
                 <!-- Mô tả -->
                 <div class="card mb-4">
                     <div class="card-header text-white" style="background: linear-gradient(135deg,#d4af37,#aa8a3a)">
-                        <h4 class="mb-0"><i class="bi bi-file-text"></i> Mô Tả Phòng</h4>
+                        <h4 class="mb-0"><i class="bi bi-file-text"></i> Room Description</h4>
                     </div>
                     <div class="card-body">
                         <p class="lead bold">@Model.RoomType.Description</p>
@@ -97,36 +97,36 @@
                 <!-- Thông tin chi tiết -->
                 <div class="card mb-4">
                     <div class="card-header text-white" style="background: linear-gradient(135deg,#d4af37,#aa8a3a)">
-                        <h4 class="mb-0"><i class="bi bi-info-circle"></i> Thông Tin Chi Tiết</h4>
+                        <h4 class="mb-0"><i class="bi bi-info-circle"></i> Detailed Information</h4>
                     </div>
                     <div class="card-body">
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <div class="info-card">
                                     <i class="bi bi-door-closed fs-3 text-primary"></i>
-                                    <h6 class="mt-2 mb-1">Số Phòng</h6>
+                                    <h6 class="mt-2 mb-1">Room Number</h6>
                                     <p class="mb-0 fw-bold">@Model.RoomNumber</p>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="info-card">
                                     <i class="bi bi-building fs-3 text-primary"></i>
-                                    <h6 class="mt-2 mb-1">Tầng</h6>
-                                    <p class="mb-0 fw-bold">Tầng @Model.Floor</p>
+                                    <h6 class="mt-2 mb-1">Floor</h6>
+                                    <p class="mb-0 fw-bold">Floor @Model.Floor</p>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="info-card">
                                     <i class="bi bi-people-fill fs-3 text-warning"></i>
-                                    <h6 class="mt-2 mb-1">Sức Chứa</h6>
-                                    <p class="mb-0 fw-bold">@Model.RoomType.MaxOccupancy người</p>
+                                    <h6 class="mt-2 mb-1">Capacity</h6>
+                                    <p class="mb-0 fw-bold">@Model.RoomType.MaxOccupancy guests</p>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="info-card">
                                     <i class="bi bi-cash-coin fs-3 text-success"></i>
-                                    <h6 class="mt-2 mb-1">Giá Phòng</h6>
-                                    <p class="mb-0 fw-bold text-primary">@Model.RoomType.BasePrice.ToString("N0") VNĐ/đêm</p>
+                                    <h6 class="mt-2 mb-1">Room Rate</h6>
+                                    <p class="mb-0 fw-bold text-primary">@Model.RoomType.BasePrice.ToString("N0") VND/night</p>
                                 </div>
                             </div>
                         </div>
@@ -136,18 +136,18 @@
                 <!-- Tiện nghi -->
                 <div class="card mb-4">
                     <div class="card-header text-white" style="background: linear-gradient(135deg,#d4af37,#aa8a3a)">
-                        <h4 class="mb-0"><i class="bi bi-stars"></i> Tiện Nghi Phòng</h4>
+                        <h4 class="mb-0"><i class="bi bi-stars"></i> Room Amenities</h4>
                     </div>
                     <div class="card-body">
                         <ul class="feature-list list-unstyled">
-                            <li><i class="bi bi-wifi text-primary"></i> <strong>WiFi tốc độ cao</strong> - Miễn phí</li>
-                            <li><i class="bi bi-tv text-primary"></i> <strong>TV màn hình phẳng</strong> - Smart TV 50 inch</li>
-                            <li><i class="bi bi-snow text-primary"></i> <strong>Điều hòa không khí</strong> - Điều khiển độc lập</li>
-                            <li><i class="bi bi-cup-hot text-primary"></i> <strong>Minibar</strong> - Đầy đủ đồ uống</li>
-                            <li><i class="bi bi-door-open text-primary"></i> <strong>Phòng tắm riêng</strong> - Vòi sen & bồn tắm</li>
-                            <li><i class="bi bi-shield-check text-primary"></i> <strong>Két an toàn</strong> - Điện tử hiện đại</li>
-                            <li><i class="bi bi-telephone text-primary"></i> <strong>Điện thoại</strong> - Liên lạc nội bộ</li>
-                            <li><i class="bi bi-moisture text-primary"></i> <strong>Máy sấy tóc</strong> - Công suất cao</li>
+                            <li><i class="bi bi-wifi text-primary"></i> <strong>High-speed WiFi</strong> - Complimentary</li>
+                            <li><i class="bi bi-tv text-primary"></i> <strong>Flat-screen TV</strong> - 50-inch Smart TV</li>
+                            <li><i class="bi bi-snow text-primary"></i> <strong>Air conditioning</strong> - Individual control</li>
+                            <li><i class="bi bi-cup-hot text-primary"></i> <strong>Minibar</strong> - Fully stocked</li>
+                            <li><i class="bi bi-door-open text-primary"></i> <strong>Private bathroom</strong> - Shower & bathtub</li>
+                            <li><i class="bi bi-shield-check text-primary"></i> <strong>Safe deposit box</strong> - Modern electronic</li>
+                            <li><i class="bi bi-telephone text-primary"></i> <strong>Telephone</strong> - Internal communication</li>
+                            <li><i class="bi bi-moisture text-primary"></i> <strong>Hair dryer</strong> - High power</li>
                         </ul>
                     </div>
                 </div>
@@ -155,15 +155,15 @@
                 <!-- Chính sách -->
                 <div class="card mb-4">
                     <div class="card-header text-dark" style="background: linear-gradient(135deg,#d4af37,#aa8a3a)">
-                        <h4 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Chính Sách Phòng</h4>
+                        <h4 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Room Policies</h4>
                     </div>
                     <div class="card-body">
                         <ul class="list-unstyled">
-                            <li class="mb-2"><i class="bi bi-check-circle text-success"></i> <strong>Nhận phòng:</strong> Từ 14:00</li>
-                            <li class="mb-2"><i class="bi bi-check-circle text-success"></i> <strong>Trả phòng:</strong> Trước 12:00</li>
-                            <li class="mb-2"><i class="bi bi-check-circle text-success"></i> <strong>Hủy miễn phí:</strong> Trước 24 giờ</li>
-                            <li class="mb-2"><i class="bi bi-x-circle text-danger"></i> <strong>Không hút thuốc</strong> trong phòng</li>
-                            <li class="mb-2"><i class="bi bi-check-circle text-success"></i> <strong>Thú cưng:</strong> Cho phép (phụ phí 200,000 VNĐ/đêm)</li>
+                            <li class="mb-2"><i class="bi bi-check-circle text-success"></i> <strong>Check-in:</strong> From 2:00 PM</li>
+                            <li class="mb-2"><i class="bi bi-check-circle text-success"></i> <strong>Check-out:</strong> Before 12:00 PM</li>
+                            <li class="mb-2"><i class="bi bi-check-circle text-success"></i> <strong>Free cancellation:</strong> Up to 24 hours before</li>
+                            <li class="mb-2"><i class="bi bi-x-circle text-danger"></i> <strong>No smoking</strong> in the room</li>
+                            <li class="mb-2"><i class="bi bi-check-circle text-success"></i> <strong>Pets:</strong> Allowed (surcharge 200,000 VND/night)</li>
                         </ul>
                     </div>
                 </div>
@@ -173,12 +173,12 @@
             <div class="col-lg-4">
                 <div class="card booking-card shadow-lg">
                     <div class="card-header text-white text-center" style="background: linear-gradient(135deg,#d4af37,#aa8a3a)">
-                        <h4 class="mb-0">Thông Tin Đặt Phòng</h4>
+                        <h4 class="mb-0">Booking Information</h4>
                     </div>
                     <div class="card-body">
                         <div class="text-center mb-4">
-                            <div class="display-6 fw-bold" style="color: #d4af37">@Model.RoomType.BasePrice.ToString("N0") VNĐ</div>
-                            <small class="text-muted">/ mỗi đêm</small>
+                            <div class="display-6 fw-bold" style="color: #d4af37">@Model.RoomType.BasePrice.ToString("N0") VND</div>
+                            <small class="text-muted">/ per night</small>
                         </div>
 
                         @if (Model.Status == "Available")
@@ -202,7 +202,7 @@
                                 </div>
 
                                 <div class="d-grid gap-2 mb-3">
-                                    <button type="submit" id="bookNowBtn" class="btn btn-primary btn-lg">
+                                    <button type="submit" id="bookNowBtn" class="btn btn-lg" style="background: linear-gradient(135deg,#d4af37,#aa8a3a)">
                                         <i class="bi bi-calendar-check-fill"></i> Book Now
                                     </button>
                                 </div>
@@ -211,7 +211,7 @@
                         else
                         {
                             <div class="alert alert-danger text-center">
-                                <i class="bi bi-x-circle-fill"></i> Phòng này đã được đặt
+                                <i class="bi bi-x-circle-fill"></i> This room has been booked
                             </div>
 
                             <div class="d-grid gap-2 mb-3">
@@ -219,7 +219,7 @@
                                    asp-action="RoomTypeDetails"
                                    asp-route-id="@Model.RoomTypeId"
                                    class="btn btn-lg" style="background: linear-gradient(135deg,#d4af37,#aa8a3a)">
-                                    <i class="bi bi-search"></i> Tìm Phòng Khác
+                                    <i class="bi bi-search"></i> Find Another Room
                                 </a>
                             </div>
                         }
@@ -229,18 +229,18 @@
                                asp-action="RoomTypeDetails"
                                asp-route-id="@Model.RoomTypeId"
                                class="btn btn-outline-secondary">
-                                <i class="bi bi-arrow-left"></i> Quay Lại Danh Sách
+                                <i class="bi bi-arrow-left"></i> Back to List
                             </a>
                         </div>
 
                         <!-- Thông tin liên hệ -->
                         <div class="mt-4 pt-3 border-top">
-                            <h6 class="text-center mb-3">Cần Hỗ Trợ?</h6>
+                            <h6 class="text-center mb-3">Need Assistance?</h6>
                             <div class="d-grid gap-2">
-                                <a href="tel:+84123456789" class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-telephone-fill"></i> 036 290 9853
+                                <a href="tel:+84362909853" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-telephone-fill"></i> +84 36 290 9853
                                 </a>
-                                <a href="mailto:info@hthotel.com" class="btn btn-sm btn-outline-primary">
+                                <a href="mailto:sales@hanoihotel.com.vn" class="btn btn-sm btn-outline-primary">
                                     <i class="bi bi-envelope-fill"></i> sales@hanoihotel.com.vn
                                 </a>
                             </div>
@@ -248,12 +248,12 @@
 
                         <!-- Highlights -->
                         <div class="mt-4 pt-3 border-top">
-                            <h6 class="mb-3">Điểm Nổi Bật</h6>
+                            <h6 class="mb-3">Highlights</h6>
                             <ul class="list-unstyled small">
-                                <li class="mb-2"><i class="bi bi-check2 text-success"></i> Miễn phí WiFi</li>
-                                <li class="mb-2"><i class="bi bi-check2 text-success"></i> Bữa sáng buffet</li>
-                                <li class="mb-2"><i class="bi bi-check2 text-success"></i> Hủy miễn phí</li>
-                                <li class="mb-2"><i class="bi bi-check2 text-success"></i> Dọn phòng hàng ngày</li>
+                                <li class="mb-2"><i class="bi bi-check2 text-success"></i> Free WiFi</li>
+                                <li class="mb-2"><i class="bi bi-check2 text-success"></i> Buffet breakfast</li>
+                                <li class="mb-2"><i class="bi bi-check2 text-success"></i> Free cancellation</li>
+                                <li class="mb-2"><i class="bi bi-check2 text-success"></i> Daily housekeeping</li>
                             </ul>
                         </div>
                     </div>
