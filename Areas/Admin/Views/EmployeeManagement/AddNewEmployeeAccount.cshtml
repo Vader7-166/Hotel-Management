@@ -18,40 +18,21 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <div class="form-floating">
-                            @* SỬA: Thêm placeholder và đổi vị trí label *@
                             <input asp-for="FullName" class="form-control" placeholder="Full Name" />
                             <label asp-for="FullName"></label>
                         </div>
                         <span asp-validation-for="FullName" class="text-danger"></span>
                     </div>
+
                     <div class="col-md-6 mb-3">
                         <div class="form-floating">
-                            <select asp-for="Position" class="form-select">
-                                <option value="" selected disabled>Select a Position...</option>
-
-                                <optgroup label="Admin Roles (Quản lý)">
-                                    <option value="General Manager">General Manager</option>
-                                    <option value="Hotel Manager">Hotel Manager</option>
-                                    <option value="Operations Manager">Operations Manager</option>
-                                    <option value="IT Administrator">IT Administrator</option>
-                                    <option value="Finance Manager">Finance Manager</option>
-                                </optgroup>
-
-                                <optgroup label="Employee Roles (Nhân viên)">
-                                    <option value="Receptionist">Receptionist (Lễ tân)</option>
-                                    <option value="Housekeeper">Housekeeper (Buồng phòng)</option>
-                                    <option value="Concierge">Concierge (Hỗ trợ)</option>
-                                    <option value="Waiter">Waiter (Phục vụ)</option>
-                                    <option value="Security Guard">Security Guard (Bảo vệ)</option>
-                                </optgroup>
-                            </select>
-                            <label asp-for="Position"></label>
+                            <input asp-for="Salary" type="number" class="form-control" placeholder="Salary" />
+                            <label asp-for="Salary"></label>
                         </div>
-                        <span asp-validation-for="Position" class="text-danger"></span>
+                        <span asp-validation-for="Salary" class="text-danger"></span>
                     </div>
                     <div class="col-md-6 mb-3">
                         <div class="form-floating">
-                            @* SỬA: Thêm placeholder và đổi vị trí label *@
                             <input asp-for="Phone" class="form-control" placeholder="Phone" />
                             <label asp-for="Phone"></label>
                         </div>
@@ -59,7 +40,6 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <div class="form-floating">
-                            @* SỬA: Thêm placeholder và đổi vị trí label *@
                             <input asp-for="Address" class="form-control" placeholder="Address" />
                             <label asp-for="Address"></label>
                         </div>
@@ -67,7 +47,6 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <div class="form-floating">
-                            @* SỬA: Đổi vị trí label (input type="date" không cần placeholder) *@
                             <input asp-for="BirthDate" type="date" class="form-control" />
                             <label asp-for="BirthDate"></label>
                         </div>
@@ -75,7 +54,6 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <div class="form-floating">
-                            @* SỬA: Đổi vị trí label *@
                             <select asp-for="Gender" class="form-control">
                                 <option value="" selected disabled>Select Gender</option>
                                 <option value="Male">Male</option>
@@ -88,7 +66,6 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <div class="form-floating">
-                            @* SỬA: Đổi vị trí label *@
                             <input asp-for="HireDate" type="date" class="form-control" />
                             <label asp-for="HireDate"></label>
                         </div>
@@ -102,7 +79,6 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <div class="form-floating">
-                            @* SỬA: Thêm placeholder và đổi vị trí label *@
                             <input asp-for="Username" class="form-control" placeholder="Username" />
                             <label asp-for="Username"></label>
                         </div>
@@ -110,7 +86,6 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <div class="form-floating">
-                            @* SỬA: Thêm placeholder và đổi vị trí label *@
                             <input asp-for="Email" class="form-control" placeholder="Email" />
                             <label asp-for="Email"></label>
                         </div>
@@ -120,7 +95,6 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <div class="form-floating">
-                            @* SỬA: Thêm placeholder và đổi vị trí label *@
                             <input asp-for="Password" class="form-control" placeholder="Password" />
                             <label asp-for="Password"></label>
                         </div>
@@ -128,7 +102,6 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <div class="form-floating">
-                            @* SỬA: Thêm placeholder và đổi vị trí label *@
                             <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm Password" />
                             <label asp-for="ConfirmPassword"></label>
                         </div>
@@ -136,11 +109,11 @@
                     </div>
                 </div>
                 <div class="row">
+
                     <div class="col-md-6 mb-3">
                         <div class="form-floating">
-                            @* SỬA: Đổi vị trí label *@
                             <select asp-for="Role" class="form-control">
-                                <option value="" selected disabled>Select Role</option>
+                                <option value="" selected disabled>Select Role First...</option>
                                 <option value="Employee">Employee</option>
                                 <option value="Admin">Admin</option>
                             </select>
@@ -148,6 +121,17 @@
                         </div>
                         <span asp-validation-for="Role" class="text-danger"></span>
                     </div>
+
+                    <div class="col-md-6 mb-3">
+                        <div class="form-floating">
+                            <select asp-for="Position" class="form-select" disabled>
+                                <option value="" selected disabled>Select Role to see positions...</option>
+                            </select>
+                            <label asp-for="Position"></label>
+                        </div>
+                        <span asp-validation-for="Position" class="text-danger"></span>
+                    </div>
+
                 </div>
 
                 <div class="d-flex justify-content-end mt-4">
@@ -159,8 +143,6 @@
 </div>
 
 @section Styles {
-    @* Bạn có thể giữ hoặc xóa file CSS này. 
-       Nếu giữ, nó có thể ảnh hưởng giao diện `form-floating` của bạn *@
     <link href="~/css/customer/CustomerList.css" rel="stylesheet">
     <style>
         :root {
@@ -178,14 +160,21 @@
         .form-floating > label {
             padding-left: var(--custom-form-padding-left);
         }
+
+        /* (Thêm CSS cho nhãn nổi - nếu cần) */
+        .form-floating > .form-control:focus ~ label,
+        .form-floating > .form-control:not(:placeholder-shown) ~ label,
+        .form-floating > .form-select ~ label {
+            transform: scale(0.85) translateY(-0.5rem) translateX(0);
+        }
     </style>
 }
 @section Script {
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    @* <script src="~/js/admin/AddNewEmployee.js"></script> *@
 
     @{
-        @* Thêm các script validation (cần thiết cho asp-validation-for) *@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script src="~/js/admin/AddNewEmployee.js" asp-append-version="true"></script>
 }

@@ -86,6 +86,7 @@ namespace Hotel_Management.Areas.Admin.Controllers
                             Email = model.Email,
                             HireDate = model.HireDate,
                             CreatedAt = DateTime.Now,
+                            Salary = model.Salary,
 
                             Phone = model.Phone,
                             Address = model.Address,
