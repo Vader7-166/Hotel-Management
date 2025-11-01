@@ -1,0 +1,51 @@
+﻿/* =========================================================
+   🧭 HEADER & NAVBAR
+   ========================================================= */
+.navbar {
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+/* Logo thương hiệu */
+.navbar-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: #c19b51 !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+    .navbar-brand img {
+        height: 55px;
+    }
+
+/* Liên kết điều hướng */
+.navbar-nav .nav-link {
+    font-weight: 300;
+    color: #000 !important;
+    margin-right: 20px;
+    transition: color 0.3s;
+}
+
+    .navbar-nav .nav-link:hover,
+    .navbar-nav .nav-link.active {
+        color: #c19b51 !important;
+    }
+
+/* Nút “Book Now” trên navbar */
+.btn-book {
+    background-color: #c19b51;
+    color: white !important;
+    font-weight: 600;
+    padding: 8px 20px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease;
+}
+
+    .btn-book:hover {
+        background-color: #a77e3e;
+    }

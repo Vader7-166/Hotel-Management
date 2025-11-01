@@ -1,0 +1,369 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutCustomer.cshtml";
+}
+
+<div class="container mt-5">
+    <h2 class="section-title mb-4 text-center">Find Available Rooms</h2>
+
+    <!-- Bộ lọc tìm kiếm -->
+    <div class="filter-section p-4 mb-4 rounded shadow-sm">
+        <div class="row g-3 justify-content-center">
+            <div class="col-md-2 col-6">
+                <label for="checkIn" class="form-label fw-semibold">Check-in Date</label>
+                <input type="date" id="checkIn" class="form-control" required>
+            </div>
+            <div class="col-md-2 col-6">
+                <label for="checkOut" class="form-label fw-semibold">Check-out Date</label>
+                <input type="date" id="checkOut" class="form-control" required>
+            </div>
+            <div class="col-md-2 col-6">
+                <label for="minPrice" class="form-label fw-semibold">Min Price (VND)</label>
+                <input type="number" id="minPrice" class="form-control" placeholder="Min">
+            </div>
+            <div class="col-md-2 col-6">
+                <label for="maxPrice" class="form-label fw-semibold">Max Price (VND)</label>
+                <input type="number" id="maxPrice" class="form-control" placeholder="Max">
+            </div>
+            <div class="col-md-2 col-6">
+                <label for="guests" class="form-label fw-semibold">Guests</label>
+                <input type="number" id="guests" class="form-control" placeholder="Guests" min="1">
+            </div>
+            <div class="col-md-2 col-6 d-flex align-items-end">
+                <button id="filterBtn" class="btn btn-gold w-100">Search</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kết quả hiển thị -->
+    <div id="roomResults" class="mt-4"></div>
+
+    <!-- Phân trang -->
+    <div id="paginationContainer" class="d-flex justify-content-center mt-4"></div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // Biến toàn cục để lưu trữ dữ liệu
+    let allRooms = [];
+    let currentPage = 1;
+    const itemsPerPage = 6; // Số phòng hiển thị mỗi trang
+
+    // === Giới hạn ngày không cho chọn quá khứ ===
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+    $("#checkIn").attr("min", todayStr);
+    $("#checkOut").attr("min", todayStr);
+
+    // Khi người dùng chọn check-in => check-out phải sau ít nhất 1 ngày
+    $("#checkIn").on("change", function () {
+        const checkInDate = new Date($(this).val());
+        const minOut = new Date(checkInDate);
+        minOut.setDate(minOut.getDate() + 1);
+        $("#checkOut").attr("min", minOut.toISOString().split("T")[0]);
+
+        // Nếu checkOut cũ không hợp lệ thì cập nhật lại
+        const currentOut = new Date($("#checkOut").val());
+        if (currentOut <= checkInDate) {
+            $("#checkOut").val(minOut.toISOString().split("T")[0]);
+        }
+    });
+
+    // === Nút tìm phòng ===
+    $("#filterBtn").click(function () {
+        const checkIn = $("#checkIn").val();
+        const checkOut = $("#checkOut").val();
+        const minPrice = $("#minPrice").val();
+        const maxPrice = $("#maxPrice").val();
+        const guests = $("#guests").val();
+
+        if (!checkIn || !checkOut) {
+            alert("⚠️ Please select check-in and check-out dates!");
+            return;
+        }
+
+        if (new Date(checkOut) <= new Date(checkIn)) {
+            alert("⚠️ Check-out date must be later than Check-in date!");
+            return;
+        }
+
+        $.ajax({
+            url: '/Customer/Booking/FilterRooms',
+            type: 'GET',
+            data: { checkIn, checkOut, minPrice, maxPrice, guests },
+            success: function (res) {
+                if (res.success) {
+                    allRooms = res.data;
+                    currentPage = 1;
+                    displayRooms();
+                    displayPagination();
+                }
+            },
+            error: function (res) {
+                alert(res.responseJSON?.message || "⚠️ Please check your selected dates!");
+            }
+        });
+    });
+
+    // === Hàm hiển thị phòng theo trang ===
+    function displayRooms() {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const roomsToDisplay = allRooms.slice(startIndex, endIndex);
+
+        let html = "";
+
+        if (roomsToDisplay.length === 0) {
+            html = "<p class='text-center mt-4'>No available rooms found.</p>";
+        } else {
+            roomsToDisplay.forEach(room => {
+                const name = room.typeName.trim().toLowerCase();
+                let imgIndex = 1;
+                switch (name) {
+                    case "superior": imgIndex = 1; break;
+                    case "deluxe": imgIndex = 2; break;
+                    case "premier": imgIndex = 3; break;
+                    case "loft": imgIndex = 4; break;
+                    case "junior suite": imgIndex = 5; break;
+                    case "executive suite": imgIndex = 6; break;
+                    case "panoramic suite": imgIndex = 7; break;
+                    case "suite": imgIndex = 8; break;
+                    case "presidential suite": imgIndex = 9; break;
+                }
+
+                const imageUrl = `/images/Room/room${imgIndex}.jpg`;
+
+                html += `
+                    <div class="card mb-3 shadow-sm p-3 room-card">
+                        <div class="row g-0 align-items-center">
+                            <div class="col-md-3 text-center">
+                                <img src="${imageUrl}" class="img-fluid rounded room-img" alt="${room.typeName}">
+                            </div>
+                            <div class="col-md-9">
+                                <h5 class="fw-bold">${room.typeName}</h5>
+                                <p class="text-muted">${room.description || ''}</p>
+                                <p><strong>${room.basePrice.toLocaleString()} VND / night</strong></p>
+                                <p><i class="bi bi-people"></i> Max: ${room.maxOccupancy} guests</p>
+                                <button class="btn btn-gold"
+                                    onclick="bookRoom(${room.roomId})">
+                                    <i class='bi bi-calendar-check'></i> Book Now
+                                </button>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        $("#roomResults").html(html);
+
+        // Cuộn mượt lên đầu kết quả
+        $('html, body').animate({
+            scrollTop: $("#roomResults").offset().top - 100
+        }, 400);
+    }
+
+    // === Hàm hiển thị phân trang ===
+    function displayPagination() {
+        const totalPages = Math.ceil(allRooms.length / itemsPerPage);
+
+        if (totalPages <= 1) {
+            $("#paginationContainer").html("");
+            return;
+        }
+
+        let paginationHtml = '<ul class="pagination">';
+
+        // Nút Previous
+        if (currentPage > 1) {
+            paginationHtml += `
+                <li class="page-item">
+                    <a class="page-link" href="#" onclick="changePage(${currentPage - 1}); return false;">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                </li>`;
+        } else {
+            paginationHtml += `
+                <li class="page-item disabled">
+                    <span class="page-link"><i class="bi bi-chevron-left"></i></span>
+                </li>`;
+        }
+
+        // Các số trang
+        const maxVisiblePages = 5;
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+        if (endPage - startPage < maxVisiblePages - 1) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+
+        // Trang đầu tiên
+        if (startPage > 1) {
+            paginationHtml += `
+                <li class="page-item">
+                    <a class="page-link" href="#" onclick="changePage(1); return false;">1</a>
+                </li>`;
+            if (startPage > 2) {
+                paginationHtml += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+            }
+        }
+
+        // Các trang ở giữa
+        for (let i = startPage; i <= endPage; i++) {
+            if (i === currentPage) {
+                paginationHtml += `
+                    <li class="page-item active">
+                        <span class="page-link">${i}</span>
+                    </li>`;
+            } else {
+                paginationHtml += `
+                    <li class="page-item">
+                        <a class="page-link" href="#" onclick="changePage(${i}); return false;">${i}</a>
+                    </li>`;
+            }
+        }
+
+        // Trang cuối cùng
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                paginationHtml += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+            }
+            paginationHtml += `
+                <li class="page-item">
+                    <a class="page-link" href="#" onclick="changePage(${totalPages}); return false;">${totalPages}</a>
+                </li>`;
+        }
+
+        // Nút Next
+        if (currentPage < totalPages) {
+            paginationHtml += `
+                <li class="page-item">
+                    <a class="page-link" href="#" onclick="changePage(${currentPage + 1}); return false;">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>`;
+        } else {
+            paginationHtml += `
+                <li class="page-item disabled">
+                    <span class="page-link"><i class="bi bi-chevron-right"></i></span>
+                </li>`;
+        }
+
+        paginationHtml += '</ul>';
+
+        // Thêm thông tin số lượng kết quả
+        const startItem = (currentPage - 1) * itemsPerPage + 1;
+        const endItem = Math.min(currentPage * itemsPerPage, allRooms.length);
+        const infoHtml = `
+            <div class="text-center mb-3 text-muted">
+                Showing ${startItem} - ${endItem} of ${allRooms.length} rooms
+            </div>`;
+
+        $("#paginationContainer").html(infoHtml + paginationHtml);
+    }
+
+    // === Hàm chuyển trang ===
+    function changePage(page) {
+        currentPage = page;
+        displayRooms();
+        displayPagination();
+    }
+
+    // === Hàm xử lý khi bấm Book Now ===
+    function bookRoom(roomId) {
+        const checkIn = $("#checkIn").val();
+        const checkOut = $("#checkOut").val();
+
+        if (!checkIn || !checkOut) {
+            alert("⚠️ Please select check-in and check-out dates first!");
+            return;
+        }
+
+        // Chuyển hướng đến Booking/Create
+        window.location.href = `/Customer/Booking/Create?roomId=${roomId}&checkIn=${checkIn}&checkOut=${checkOut}`;
+    }
+</script>
+
+<style>
+    .filter-section {
+        background: #f9f9f9;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    label.form-label {
+        font-size: 14px;
+        color: #444;
+    }
+
+    input.form-control {
+        font-size: 15px;
+    }
+
+    .room-img {
+        width: 100%;
+        max-width: 230px;
+        height: 160px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+
+    .room-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .room-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+        }
+
+    .btn-gold {
+        background-color: #c9a44c;
+        color: white;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+        .btn-gold:hover {
+            background-color: #b38c2f;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(201, 164, 76, 0.3);
+        }
+
+    /* Pagination Styles */
+    .pagination {
+        margin: 0;
+    }
+
+        .pagination .page-link {
+            color: #c9a44c;
+            border: 1px solid #dee2e6;
+            padding: 0.5rem 0.75rem;
+            margin: 0 2px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+            .pagination .page-link:hover {
+                background-color: #c9a44c;
+                color: white;
+                border-color: #c9a44c;
+            }
+
+        .pagination .page-item.active .page-link {
+            background-color: #c9a44c;
+            border-color: #c9a44c;
+            color: white;
+            font-weight: 600;
+        }
+
+        .pagination .page-item.disabled .page-link {
+            color: #6c757d;
+            background-color: #fff;
+            border-color: #dee2e6;
+        }
+
+    #paginationContainer {
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+</style>
