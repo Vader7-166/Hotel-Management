@@ -72,20 +72,22 @@
     $('#resetAccountButton').on('click', function () {
         $('#searchAccountInput').val('');
         $('#roleFilter').val('');
+        $('#positionFilter').val('');
         initializeFloatingLabels();
         loadPage(1);
     });
 
     // Hàm chính để tải dữ liệu thông qua AJAX
     function loadPage(pageIndex) {
-        // THAY ĐỔI 5: Lấy giá trị từ các bộ lọc mới
         var searchQuery = $('#searchAccountInput').val();
         var role = $('#roleFilter').val();
+        var position = $('#positionFilter').val();
 
         var data = {
             pageIndex: pageIndex,
             searchQuery: searchQuery,
-            role: role // Đổi 'gender' và 'nationality' thành 'role'
+            role: role,
+            position: position // <-- GỬI LÊN SERVER
         };
 
         $.ajax({
@@ -252,6 +254,47 @@
                 // Xử lý lỗi mạng hoặc lỗi server
                 alert('Đã có lỗi xảy ra trong quá trình xóa tài khoản.');
                 $('#confirmationModal').modal('hide');
+            }
+        });
+    });
+
+    // =======================================================
+    // LOGIC CHO DROPDOWN ĐỘNG (CASCADING DROPDOWNS)
+    // =======================================================
+    $('#roleFilter').on('change', function () {
+        var selectedRole = $(this).val(); // Lấy role (Admin, Employee, "")
+        var positionDropdown = $('#positionFilter');
+
+        // 1. Vô hiệu hóa dropdown "Position" trong khi đang tải dữ liệu
+        positionDropdown.prop('disabled', true);
+
+        // 2. Gọi AJAX đến Action mới ta vừa tạo
+        $.ajax({
+            url: '/Admin/EmployeeManagement/GetPositionsByRole',
+            type: 'GET',
+            data: { role: selectedRole },
+            success: function (positions) {
+
+                // 3. Xóa tất cả các <option> cũ (trừ option "All Positions")
+                positionDropdown.find('option:not(:first)').remove();
+
+                // 4. Lặp qua danh sách JSON trả về và thêm các <option> mới
+                $.each(positions, function (i, position) {
+                    positionDropdown.append($('<option>', {
+                        value: position,
+                        text: position
+                    }));
+                });
+
+                // 5. Kích hoạt lại dropdown
+                positionDropdown.prop('disabled', false);
+
+                // 6. Cập nhật lại giao diện floating label (nếu bạn dùng)
+                initializeFloatingLabels();
+            },
+            error: function () {
+                alert('Có lỗi xảy ra khi tải danh sách vị trí.');
+                positionDropdown.prop('disabled', false);
             }
         });
     });

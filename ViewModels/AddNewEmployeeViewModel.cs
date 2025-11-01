@@ -19,6 +19,10 @@ namespace Hotel_Management.ViewModels
         [DataType(DataType.Date)] // Giúp hiển thị đúng kiểu date picker
         public DateOnly? HireDate { get; set; }
 
+        [Range(0, double.MaxValue, ErrorMessage = "Salary must be a positive number.")]
+        [DataType(DataType.Currency)]
+        public decimal? Salary { get; set; }
+
         // --- Thuộc tính từ lớp Account ---
         [Required(ErrorMessage = "Username is required.")]
         public string Username { get; set; }

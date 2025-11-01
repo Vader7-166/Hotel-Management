@@ -60,7 +60,7 @@
         <ul class="list-group list-group-flush">
             <li class="list-group-item d-flex justify-content-between">
                 <span class="fw-semibold">Full Name:</span>
-                [cite_start]@* Thử lấy FullName từ Employee, nếu không có thì lấy từ Customer [cite: 2] *@
+                @* Thử lấy FullName từ Employee, nếu không có thì lấy từ Customer [cite: 2] *@
                 <span>@(Model.Employee?.FullName ?? Model.Customer?.FullName ?? "N/A")</span>
             </li>
             <li class="list-group-item d-flex justify-content-between">
@@ -73,7 +73,7 @@
     // Phần Footer của Modal
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <a href="@Url.Action("Edit", "EmployeeManagement", new { id = Model.Username })" class="btn btn-primary edit-details-btn">
+        <a href="@Url.Action("Edit", "EmployeeManagement", new { username = Model.Username })" class="btn btn-primary edit-details-btn">
             <i class="material-symbols-rounded">edit</i>&nbsp;Edit
         </a>
     </div>
