@@ -125,12 +125,11 @@ namespace Hotel_Management.Areas.Admin.Controllers
                     }
                 }
             }
-
             // 4. Nếu ModelState không hợp lệ ngay từ đầu, trả về View với các lỗi
             return View(model);
         }
 
-        // Hàm HashPassword của bạn
+        // Hàm HashPassword
         private string HashPassword(string password)
         {
             using (SHA256 sha = SHA256.Create())
@@ -155,13 +154,13 @@ namespace Hotel_Management.Areas.Admin.Controllers
                                           .Include(a => a.Employee)
                                           .Where(a => a.Role == "Admin" || a.Role == "Employee");
 
-            // Lọc loại trừ (Giữ nguyên)
+            // Lọc loại trừ
             if (!string.IsNullOrEmpty(loggedInUsername))
             {
                 query = query.Where(a => a.Username != loggedInUsername);
             }
 
-            // Các bộ lọc (Giữ nguyên)
+            // Các bộ lọc
             if (!string.IsNullOrEmpty(searchQuery))
             {
                 query = query.Where(a => a.Username.Contains(searchQuery) || a.Email.Contains(searchQuery));
@@ -224,10 +223,6 @@ namespace Hotel_Management.Areas.Admin.Controllers
             }
         }
 
-
-        //public
-
-
         // Action Details(id), Edit(id) [HttpGet], Edit(id) [HttpPost] ở đây
         public async Task<IActionResult> Details(string username) 
         {
@@ -242,78 +237,127 @@ namespace Hotel_Management.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string username)
         {
-            var account = await db.Accounts.FindAsync(username); 
+            // DÙNG .Include() ĐỂ TẢI EMPLOYEE
+            var account = await db.Accounts
+                .Include(a => a.Employee)
+                .FirstOrDefaultAsync(a => a.Username == username);
+
             if (account == null) return NotFound();
-            return PartialView("_AccountEditPartitial", account);
+
+            // Ánh xạ (Map) từ Entity -> ViewModel
+            var viewModel = new EditEmployeeViewModel
+            {
+                Username = account.Username,
+                Email = account.Email,
+                Role = account.Role,
+                IsActive = account.IsActive,
+                EmployeeId = account.EmployeeId ?? 0, // Lấy EmployeeId
+
+                // Gán giá trị Employee (nếu có)
+                FullName = account.Employee?.FullName,
+                Position = account.Employee?.Position,
+                Salary = account.Employee?.Salary,
+                Phone = account.Employee?.Phone,
+                Address = account.Employee?.Address,
+                Gender = account.Employee?.Gender,
+                BirthDate = account.Employee?.BirthDate
+            };
+
+            return PartialView("_AccountEditPartitial", viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Account accountViewModel)
+        public async Task<IActionResult> Edit(EditEmployeeViewModel model)
         {
-            if (string.IsNullOrEmpty(accountViewModel.Username))
-            {
-                return BadRequest();
-            }
-
-            ModelState.Remove("PasswordHash");
-            ModelState.Remove("CreatedAt");
+            // (Bỏ qua ModelState.Remove vì ViewModel đã đúng)
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var entityToUpdate = await db.Accounts.FindAsync(accountViewModel.Username);
+                    // Lấy cả 2 bản ghi gốc
+                    var accountToUpdate = await db.Accounts.FindAsync(model.Username);
+                    var employeeToUpdate = await db.Employees.FindAsync(model.EmployeeId);
 
-                    if (entityToUpdate == null)
+                    if (accountToUpdate == null || employeeToUpdate == null)
                     {
                         return NotFound();
                     }
 
-                    db.Entry(entityToUpdate).CurrentValues.SetValues(accountViewModel);
+                    // 1. Cập nhật Account
+                    accountToUpdate.Email = model.Email;
+                    accountToUpdate.Role = model.Role;
+                    accountToUpdate.IsActive = model.IsActive;
+                    accountToUpdate.UpdatedAt = DateTime.Now;
 
-                    // === DÒNG QUAN TRỌNG ĐỂ SỬA LỖI ===
-                    // Nói với EF Core rằng không được thay đổi thuộc tính PasswordHash
-                    db.Entry(entityToUpdate).Property(x => x.PasswordHash).IsModified = false;
-
-                    entityToUpdate.UpdatedAt = DateTime.Now;
+                    // 2. Cập nhật Employee
+                    employeeToUpdate.FullName = model.FullName;
+                    employeeToUpdate.Position = model.Position;
+                    employeeToUpdate.Salary = model.Salary;
+                    employeeToUpdate.Phone = model.Phone;
+                    employeeToUpdate.Address = model.Address;
+                    employeeToUpdate.Gender = model.Gender;
+                    employeeToUpdate.BirthDate = model.BirthDate;
+                    employeeToUpdate.UpdatedAt = DateTime.Now;
 
                     await db.SaveChangesAsync();
-
                     return Json(new { success = true, message = "Account updated successfully!" });
                 }
                 catch (DbUpdateException)
                 {
-                    return Json(new { success = false, message = "An error occurred while saving. Please try again." });
+                    return Json(new { success = false, message = "Error saving data." });
                 }
             }
 
-            return PartialView("_AccountEditPartial", accountViewModel);
+            // Nếu model không hợp lệ
+            return PartialView("_AccountEditPartitial", model);
         }
 
-        //lấy ra các role dựa trên kết quả đã lọc, ban đầu sẽ là null
+       
         [HttpGet]
-        public async Task<IActionResult> GetPositionsByRole(string role)
+        public IActionResult GetPositionsByRole(string role)
         {
-            // Bắt đầu truy vấn từ bảng Accounts, tải kèm Employee
-            IQueryable<Account> query = db.Accounts.Include(a => a.Employee);
-
-            // 1. Nếu một role cụ thể được chọn (Admin hoặc Employee)
-            if (!string.IsNullOrEmpty(role))
+            var adminPositions = new List<string>
             {
-                query = query.Where(a => a.Role == role);
+                "Quản lý Khách sạn",
+                "Quản lý Vận hành",
+                "Quản trị viên IT",
+                "Quản lý Tài chính"
+            };
+
+            var employeePositions = new List<string>
+            {
+                "Lễ tân",
+                "Buồng phòng",
+                "Lao công",
+                "Hỗ trợ (Concierge)",
+                "Phục vụ",
+                "Bảo vệ",
+                "Nhân viên Đặt phòng"
+                // (Thêm các vị trí nhân viên khác muốn)
+            };
+
+            List<string> positionsToSend;
+
+            // 2. Quyết định danh sách nào sẽ gửi đi
+            if (role == "Admin")
+            {
+                positionsToSend = adminPositions;
+            }
+            else if (role == "Employee")
+            {
+                positionsToSend = employeePositions;
+            }
+            else // Trường hợp role == "" (Tức là chọn "All Roles" trong bộ lọc)
+            {
+                // Gộp cả 2 danh sách lại
+                positionsToSend = adminPositions.Concat(employeePositions).ToList();
             }
 
-            // 2. Từ kết quả đã lọc, lấy ra các Vị trí (Position)
-            var positions = await query
-                .Where(a => a.Employee != null && !string.IsNullOrEmpty(a.Employee.Position)) // Lọc bỏ các Employee rỗng
-                .Select(a => a.Employee.Position) // Chỉ chọn cột Position
-                .Distinct() // Lấy các giá trị duy nhất
-                .OrderBy(p => p) // Sắp xếp theo ABC
-                .ToListAsync();
-
-            // 3. Trả về danh sách dưới dạng JSON
-            return Json(positions);
+            // 3. Sắp xếp và trả về JSON
+            positionsToSend.Sort(); // Sắp xếp theo thứ tự ABC
+            return Json(positionsToSend);
         }
     }
 }
