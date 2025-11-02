@@ -14,13 +14,14 @@ namespace Hotel_Management.Areas.Admin.Controllers
         {
             this.db = _db;
         }
+
         public IActionResult Index()
         {
             var rooms = db.Rooms
-            .Include("RoomType")
-            .OrderBy(r => r.Floor)
-            .ThenBy(r => r.RoomNumber)
-            .ToList();
+                .Include("RoomType")
+                .OrderBy(r => r.Floor)
+                .ThenBy(r => r.RoomNumber)
+                .ToList();
 
             var viewModel = new RoomManagementViewModel
             {
@@ -37,19 +38,20 @@ namespace Hotel_Management.Areas.Admin.Controllers
 
             return View(viewModel);
         }
-        // Hàm này để nạp lại danh sách loại phòng cho dropdown
+
+        // This method loads room type list for dropdown
         private async Task PopulateRoomTypes(RoomDetailViewModel viewModel)
         {
             viewModel.AvailableRoomTypes = await db.RoomTypes
-                                        .Select(rt => new SelectListItem
-                                        {
-                                            Value = rt.RoomTypeId.ToString(),
-                                            Text = $"{rt.TypeName} ({rt.Rooms.Count(r => r.Status == "Available")} available)"
-                                        }).ToListAsync();
+                .Select(rt => new SelectListItem
+                {
+                    Value = rt.RoomTypeId.ToString(),
+                    Text = $"{rt.TypeName} ({rt.Rooms.Count(r => r.Status == "Available")} available)"
+                }).ToListAsync();
         }
 
         [HttpGet]
-        public async  Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
             var availableRoomTypesList = db.RoomTypes
                                            .Select(rt => new SelectListItem
@@ -60,7 +62,7 @@ namespace Hotel_Management.Areas.Admin.Controllers
 
             RoomDetailViewModel viewModel;
 
-            if (id > 0) // Trường hợp Cập nhật (Edit)
+            if (id > 0) // Edit mode
             {
                 var room = db.Rooms.FirstOrDefault(r => r.RoomId == id);
 
@@ -78,21 +80,22 @@ namespace Hotel_Management.Areas.Admin.Controllers
                     Floor = room.Floor ?? 1,
                     Note = room.Note ?? ""
                 };
-                // 2. Tìm thông tin booking nếu phòng không có sẵn
+
+                // Get booking info if room is not available
                 if (room.Status == "Occupied" || room.Status == "CheckedIn" || room.Status == "Reserved")
                 {
                     var today = DateOnly.FromDateTime(DateTime.Now);
 
-                    // Tìm booking đang hoạt động hoặc sắp tới của phòng này
+                    // Find current or upcoming booking for this room
                     var activeBooking = await db.BookingDetails
-                        .Include(bd => bd.Booking.Customer) // JOIN đến Bảng Customer
+                        .Include(bd => bd.Booking.Customer)
                         .Where(bd => bd.RoomId == id &&
                                      (bd.Booking.Status == "CheckedIn" || bd.Booking.Status == "Confirmed") &&
                                      bd.Booking.CheckOutDate >= today)
-                        .OrderBy(bd => bd.Booking.CheckInDate) // Lấy booking sớm nhất
+                        .OrderBy(bd => bd.Booking.CheckInDate)
                         .FirstOrDefaultAsync();
 
-                    // 3. Nếu tìm thấy, gán thông tin vào ViewModel
+                    // If found, add to ViewModel
                     if (activeBooking != null)
                     {
                         viewModel.CustomerName = activeBooking.Booking.Customer.FullName;
@@ -101,12 +104,12 @@ namespace Hotel_Management.Areas.Admin.Controllers
                     }
                 }
             }
-            else // Trường hợp Tạo mới (Create)
+            else // Create mode
             {
                 viewModel = new RoomDetailViewModel();
             }
-            viewModel.AvailableRoomTypes = availableRoomTypesList;
 
+            viewModel.AvailableRoomTypes = availableRoomTypesList;
             return PartialView("_RoomDetail", viewModel);
         }
 
@@ -118,6 +121,7 @@ namespace Hotel_Management.Areas.Admin.Controllers
                 await PopulateRoomTypes(model);
                 return PartialView("_RoomDetail", model);
             }
+
             try
             {
                 var room = new Room
@@ -134,11 +138,11 @@ namespace Hotel_Management.Areas.Admin.Controllers
                 db.Rooms.Add(room);
                 await db.SaveChangesAsync();
 
-                return Json(new { success = true, message = "Thêm phòng thành công!" });
+                return Json(new { success = true, message = "Room added successfully!" });
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = "Lỗi server: " + ex.Message });
+                return Json(new { success = false, message = "Server error: " + ex.Message });
             }
         }
 
@@ -156,7 +160,7 @@ namespace Hotel_Management.Areas.Admin.Controllers
                 var room = await db.Rooms.FindAsync(model.RoomId);
                 if (room == null)
                 {
-                    return Json(new { success = false, message = "Không tìm thấy phòng!" });
+                    return Json(new { success = false, message = "Room not found!" });
                 }
 
                 room.RoomNumber = model.RoomNumber;
@@ -168,11 +172,11 @@ namespace Hotel_Management.Areas.Admin.Controllers
 
                 await db.SaveChangesAsync();
 
-                return Json(new { success = true, message = "Cập nhật phòng thành công!" });
+                return Json(new { success = true, message = "Room updated successfully!" });
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = "Lỗi server: " + ex.Message });
+                return Json(new { success = false, message = "Server error: " + ex.Message });
             }
         }
 
@@ -184,41 +188,42 @@ namespace Hotel_Management.Areas.Admin.Controllers
                 var room = await db.Rooms.FindAsync(id);
                 if (room == null)
                 {
-                    return Json(new { success = false, message = "Không tìm thấy phòng!" });
+                    return Json(new { success = false, message = "Room not found!" });
                 }
 
                 var isBooked = await db.BookingDetails
                     .AnyAsync(bd => bd.RoomId == id && bd.Booking.Status == "CheckedIn");
+
                 if (isBooked)
                 {
-                    return Json(new { success = false, message = "Không thể xóa phòng đang có khách!" });
+                    return Json(new { success = false, message = "Cannot delete a room currently occupied!" });
                 }
 
                 db.Rooms.Remove(room);
                 await db.SaveChangesAsync();
 
-                return Json(new { success = true, message = "Xóa phòng thành công!" });
+                return Json(new { success = true, message = "Room deleted successfully!" });
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = "Lỗi khi xóa: " + ex.Message });
+                return Json(new { success = false, message = "Error deleting room: " + ex.Message });
             }
         }
+
         [HttpGet]
         public async Task<IActionResult> _GetRoomLayout()
         {
-            // Query lại toàn bộ dữ liệu (giống hệt action Index)
+            // Reload all room data (same as Index)
             var floorsData = await db.Rooms
                 .Include(r => r.RoomType)
-                .GroupBy(r => r.Floor ?? 0) 
+                .GroupBy(r => r.Floor ?? 0)
                 .Select(g => new FloorGroup
                 {
                     FloorNumber = g.Key,
-                    Rooms = g.ToList() 
+                    Rooms = g.ToList()
                 })
                 .OrderBy(f => f.FloorNumber)
                 .ToListAsync();
-
 
             var viewModel = new RoomManagementViewModel
             {
@@ -229,4 +234,3 @@ namespace Hotel_Management.Areas.Admin.Controllers
         }
     }
 }
-

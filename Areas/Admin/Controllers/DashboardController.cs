@@ -26,15 +26,21 @@ namespace Hotel_Management.Areas.Admin.Controllers
             viewModel.TotalRoom = db.Rooms.Count();
             viewModel.CurrentlyRenting = db.Rooms.Count(r => r.Status != "Available");
             viewModel.AvailableRooms = db.Rooms.Count(r => r.Status == "Available");
-            viewModel.RevenueToday =(decimal)db.Invoices.Where(i => DateOnly.FromDateTime(i.InvoiceDate) == today && i.PaymentStatus == "Paid").Sum(i => i.TotalAmount);
+            viewModel.RevenueToday = db.Invoices
+                .Where(i => DateOnly.FromDateTime(i.InvoiceDate) == today && i.PaymentStatus == "Paid" && i.TotalAmount != null)
+                .Sum(i => i.TotalAmount ?? 0);
             // Change to milions VND
             viewModel.RevenueToday /= 1000000;
             // Calculate profit compared to yesterday
             var revenueYesterday = (decimal)db.Invoices.Where(i => DateOnly.FromDateTime(i.InvoiceDate) == yesterday && i.PaymentStatus == "Paid").Sum(i => i.TotalAmount);
             decimal percentDiff = 0;
-            if (viewModel.RevenueToday != 0)
+            if (revenueYesterday != 0)
             {
-                percentDiff = (viewModel.RevenueToday - revenueYesterday) / viewModel.RevenueToday * 100;
+                percentDiff = (viewModel.RevenueToday - revenueYesterday) / revenueYesterday * 100;
+            }
+            else if (viewModel.RevenueToday > 0)
+            {
+                percentDiff = 100;
             }
             viewModel.RevenueCompareToYesterday = percentDiff;
 
