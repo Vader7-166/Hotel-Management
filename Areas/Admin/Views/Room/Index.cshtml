@@ -1,7 +1,7 @@
 ﻿@model Hotel_Management.ViewModels.RoomManagementViewModel
 @{
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
-    ViewBag.Title = "Quản Lý Phòng";
+    ViewBag.Title = "Room Management";
 }
 
 @section Styles {
@@ -11,36 +11,36 @@
 <div class="container-fluid py-4">
     <div class="row mb-4">
         <div class="col-md-6">
-            <h2><i class="bi bi-door-closed"></i> Quản Lý Phòng</h2>
+            <h2><i class="bi bi-door-closed"></i> Room Management</h2>
         </div>
         <div class="col-md-6 text-end">
             <button type="button" class="btn btn-primary" onclick="openAddRoomModal()">
-                <i class="bi bi-plus-circle"></i> Thêm Phòng Mới
+                <i class="bi bi-plus-circle"></i> Add New Room
             </button>
         </div>
     </div>
 
-    <!-- Chú thích trạng thái -->
+    <!-- Status Legend -->
     <div class="row mb-3">
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <span class="me-3"><i class="bi bi-circle-fill text-success"></i> Phòng trống</span>
-                    <span class="me-3"><i class="bi bi-circle-fill text-danger"></i> Đã đặt</span>
-                    <span class="me-3"><i class="bi bi-circle-fill text-warning"></i> Bảo trì</span>
+                    <span class="me-3"><i class="bi bi-circle-fill text-success"></i> Available</span>
+                    <span class="me-3"><i class="bi bi-circle-fill text-danger"></i> Occupied</span>
+                    <span class="me-3"><i class="bi bi-circle-fill text-warning"></i> Under Maintenance</span>
                 </div>
             </div>
         </div>
     </div>
 
     <div id="room-layout-container">
-        <!-- Thanh điều hướng nhảy tầng nhanh -->
+        <!-- Quick floor navigation -->
         <div class="row mb-4">
             <div class="col-12">
                 <div class="card shadow-sm sticky-top" style="top: 20px; z-index: 100;">
                     <div class="card-body py-3">
                         <div class="d-flex align-items-center justify-content-between flex-wrap">
-                            <h6 class="mb-0 me-3"><i class="bi bi-signpost-split"></i> Nhảy đến tầng:</h6>
+                            <h6 class="mb-0 me-3"><i class="bi bi-signpost-split"></i> Jump to floor:</h6>
                             <div class="btn-group flex-wrap" role="group" aria-label="Floor navigation">
                                 @foreach (var floor in Model.Floors.OrderBy(f => f.FloorNumber))
                                 {
@@ -51,30 +51,30 @@
                                     <button type="button"
                                             class="btn btn-outline-primary position-relative"
                                             onclick="scrollToFloor(@floor.FloorNumber)">
-                                        <i class="bi bi-building"></i> Tầng @floor.FloorNumber
+                                        <i class="bi bi-building"></i> Floor @floor.FloorNumber
                                     </button>
                                 }
                             </div>
                         </div>
 
-                        <!-- Thông tin tổng quan -->
+                        <!-- Overview info -->
                         <div class="mt-3 pt-3 border-top">
                             <div class="row text-center">
                                 <div class="col-md-3 col-6">
                                     <h5 class="text-primary mb-0">@Model.Floors.Sum(f => f.Rooms.Count)</h5>
-                                    <small class="text-muted">Tổng phòng</small>
+                                    <small class="text-muted">Total Rooms</small>
                                 </div>
                                 <div class="col-md-3 col-6">
                                     <h5 class="text-success mb-0">@Model.Floors.Sum(f => f.Rooms.Count(r => r.Status == "Available"))</h5>
-                                    <small class="text-muted">Phòng trống</small>
+                                    <small class="text-muted">Available</small>
                                 </div>
                                 <div class="col-md-3 col-6">
                                     <h5 class="text-danger mb-0">@Model.Floors.Sum(f => f.Rooms.Count(r => r.Status == "Occupied"))</h5>
-                                    <small class="text-muted">Đã đặt</small>
+                                    <small class="text-muted">Occupied</small>
                                 </div>
                                 <div class="col-md-3 col-6">
-                                    <h5 class="text-warning mb-0">@Model.Floors.Sum(f => f.Rooms.Count(r => r.Status == "Maintenance"))</h5>
-                                    <small class="text-muted">Bảo trì</small>
+                                    <h5 class="text-warning mb-0">@Model.Floors.Sum(f => f.Rooms.Count(r => r.Status == "Maintained"))</h5>
+                                    <small class="text-muted">Under Maintenance</small>
                                 </div>
                             </div>
                         </div>
@@ -83,23 +83,23 @@
             </div>
         </div>
 
-        <!-- Danh sách phòng theo tầng -->
+        <!-- Room list by floor -->
         @foreach (var floor in Model.Floors)
         {
             var availableCount = floor.Rooms.Count(r => r.Status == "Available");
             var occupiedCount = floor.Rooms.Count(r => r.Status == "Occupied");
-            var maintenanceCount = floor.Rooms.Count(r => r.Status == "Maintenance");
+            var maintenanceCount = floor.Rooms.Count(r => r.Status == "Maintained");
 
             <div class="card mb-4 floor-section" id="floor-@floor.FloorNumber">
                 <div class="card-header bg-primary text-white">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h4 class="mb-0"><i class="bi bi-building"></i> Tầng @floor.FloorNumber</h4>
+                        <h4 class="mb-0"><i class="bi bi-building"></i> Floor @floor.FloorNumber</h4>
                         <div>
-                            <span class="badge bg-success me-1">Trống: @availableCount</span>
-                            <span class="badge bg-danger me-1">Đặt: @occupiedCount</span>
+                            <span class="badge bg-success me-1">Available: @availableCount</span>
+                            <span class="badge bg-danger me-1">Occupied: @occupiedCount</span>
                             @if (maintenanceCount > 0)
                             {
-                                <span class="badge bg-warning">Bảo trì: @maintenanceCount</span>
+                                <span class="badge bg-warning text-dark">Maintenance: @maintenanceCount</span>
                             }
                         </div>
                     </div>
@@ -131,22 +131,21 @@
     </div>
 </div>
 
-<!-- Modal Chi Tiết/Chỉnh Sửa Phòng -->
+<!-- Room Details/Edit Modal -->
 <div class="modal fade" id="roomModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="roomModalLabel">Chi Tiết Phòng</h5>
+                <h5 class="modal-title" id="roomModalLabel">Room Details</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body" id="roomModalBody">
-                <!-- Nội dung sẽ được load bằng AJAX -->
+                <!-- Content loaded via AJAX -->
             </div>
         </div>
     </div>
 </div>
 
 @section Script {
-
     <script src="/js/admin/room.js"></script>
 }
