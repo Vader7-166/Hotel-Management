@@ -2,32 +2,32 @@
 
     // ============ LOGIC "NHÃN NỔI" (FLOATING LABEL) ============
     // (Phần này không cần thay đổi vì nó hoạt động chung cho cả trang)
-    function initializeFloatingLabels() {
-        $('.input-group .form-control').each(function () {
-            const input = $(this);
-            const inputGroup = input.closest('.input-group');
-            if (input.val() && input.val().trim() !== '') {
-                inputGroup.addClass('is-filled');
-            } else {
-                inputGroup.removeClass('is-filled');
-            }
-        });
-    }
-    $('body').on('focus', '.input-group .form-control', function () {
-        $(this).closest('.input-group').addClass('is-focused');
-    });
-    $('body').on('blur', '.input-group .form-control', function () {
-        const input = $(this);
-        const inputGroup = input.closest('.input-group');
-        inputGroup.removeClass('is-focused');
-        if (input.val() && input.val().trim() !== '') {
-            inputGroup.addClass('is-filled');
-        } else {
-            inputGroup.removeClass('is-filled');
-        }
-    });
-    // Chạy lần đầu
-    initializeFloatingLabels();
+    //function initializeFloatingLabels() {
+    //    $('.input-group .form-control').each(function () {
+    //        //const input = $(this);
+    //        //const inputGroup = input.closest('.input-group');
+    //        //if (input.val() && input.val().trim() !== '') {
+    //        //    inputGroup.addClass('is-filled');
+    //        //} else {
+    //        //    inputGroup.removeClass('is-filled');
+    //        //}
+    //    });
+    //}
+    //$('body').on('focus', '.input-group .form-control', function () {
+    //    //$(this).closest('.input-group').addClass('is-focused');
+    //});
+    //$('body').on('blur', '.input-group .form-control', function () {
+    //    //const input = $(this);
+    //    //const inputGroup = input.closest('.input-group');
+    //    //inputGroup.removeClass('is-focused');
+    //    //if (input.val() && input.val().trim() !== '') {
+    //    //    inputGroup.addClass('is-filled');
+    //    //} else {
+    //    //    inputGroup.removeClass('is-filled');
+    //    //}
+    //});
+    //// Chạy lần đầu
+    //initializeFloatingLabels();
 
     // ============ LOGIC LỌC, PHÂN TRANG, VÀ RESET ============
 
@@ -105,6 +105,46 @@
         });
     }
 
+    // HÀM HELPER: Tải và điền danh sách Position
+    // (currentPositionValue dùng cho form "Edit" để chọn lại giá trị cũ)
+    function updatePositionDropdown(role, positionDropdown, currentPositionValue) {
+
+        // 1. Vô hiệu hóa dropdown "Position" trong khi tải
+        positionDropdown.prop('disabled', true);
+
+        // 2. Gọi AJAX (tái sử dụng Action 'GetPositionsByRole' của bạn)
+        $.ajax({
+            url: '/Admin/EmployeeManagement/GetPositionsByRole',
+            type: 'GET',
+            data: { role: role },
+            success: function (positions) {
+
+                // 3. Xóa các <option> cũ (trừ option "Select Position...")
+                positionDropdown.find('option:not([value=""])').remove();
+
+                // 4. Lặp qua JSON và thêm các <option> mới
+                $.each(positions, function (i, position) {
+                    positionDropdown.append($('<option>', {
+                        value: position,
+                        text: position
+                    }));
+                });
+
+                // 5. CHỌN LẠI GIÁ TRỊ HIỆN TẠI (nếu có)
+                if (currentPositionValue) {
+                    positionDropdown.val(currentPositionValue);
+                }
+
+                // 6. Kích hoạt lại dropdown
+                positionDropdown.prop('disabled', false);
+            },
+            error: function () {
+                alert('Could not load positions for editing.');
+                positionDropdown.prop('disabled', false);
+            }
+        });
+    }
+
     // =======================================================
     // LOGIC CHO CÁC ACTION (VIEW, EDIT, DELETE)
     // (Phần này không cần thay đổi vì nó được thiết kế để tái sử dụng)
@@ -143,8 +183,23 @@
         modalContent.html(loadingSpinner);
 
         $.get(url, function (response) {
+            // 1. Tải nội dung HTML (modal) vào
             modalContent.html(response);
-            initializeFloatingLabels();
+
+            // 2. Tìm dropdown Role và Position BÊN TRONG MODAL
+            var roleDropdown = $('#detailsModal #Role');
+            var positionDropdown = $('#detailsModal #Position');
+
+            // 3. Lấy giá trị HIỆN TẠI của chúng (đã được tải từ ViewModel)
+            var currentRole = roleDropdown.val();
+            var currentPosition = positionDropdown.val(); // Đây là giá trị ta muốn giữ
+
+            // 4. Gọi hàm helper để lọc danh sách, 
+            //    nhưng vẫn giữ nguyên giá trị 'currentPosition' đã chọn
+            if (currentRole) {
+                updatePositionDropdown(currentRole, positionDropdown, currentPosition);
+            }
+
         }).fail(function () {
             var errorAlert = `<div class="modal-body"><div class="alert alert-danger">Không thể tải dữ liệu.</div></div>`;
             modalContent.html(errorAlert);
@@ -181,6 +236,17 @@
                 alert('An error occurred while submitting the form.');
             }
         });
+    });
+
+    // Lắng nghe sự kiện 'change' trên dropdown #Role (BÊN TRONG MODAL)
+    // Dùng "event delegation" vì modal (#detailsModal) đã tồn tại
+    $('#detailsModal').on('change', '#Role', function () {
+        var selectedRole = $(this).val();
+        // Tìm dropdown Position bên trong modal
+        var positionDropdown = $('#detailsModal #Position');
+
+        // Gọi hàm helper, không cần giữ giá trị cũ (vì người dùng đang chọn mới)
+        updatePositionDropdown(selectedRole, positionDropdown, null);
     });
 
     // Sự kiện hiển thị modal xác nhận xóa

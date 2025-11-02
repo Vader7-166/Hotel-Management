@@ -1,4 +1,4 @@
-﻿@model Hotel_Management.Models.Account
+﻿@model Hotel_Management.ViewModels.EditEmployeeViewModel
 
 @{
     Layout = null;
@@ -7,8 +7,8 @@
 <form asp-area="Admin" asp-controller="EmployeeManagement" asp-action="Edit" method="post" id="editAccountForm">
     @Html.AntiForgeryToken()
 
-    @* Gửi ID (Username) về server nhưng không cho phép sửa *@
     <input type="hidden" asp-for="Username" />
+    <input type="hidden" asp-for="EmployeeId" />
 
     <div class="modal-header">
         <h5 class="modal-title">Edit Account: <strong>@Model.Username</strong></h5>
@@ -19,46 +19,114 @@
         <div class="container-fluid">
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
+            <p class="text-uppercase text-sm">Account Information</p>
             <div class="row">
                 <div class="col-12 mb-3">
-                    <div class="input-group input-group-outline is-filled">
-                        @* Luôn is-filled vì đây là thông tin không đổi *@
-                        <label class="form-label">Username</label>
-                        <input type="text" class="form-control" value="@Model.Username" readonly />
+                    <div class="form-floating">
+                        <input type="text" class="form-control" value="@Model.Username" readonly placeholder="Username" />
+                        <label>Username</label>
                     </div>
                 </div>
 
                 <div class="col-12 mb-3">
-                    <div class="input-group input-group-outline">
-                        <label asp-for="Email" class="form-label"></label>
-                        <input asp-for="Email" class="form-control" />
+                    <div class="form-floating">
+                        <input asp-for="Email" class="form-control" placeholder="Email" />
+                        <label asp-for="Email"></label>
                     </div>
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <div class="input-group input-group-outline">
-                        <select asp-for="Role" class="form-control" required>
+                    <div class="form-floating">
+                        <select asp-for="Role" class="form-select" required>
                             <option value="Employee">Employee</option>
                             <option value="Admin">Admin</option>
                         </select>
+                        <label asp-for="Role"></label>
                     </div>
                     <span asp-validation-for="Role" class="text-danger"></span>
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <div class="input-group input-group-outline">
-                        @{
-                            // Chuyển đổi bool sang string để select có thể binding
-                            string isActiveString = Model.IsActive.ToString();
-                        }
-                        <select asp-for="IsActive" class="form-control" required>
-                            <option value="True" selected="@(isActiveString == "True")">Active</option>
-                            <option value="False" selected="@(isActiveString == "False")">Inactive</option>
+                    <div class="form-floating">
+                        <select asp-for="IsActive" class="form-select" required>
+                            <option value="true">Active</option>
+                            <option value="false">Inactive</option>
                         </select>
+                        <label asp-for="IsActive">Status</label>
                     </div>
                     <span asp-validation-for="IsActive" class="text-danger"></span>
                 </div>
+            </div>
+
+            <hr class="horizontal dark mt-3 mb-4">
+            <p class="text-uppercase text-sm">Personal Information</p>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="form-floating">
+                        <input asp-for="FullName" class="form-control" placeholder="Full Name" />
+                        <label asp-for="FullName"></label>
+                    </div>
+                    <span asp-validation-for="FullName" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <div class="form-floating">
+                        <input asp-for="Phone" class="form-control" placeholder="Phone" />
+                        <label asp-for="Phone"></label>
+                    </div>
+                    <span asp-validation-for="Phone" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <div class="form-floating">
+
+                        <select asp-for="Position" class="form-select" required disabled>
+                            <option value="">Select Role to see positions...</option>
+                        </select>
+
+                        <label asp-for="Position"></label>
+                    </div>
+                    <span asp-validation-for="Position" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <div class="form-floating">
+                        <input type="number" asp-for="Salary" class="form-control" placeholder="Salary" />
+                        <label asp-for="Salary"></label>
+                    </div>
+                    <span asp-validation-for="Salary" class="text-danger"></span>
+                </div>
+
+                <div class="col-12 mb-3">
+                    <div class="form-floating">
+                        <input asp-for="Address" class="form-control" placeholder="Address" />
+                        <label asp-for="Address"></label>
+                    </div>
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <div class="form-floating">
+                        <select asp-for="Gender" class="form-select">
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <label asp-for="Gender"></label>
+                    </div>
+                    <span asp-validation-for="Gender" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <div class="form-floating">
+                        <input type="date" asp-for="BirthDate" class="form-control" />
+                        <label asp-for="BirthDate"></label>
+                    </div>
+                    <span asp-validation-for="BirthDate" class="text-danger"></span>
+                </div>
+
             </div>
         </div>
     </div>
@@ -68,10 +136,3 @@
         <button type="submit" class="btn btn-primary">Save Changes</button>
     </div>
 </form>
-
-@* Script để kích hoạt floating label cho form vừa tải *@
-<script>
-    if (typeof initializeFloatingLabels === 'function') {
-        initializeFloatingLabels();
-    }
-</script>
