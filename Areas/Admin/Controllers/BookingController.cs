@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Hotel_Management.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [AdminAuthorize]
+    [StaffAuthorize]
     public class BookingController : Controller
     {
         private readonly HotelManagementContext db;

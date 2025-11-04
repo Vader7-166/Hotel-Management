@@ -10,7 +10,7 @@ using GlobalCustomer = Hotel_Management.Models.Customer;
 namespace Hotel_Management.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [AdminAuthorize]
+    [AdminOnlyAuthorize]
     public class CustomerController : Controller
     {
         private readonly HotelManagementContext db; //khai báo biến db context
