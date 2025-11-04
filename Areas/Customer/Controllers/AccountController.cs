@@ -67,7 +67,7 @@ namespace Hotel_Management.Areas.Customer.Controllers
                     HttpContext.Session.SetString("FullName", customer.FullName);
                 }
             }
-            if (account.Role == "Admin")
+            if (account.Role == "Admin" )
             {
                 return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
             }
@@ -75,9 +75,13 @@ namespace Hotel_Management.Areas.Customer.Controllers
             {
                 return RedirectToAction("Index", "Home", new { area = "Customer" });
             }
-            else
+            else if (account.Role == "Receptionist")
             {
-                ViewBag.Error="Invalid role! . Please contact support!";
+                return RedirectToAction("Index", "Booking", new { area = "Admin" });
+            }
+            else 
+            {
+                ViewBag.Error = "Invalid role! . Please contact support!";
                 return View();
             }
  

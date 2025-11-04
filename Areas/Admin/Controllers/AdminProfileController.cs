@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Hotel_Management.Areas.Admin.Controllers
 {
     [Area("Admin")] // Đảm bảo nó nằm trong Area Admin
-    [AdminAuthorize]
+    [StaffAuthorize]
     public class AdminProfileController : Controller
     {
         private readonly HotelManagementContext db;

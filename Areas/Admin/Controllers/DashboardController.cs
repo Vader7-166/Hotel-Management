@@ -9,7 +9,7 @@ using Hotel_Management.Filters;
 namespace Hotel_Management.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [AdminAuthorize]
+    [AdminOnlyAuthorize]
     public class DashboardController : Controller
     {
         private readonly HotelManagementContext db;
