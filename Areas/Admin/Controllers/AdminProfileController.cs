@@ -1,4 +1,5 @@
-﻿using Hotel_Management.Models;
+﻿using Hotel_Management.Filters;
+using Hotel_Management.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 namespace Hotel_Management.Areas.Admin.Controllers
 {
     [Area("Admin")] // Đảm bảo nó nằm trong Area Admin
+    [AdminAuthorize]
     public class AdminProfileController : Controller
     {
         private readonly HotelManagementContext db;

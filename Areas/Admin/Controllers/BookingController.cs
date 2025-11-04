@@ -1,12 +1,14 @@
-﻿using Hotel_Management.Models;
+﻿using Hotel_Management.Filters;
+using Hotel_Management.Models;
+using Hotel_Management.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Hotel_Management.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hotel_Management.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [AdminAuthorize]
     public class BookingController : Controller
     {
         private readonly HotelManagementContext db;

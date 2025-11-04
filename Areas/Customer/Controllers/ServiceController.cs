@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Hotel_Management.Filters;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Hotel_Management.Areas.Customer.Controllers
 {
     [Area("Customer")]
-    
+
     public class ServiceController : Controller
     {
         public IActionResult Index()

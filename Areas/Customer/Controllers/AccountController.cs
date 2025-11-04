@@ -1,4 +1,5 @@
-﻿using Hotel_Management.Models;
+﻿using Hotel_Management.Filters;
+using Hotel_Management.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Cryptography;
 using System.Text;
@@ -8,6 +9,7 @@ using System.Text;
 namespace Hotel_Management.Areas.Customer.Controllers
 {
     [Area("Customer")]
+    
     public class AccountController : Controller
     {
         private readonly HotelManagementContext _context;

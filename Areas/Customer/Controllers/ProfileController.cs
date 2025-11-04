@@ -1,10 +1,12 @@
-﻿using Hotel_Management.Models;
+﻿using Hotel_Management.Filters;
+using Hotel_Management.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hotel_Management.Areas.Customer.Controllers
 {
     [Area("Customer")]
     [Route("Customer/[controller]/[action]")]
+    [CustomerAuthorize]
     public class ProfileController : Controller
     {
         private readonly HotelManagementContext _context;
