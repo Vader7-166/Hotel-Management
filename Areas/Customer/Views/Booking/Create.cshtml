@@ -1,88 +1,252 @@
-﻿@{
+﻿@model Hotel_Management.Models.Booking
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
     Layout = "~/Views/Shared/_LayoutCustomer.cshtml";
+    ViewData["Title"] = "Confirm Booking";
+
     var room = ViewBag.Room;
     var services = ViewBag.Services as List<Hotel_Management.Models.Service>;
+
+    // --- Tính toán giá trị ban đầu ---
+    var checkIn = DateTime.Parse(ViewBag.CheckIn);
+    var checkOut = DateTime.Parse(ViewBag.CheckOut);
+    var totalNights = (int)(checkOut - checkIn).TotalDays;
+    var roomSubtotal = room.RoomType.BasePrice * totalNights;
+
+    // --- Logic gán ảnh (Vì không có ảnh trong DB) ---
+    string imageUrl = "/images/Room/room-default.jpg"; // Ảnh mặc định
+    string typeName = room.RoomType.TypeName.ToLower();
+
+    if (typeName.Contains("superior")) { imageUrl = "/images/Room/room1.jpg"; }
+    else if (typeName.Contains("deluxe")) { imageUrl = "/images/Room/room2.jpg"; }
+    else if (typeName.Contains("premier")) { imageUrl = "/images/Room/room3.jpg"; }
+    else if (typeName.Contains("loft")) { imageUrl = "/images/Room/room4.jpg"; }
+    else if (typeName.Contains("junior suite")) { imageUrl = "/images/Room/room5.jpg"; }
+    else if (typeName.Contains("executive suite")) { imageUrl = "/images/Room/room6.jpg"; }
+    else if (typeName.Contains("panoramic suite")) { imageUrl = "/images/Room/room7.jpg"; }
+    else if (typeName.Contains("suite")) { imageUrl = "/images/Room/room8.jpg"; }
+    else if (typeName.Contains("presidential suite")) { imageUrl = "/images/Room/room9.jpg"; }
 }
 
 <div class="container mt-5 mb-5">
-    <h2 class="text-center mb-4">Confirm Your Booking</h2>
+    <h2 class="section-title text-center mb-4">Confirm Your Booking</h2>
 
-    <form asp-action="Create" method="post">
+    <form asp-action="Create" method="post" id="bookingForm">
         <input type="hidden" name="roomId" value="@room.RoomId" />
 
-        <!-- ROOM DETAILS -->
-        <div class="card p-4 mb-4 shadow-sm">
-            <h5 class="fw-bold mb-3">Room Details</h5>
-            <p><strong>Room Type:</strong> @room.RoomType.TypeName</p>
-            <p><strong>Room Number:</strong> @room.RoomNumber</p>
-            <p><strong>Price:</strong> @room.RoomType.BasePrice.ToString("N0") VND / night</p>
+        <div class="row g-4">
 
-            <div class="row mt-3">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label fw-semibold">Check-in Date</label>
-                    <input type="date" name="CheckInDate" class="form-control"
-                           value="@ViewBag.CheckIn" required />
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label class="form-label fw-semibold">Check-out Date</label>
-                    <input type="date" name="CheckOutDate" class="form-control"
-                           value="@ViewBag.CheckOut" required />
-                </div>
-            </div>
+            <div class="col-lg-7">
 
-            <!-- EXTRA SERVICES -->
-            <div class="card p-4 mb-4 shadow-sm">
-                <h5 class="fw-bold mb-3">Select Extra Services</h5>
-                @if (services != null && services.Any())
-                {
+                <div class="card p-4 mb-4 shadow-sm">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2">Room Details</h5>
+                    <p class="mb-1"><strong>Room Type:</strong> @room.RoomType.TypeName</p>
+                    <p class="mb-1"><strong>Room Number:</strong> @room.RoomNumber</p>
+                    <p class="mb-1"><strong>Price:</strong> @room.RoomType.BasePrice.ToString("N0") VND / night</p>
+                    <p class="text-muted small mt-2">@room.RoomType.Description</p>
+                </div>
+
+                <div class="card p-4 mb-4 shadow-sm">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2">Your Stay</h5>
                     <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Check-in Date</label>
+                            <input type="date" name="CheckInDate" class="form-control"
+                                   value="@ViewBag.CheckIn" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Check-out Date</label>
+                            <input type="date" name="CheckOutDate" class="form-control"
+                                   value="@ViewBag.CheckOut" required />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card p-4 mb-4 shadow-sm">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2">Select Extra Services</h5>
+                    @if (services != null && services.Any())
+                    {
                         @foreach (var s in services)
                         {
-                            <div class="col-md-4 mb-3">
-                                <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" name="selectedServices" value="@s.ServiceId" id="service_@s.ServiceId" />
-                                    <label class="form-check-label" for="service_@s.ServiceId">
-                                        <strong>@s.ServiceName</strong> - @s.UnitPrice.ToString("N0") VND
+                            <div class="form-check d-flex justify-content-between align-items-center mb-2 p-2 rounded" style="background-color: #fcfcfc;">
+                                <div>
+                                    <input type="checkbox" class="form-check-input service-checkbox"
+                                           name="selectedServices"
+                                           value="@s.ServiceId"
+                                           id="service_@s.ServiceId"
+                                           data-price="@s.UnitPrice"
+                                           data-name="@s.ServiceName" />
+                                    <label class="form-check-label ms-2" for="service_@s.ServiceId">
+                                        <strong>@s.ServiceName</strong>
                                     </label>
-                                    <small class="text-muted d-block">@s.Description</small>
+                                    <small class="text-muted d-block ms-4">@s.Description</small>
                                 </div>
+                                <span class="fw-semibold text-nowrap">@s.UnitPrice.ToString("N0") VND</span>
                             </div>
                         }
+                    }
+                    else
+                    {
+                        <p class="text-muted">No extra services available.</p>
+                    }
+                </div>
+
+                <div class="card p-4 shadow-sm mb-4">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2">Additional Notes</h5>
+                    <textarea name="Notes" class="form-control" rows="3" placeholder="Add any special requests (e.g., late check-in, non-smoking room)..."></textarea>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="card p-4 shadow-sm sticky-top" style="top: 20px;">
+                    <h4 class="fw-bold text-center mb-3">Price Summary</h4>
+
+                    <img src="@imageUrl" class="img-fluid rounded mb-3" alt="@room.RoomType.TypeName" style="height: 250px; object-fit: cover;">
+
+                    <h5 class="fw-semibold">@room.RoomType.TypeName</h5>
+                    <p class="mb-1"><i class="bi bi-people"></i> Max @room.RoomType.MaxOccupancy guests</p>
+
+                    <hr>
+
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Room Subtotal (<span id="total-nights">@totalNights</span> night(s))</span>
+                        <span class="fw-semibold" id="room-subtotal-text">@roomSubtotal.ToString("N0") VND</span>
                     </div>
-                }
-                else
-                {
-                    <p class="text-muted">No extra services available.</p>
-                }
+
+                    <div id="service-summary-list"></div>
+
+                    <hr>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="fw-bold fs-5">Grand Total</span>
+                        <span class="fw-bold fs-5 text-success" id="grand-total">@roomSubtotal.ToString("N0") VND</span>
+                    </div>
+
+                    <input type="hidden" id="base-room-price" value="@room.RoomType.BasePrice" />
+                    <input type="hidden" id="room-subtotal-hidden" value="@roomSubtotal" />
+
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-gold w-100 py-2 fs-5">
+                            Confirm & Book Now
+                        </button>
+                    </div>
+                    <small class="text-muted text-center mt-2 d-block">You will pay at the hotel.</small>
+                </div>
             </div>
 
-            <!-- NOTES -->
-            <div class="card p-4 shadow-sm mb-4">
-                <h5 class="fw-bold mb-3">Additional Notes</h5>
-                <textarea name="Notes" class="form-control" rows="3" placeholder="Add any special requests..."></textarea>
-            </div>
-
-            <!-- CONFIRM BUTTON -->
-            <div class="text-end">
-                <button type="submit" class="btn btn-gold px-5 py-2">Confirm Booking</button>
-            </div>
+        </div>
     </form>
 </div>
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            // === Lấy các phần tử ===
+            const checkInInput = document.querySelector('input[name="CheckInDate"]');
+            const checkOutInput = document.querySelector('input[name="CheckOutDate"]');
+            const serviceCheckboxes = document.querySelectorAll(".service-checkbox");
+
+            // Element hiển thị
+            const totalNightsText = document.getElementById("total-nights");
+            const roomSubtotalText = document.getElementById("room-subtotal-text");
+            const serviceSummaryList = document.getElementById("service-summary-list");
+            const grandTotalElement = document.getElementById("grand-total");
+
+            // Element giá trị
+            const baseRoomPrice = parseFloat(document.getElementById("base-room-price").value);
+
+            // Định dạng tiền
+            const formatter = new Intl.NumberFormat('vi-VN');
+
+            // === HÀM TÍNH TOÁN TỔNG ===
+            function updateTotals() {
+
+                // 1. Tính tiền phòng
+                const checkInDate = new Date(checkInInput.value);
+                const checkOutDate = new Date(checkOutInput.value);
+
+                let nights = 0;
+                if (checkOutDate > checkInDate) {
+                     // Tính số mili-giây chênh lệch và đổi ra ngày
+                     nights = Math.round((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
+                }
+
+                const roomSubtotal = baseRoomPrice * nights;
+
+                // 2. Tính tiền dịch vụ
+                let serviceTotal = 0;
+                serviceSummaryList.innerHTML = ''; // Xóa list dịch vụ cũ
+
+                serviceCheckboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        const price = parseFloat(checkbox.getAttribute("data-price"));
+                        const name = checkbox.getAttribute("data-name");
+                        serviceTotal += price;
+
+                        // Thêm dịch vụ vào tóm tắt
+                        const serviceItem = document.createElement('div');
+                        serviceItem.className = 'd-flex justify-content-between mb-1 text-muted small';
+                        serviceItem.innerHTML = `<span>+ ${name}</span><span>${formatter.format(price)} VND</span>`;
+                        serviceSummaryList.appendChild(serviceItem);
+                    }
+                });
+
+                // 3. Tính tổng cộng
+                const grandTotal = roomSubtotal + serviceTotal;
+
+                // 4. Cập nhật giao diện
+                totalNightsText.textContent = nights;
+                roomSubtotalText.textContent = formatter.format(roomSubtotal) + " VND";
+                grandTotalElement.textContent = formatter.format(grandTotal) + " VND";
+            }
+
+            // === GỌI HÀM CẬP NHẬT KHI CÓ THAY ĐỔI ===
+
+            // 1. Khi thay đổi dịch vụ
+            serviceCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener("change", updateTotals);
+            });
+
+            // 2. Khi thay đổi ngày (Check-in)
+            checkInInput.addEventListener("change", () => {
+                const inDate = new Date(checkInInput.value);
+                const minOut = new Date(inDate);
+                minOut.setDate(minOut.getDate() + 1);
+                const minStr = minOut.toISOString().split("T")[0];
+
+                checkOutInput.min = minStr; // Cập nhật min cho check-out
+
+                if (!checkOutInput.value || new Date(checkOutInput.value) <= inDate) {
+                    checkOutInput.value = minStr;
+                }
+
+                updateTotals(); // Tính lại tổng
+            });
+
+            // 3. Khi thay đổi ngày (Check-out)
+            checkOutInput.addEventListener("change", updateTotals);
+
+            // === Logic script cũ của bạn (chỉ giữ phần min date) ===
+            const today = new Date();
+            const todayStr = today.toISOString().split('T')[0];
+
+            // Chỉ đặt min date, không đặt max
+            // (Vì script trên đã xử lý vụ checkin > checkout)
+            if (!checkInInput.value || checkInInput.value < todayStr) {
+                 checkInInput.min = todayStr;
+            }
+            if (!checkOutInput.value || checkOutInput.value < todayStr) {
+                 checkOutInput.min = todayStr;
+            }
+        });
+    </script>
+}
+
 <style>
-    .btn-gold {
-        background-color: #c19b51;
-        color: #fff;
-        font-weight: 600;
-        border: none;
-        transition: 0.3s;
-    }
-
-        .btn-gold:hover {
-            background-color: #a77e3e;
-            color: #fff;
-        }
-
     .card {
         border-radius: 10px;
         border: 1px solid #eee;
@@ -91,26 +255,6 @@
     label.form-label {
         font-weight: 500;
     }
+    /* Style cho nút vàng (đã có trong file CSS chung của bạn) */
+    /* .btn-gold { ... } */
 </style>
-<script>
-    const today = new Date();
-    const todayStr = today.toISOString().split('T')[0];
-    const checkIn = document.querySelector('input[name="CheckInDate"]');
-    const checkOut = document.querySelector('input[name="CheckOutDate"]');
-
-    checkIn.min = todayStr;
-    checkOut.min = todayStr;
-
-    checkIn.addEventListener("change", () => {
-        const inDate = new Date(checkIn.value);
-        const minOut = new Date(inDate);
-        minOut.setDate(minOut.getDate() + 1);
-        const minStr = minOut.toISOString().split("T")[0];
-        checkOut.min = minStr;
-
-        if (!checkOut.value || new Date(checkOut.value) <= inDate) {
-            checkOut.value = minStr;
-        }
-    });
-</script>
-

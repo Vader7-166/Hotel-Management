@@ -28,6 +28,7 @@ namespace Hotel_Management.Areas.Customer.Controllers
         {
             // Lấy thông tin chi tiết Booking (gồm phòng và dịch vụ)
             var booking = _context.Bookings
+                .Include(b => b.Customer) // 
                 .Include(b => b.BookingDetails)
                     .ThenInclude(d => d.Room)
                         .ThenInclude(r => r.RoomType)
@@ -66,7 +67,9 @@ namespace Hotel_Management.Areas.Customer.Controllers
             // 📦 Lấy danh sách Booking thuộc Customer hiện tại
             var bookings = _context.Bookings
                 .Include(b => b.BookingDetails)
-                    .ThenInclude(d => d.Room) // Lấy thêm thông tin phòng
+                    .ThenInclude(d => d.Room)
+                        .ThenInclude(r => r.RoomType)
+                .Include(b => b.ServiceUsages) // <-- ⭐ MỚI: Thêm dòng này
                 .Where(b => b.CustomerId == customerId)
                 .OrderByDescending(b => b.BookingDate)
                 .ToList();
@@ -105,7 +108,7 @@ namespace Hotel_Management.Areas.Customer.Controllers
         // 🔍 AJAX: Filter available rooms
         // ===========================
         [HttpGet]
-        public IActionResult FilterRooms(DateTime checkIn, DateTime checkOut, decimal? minPrice, decimal? maxPrice, int? guests)
+        public IActionResult FilterRooms(DateTime checkIn, DateTime checkOut, decimal? minPrice, decimal? maxPrice, int? guests,int? roomTypeId)
         {
             if (checkIn.Date < DateTime.Today)
                 return BadRequest(new { success = false, message = "Check-in date cannot be in the past." });
@@ -135,7 +138,8 @@ namespace Hotel_Management.Areas.Customer.Controllers
                 availableRooms = availableRooms.Where(r => r.RoomType.BasePrice <= maxPrice);
             if (guests.HasValue && guests > 0)
                 availableRooms = availableRooms.Where(r => r.RoomType.MaxOccupancy >= guests);
-
+            if(roomTypeId.HasValue&&roomTypeId>0)
+                availableRooms = availableRooms.Where(r => r.RoomTypeId == roomTypeId);
             var result = availableRooms.Select(r => new
             {
                 roomId = r.RoomId,
@@ -144,7 +148,19 @@ namespace Hotel_Management.Areas.Customer.Controllers
                 basePrice = r.RoomType.BasePrice,
                 maxOccupancy = r.RoomType.MaxOccupancy,
                 description = r.RoomType.Description,
-                status = r.Status
+                status = r.Status,
+                // Gửi URL ảnh đã xử lý logic
+                imageUrl =
+                    r.RoomType.TypeName.ToLower().Contains("superior") ? "/images/Room/room1.jpg" :
+                    r.RoomType.TypeName.ToLower().Contains("deluxe") ? "/images/Room/room2.jpg" :
+                    r.RoomType.TypeName.ToLower().Contains("premier") ? "/images/Room/room3.jpg" :
+                    r.RoomType.TypeName.ToLower().Contains("loft") ? "/images/Room/room4.jpg" :
+                    r.RoomType.TypeName.ToLower().Contains("junior suite") ? "/images/Room/room5.jpg" :
+                    r.RoomType.TypeName.ToLower().Contains("executive suite") ? "/images/Room/room6.jpg" :
+                    r.RoomType.TypeName.ToLower().Contains("panoramic suite") ? "/images/Room/room7.jpg" :
+                    r.RoomType.TypeName.ToLower().Contains("suite") ? "/images/Room/room8.jpg" :
+                    r.RoomType.TypeName.ToLower().Contains("presidential suite") ? "/images/Room/room9.jpg" :
+                    "/images/Room/room-default.jpg" // Ảnh mặc định
             }).ToList();
 
             Console.WriteLine($"✅ Found {result.Count} available rooms");

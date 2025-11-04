@@ -19,7 +19,7 @@ builder.Services.AddSession(options =>
     // để không bị chặn khi người dùng bật chế độ chặn cookie
     options.Cookie.IsEssential = true;
 });
-
+builder.Services.AddHttpContextAccessor();
 
 // 🧩 Nếu đang chạy ở môi trường Development thì load secrets
 if (builder.Environment.IsDevelopment())
