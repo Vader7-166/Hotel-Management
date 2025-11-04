@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Hotel_Management.Filters;
 using Hotel_Management.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hotel_Management.Areas.Customer.Controllers
 {
     [Area("Customer")]
+  
     public class RoomsController : Controller
     {
         private readonly HotelManagementContext _context;

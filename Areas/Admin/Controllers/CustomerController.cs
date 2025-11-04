@@ -1,14 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Hotel_Management.Models;
-// Sử dụng bí danh để tránh xung đột namespace
-using GlobalCustomer = Hotel_Management.Models.Customer;
+﻿using Hotel_Management.Models;
+using Hotel_Management.Filters;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore; // Thêm using cho ToListAsync
 using System.Linq; // Thêm using cho LINQ
 using System.Threading.Tasks; // Thêm using cho tác vụ bất đồng bộ
-using Microsoft.EntityFrameworkCore; // Thêm using cho ToListAsync
+// Sử dụng bí danh để tránh xung đột namespace
+using GlobalCustomer = Hotel_Management.Models.Customer;
 
 namespace Hotel_Management.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [AdminAuthorize]
     public class CustomerController : Controller
     {
         private readonly HotelManagementContext db; //khai báo biến db context

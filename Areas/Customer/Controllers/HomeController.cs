@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Hotel_Management.Filters;
+using Microsoft.AspNetCore.Mvc;
 
 //Trang chủ
 namespace Hotel_Management.Areas.Customer.Controllers
 {
     [Area("Customer")]
+    
     public class HomeController : Controller
     {
         [Route("")]

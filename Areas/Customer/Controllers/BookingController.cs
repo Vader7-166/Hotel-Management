@@ -1,9 +1,11 @@
-﻿using Hotel_Management.Models;
+﻿using Hotel_Management.Filters;
+using Hotel_Management.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 namespace Hotel_Management.Areas.Customer.Controllers
 {
     [Area("Customer")]
+    [CustomerAuthorize]
     public class BookingController : Controller
     {
         private readonly HotelManagementContext _context;

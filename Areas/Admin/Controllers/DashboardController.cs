@@ -4,10 +4,12 @@ using Hotel_Management.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
+using Hotel_Management.Filters;
 
 namespace Hotel_Management.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [AdminAuthorize]
     public class DashboardController : Controller
     {
         private readonly HotelManagementContext db;

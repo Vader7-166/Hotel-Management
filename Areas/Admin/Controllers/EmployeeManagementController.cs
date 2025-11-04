@@ -6,10 +6,11 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-
+using Hotel_Management.Filters;
 namespace Hotel_Management.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [AdminAuthorize]
     public class EmployeeManagementController : Controller
     {
         private readonly HotelManagementContext db;
