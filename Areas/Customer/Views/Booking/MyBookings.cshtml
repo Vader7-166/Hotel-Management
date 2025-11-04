@@ -1,74 +1,205 @@
 ﻿@model IEnumerable<Hotel_Management.Models.Booking>
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
 
 @{
     ViewData["Title"] = "My Bookings";
     Layout = "~/Views/Shared/_LayoutCustomer.cshtml";
+
+    // Phân loại booking để hiển thị chuyên nghiệp hơn
+    var upcomingBookings = Model
+        .Where(b => b.Status == "Pending" || b.Status == "Confirmed")
+        .OrderBy(b => b.CheckInDate);
+
+    var pastBookings = Model
+        .Where(b => b.Status == "Cancelled" || b.Status == "Completed")
+        .OrderByDescending(b => b.BookingDate);
 }
 
-<div class="container mt-5 mb-5 text-center">
-    <h2 class="fw-bold text-uppercase section-title">Your Bookings</h2>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 
-    @* ✅ If there are no bookings *@
+<div class="container mt-5 mb-5">
+    <h2 class="section-title text-center mb-4">Your Bookings</h2>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    @if (upcomingBookings.Any())
+    {
+        <h4 class="fw-bold mb-3">Upcoming Bookings</h4>
+        foreach (var booking in upcomingBookings)
+        {
+            // Tính toán cho thẻ này
+            var roomDetail = booking.BookingDetails.FirstOrDefault();
+            string roomTypeName = "N/A";
+            string imageUrl = "/images/Room/room-default.jpg";
+
+            if (roomDetail != null)
+            {
+                roomTypeName = roomDetail.Room.RoomType.TypeName;
+                string typeNameLower = roomTypeName.ToLower();
+
+                // Logic gán ảnh
+                if (typeNameLower.Contains("superior")) { imageUrl = "/images/Room/room1.jpg"; }
+                else if (typeNameLower.Contains("deluxe")) { imageUrl = "/images/Room/room2.jpg"; }
+                else if (typeNameLower.Contains("premier")) { imageUrl = "/images/Room/room3.jpg"; }
+                else if (typeNameLower.Contains("loft")) { imageUrl = "/images/Room/room4.jpg"; }
+                else if (typeNameLower.Contains("junior suite")) { imageUrl = "/images/Room/room5.jpg"; }
+                else if (typeNameLower.Contains("executive suite")) { imageUrl = "/images/Room/room6.jpg"; }
+                else if (typeNameLower.Contains("panoramic suite")) { imageUrl = "/images/Room/room7.jpg"; }
+                else if (typeNameLower.Contains("suite")) { imageUrl = "/images/Room/room8.jpg"; }
+                else if (typeNameLower.Contains("presidential suite")) { imageUrl = "/images/Room/room9.jpg"; }
+            }
+
+            // Tính tổng tiền
+            var roomTotal = booking.BookingDetails.Sum(d => d.SubTotal ?? 0);
+            var serviceTotal = booking.ServiceUsages.Sum(s => s.TotalAmount ?? 0);
+            var grandTotal = roomTotal + serviceTotal;
+
+            // Lấy màu trạng thái
+            var statusClass = booking.Status == "Pending" ? "bg-warning text-dark" : "bg-success";
+            var statusText = booking.Status == "Pending" ? "Pending Confirmation" : "Confirmed";
+
+            <div class="card booking-card shadow-sm mb-4">
+                <div class="row g-0">
+                    <div class="col-md-3">
+                        <img src="@imageUrl" class="img-fluid rounded-start booking-card-img" alt="@roomTypeName">
+                    </div>
+
+                    <div class="col-md-5">
+                        <div class="card-body">
+                            <span class="badge @statusClass fs-6 mb-2">@statusText</span>
+                            <h5 class="card-title fw-bold">@roomTypeName</h5>
+                            <p class="card-text mb-1">
+                                <i class="bi bi-calendar-check text-muted"></i>
+                                <strong>Check-in:</strong> @booking.CheckInDate.ToString("dd/MM/yyyy")
+                            </p>
+                            <p class="card-text">
+                                <i class="bi bi-calendar-x text-muted"></i>
+                                <strong>Check-out:</strong> @booking.CheckOutDate.ToString("dd/MM/yyyy")
+                            </p>
+                            <small class="text-muted">Booked on: @booking.BookingDate.ToString("dd/MM/yyyy")</small>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 card-footer bg-light text-center d-flex flex-column justify-content-center">
+                        <small class="text-muted">Total Price</small>
+                        <h5 class="fw-bold text-success mb-3">@grandTotal.ToString("N0") VND</h5>
+
+                        <a asp-action="Details" asp-route-id="@booking.BookingId" class="btn btn-gold w-100 mb-2">
+                            <i class="bi bi-eye"></i> View Details
+                        </a>
+
+                        @if (booking.Status == "Pending")
+                        {
+                            <form asp-action="Cancel" asp-route-id="@booking.BookingId" method="post" class="d-inline w-100"
+                                  onsubmit="return confirm('Are you sure you want to cancel this booking?');">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-outline-danger w-100">
+                                    <i class="bi bi-x-circle"></i> Cancel
+                                </button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+    @if (pastBookings.Any())
+    {
+        <h4 class="fw-bold mt-5 mb-3">Booking History</h4>
+        foreach (var booking in pastBookings)
+        {
+            var roomDetail = booking.BookingDetails.FirstOrDefault();
+            string roomTypeName = roomDetail?.Room.RoomType.TypeName ?? "N/A";
+            var statusClass = booking.Status == "Cancelled" ? "bg-danger" : "bg-secondary";
+
+            <div class="card booking-card past-booking shadow-sm mb-3">
+                <div class="row g-0">
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <span class="badge @statusClass fs-6 mb-2">@booking.Status</span>
+                            <h6 class="card-title fw-bold mb-1">@roomTypeName</h6>
+                            <p class="card-text small text-muted mb-0">
+                                Checked-in: @booking.CheckInDate.ToString("dd/MM/yyyy")
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 card-footer bg-light text-center d-flex align-items-center justify-content-end">
+                        <a asp-action="Details" asp-route-id="@booking.BookingId" class="btn btn-sm btn-outline-secondary">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
     @if (!Model.Any())
     {
-        <div class="alert alert-info mt-4">
-            You have not made any bookings yet.
-        </div>
-    }
-    else
-    {
-        <div class="table-responsive d-flex justify-content-center mt-4">
-            <table class="table table-bordered table-hover text-center w-auto shadow-sm">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Booking ID</th>
-                        <th>Booking Date</th>
-                        <th>Check-In</th>
-                        <th>Check-Out</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var booking in Model)
-                    {
-                        <tr>
-                            <td>@booking.BookingId</td>
-                            <td>@booking.BookingDate.ToString("dd/MM/yyyy")</td>
-                            <td>@booking.CheckInDate.ToString("dd/MM/yyyy")</td>
-                            <td>@booking.CheckOutDate.ToString("dd/MM/yyyy")</td>
-                            <td>
-                                @if (booking.Status == "Pending")
-                                {
-                                    <span class="badge bg-warning text-dark">Pending Confirmation</span>
-                                }
-                                else if (booking.Status == "Confirmed")
-                                {
-                                    <span class="badge bg-success">Confirmed</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-danger">Cancelled</span>
-                                }
-                            </td>
-                            <td>
-                                <a asp-action="Details" asp-route-id="@booking.BookingId"
-                                   class="btn btn-sm btn-outline-primary me-1">Details</a>
-
-                                @if (booking.Status == "Pending")
-                                {
-                                    <form asp-action="Cancel" asp-route-id="@booking.BookingId" method="post" class="d-inline">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                onclick="return confirm('Are you sure you want to cancel this booking?');">
-                                            Cancel
-                                        </button>
-                                    </form>
-                                }
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+        <div class="alert alert-info mt-4 text-center">
+            You have not made any bookings yet. <br />
+            <a asp-action="Index" class="btn btn-gold mt-3">
+                <i class="bi bi-search"></i> Find Rooms Now
+            </a>
         </div>
     }
 </div>
+
+<style>
+    .booking-card {
+        border: 1px solid #eee;
+        border-radius: 10px;
+        overflow: hidden; /* Để bo góc ảnh */
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .booking-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1) !important;
+        }
+
+    .booking-card-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        min-height: 200px; /* Đảm bảo ảnh không bị bóp */
+    }
+
+    .card-footer {
+        border-top: none;
+    }
+
+    /* Làm mờ các booking cũ */
+    .past-booking {
+        opacity: 0.8;
+    }
+
+        .past-booking:hover {
+            opacity: 1;
+        }
+
+        .past-booking .card-title {
+            color: #6c757d; /* Màu text xám */
+        }
+
+    /* Đảm bảo responsive */
+    @@media (max-width: 767px) {
+        .booking-card-img {
+            height: 200px; /* Cố định chiều cao ảnh trên mobile */
+            border-bottom-left-radius: 0;
+            border-top-right-radius: 10px;
+        }
+
+        .card-footer {
+            border-top: 1px solid #eee;
+        }
+    }
+</style>
