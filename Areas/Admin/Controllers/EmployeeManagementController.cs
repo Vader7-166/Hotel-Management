@@ -30,7 +30,7 @@ namespace Hotel_Management.Areas.Admin.Controllers
             IQueryable<Account> query = db.Accounts
                 .Include(a => a.Customer)
                 .Include(a => a.Employee)
-                .Where(a => a.Role == "Admin" || a.Role == "Employee");
+                .Where(a => a.Role == "Admin" || a.Role == "Employee" || a.Role == "Receptionist");
 
             // Nếu đã lấy được tên đăng nhập, thêm điều kiện để loại trừ chính tài khoản đó
             if (!string.IsNullOrEmpty(loggedInUsername))
@@ -153,7 +153,7 @@ namespace Hotel_Management.Areas.Admin.Controllers
             IQueryable<Account> query = db.Accounts
                                           .Include(a => a.Customer)
                                           .Include(a => a.Employee)
-                                          .Where(a => a.Role == "Admin" || a.Role == "Employee");
+                                          .Where(a => a.Role == "Admin" || a.Role == "Employee" || a.Role == "Receptionist");
 
             // Lọc loại trừ
             if (!string.IsNullOrEmpty(loggedInUsername))
@@ -323,20 +323,21 @@ namespace Hotel_Management.Areas.Admin.Controllers
             {
                 "Quản lý Khách sạn",
                 "Quản lý Vận hành",
-                "Quản trị viên IT",
-                "Quản lý Tài chính"
+                "Quản trị viên IT"
             };
 
             var employeePositions = new List<string>
             {
-                "Lễ tân",
-                "Buồng phòng",
                 "Lao công",
-                "Hỗ trợ (Concierge)",
+                "Hỗ trợ",
                 "Phục vụ",
-                "Bảo vệ",
-                "Nhân viên Đặt phòng"
-                // (Thêm các vị trí nhân viên khác muốn)
+                "Bảo vệ"
+            };
+
+            var receptionistPositions = new List<string>
+            {
+                "Nhân viên tiền sảnh",
+                "Nhân viên đặt phòng"
             };
 
             List<string> positionsToSend;
@@ -349,6 +350,10 @@ namespace Hotel_Management.Areas.Admin.Controllers
             else if (role == "Employee")
             {
                 positionsToSend = employeePositions;
+            }
+            else if (role == "Receptionist")
+            {
+                positionsToSend = receptionistPositions;
             }
             else // Trường hợp role == "" (Tức là chọn "All Roles" trong bộ lọc)
             {
