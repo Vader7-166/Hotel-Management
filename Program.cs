@@ -6,6 +6,8 @@ using System.Globalization;
 var builder = WebApplication.CreateBuilder(args);
 // Thêm bộ nhớ tạm (in-memory) để lưu trữ session
 builder.Services.AddDistributedMemoryCache();
+
+builder.Services.AddHttpContextAccessor();
 // Cấu hình Session cho ứng dụng
 builder.Services.AddSession(options =>
 {
@@ -54,10 +56,11 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthorization();
-
 // Kích hoạt session trước khi định tuyến
 app.UseSession();
+
+app.UseAuthorization();
+
 
 app.MapControllerRoute(
     name: "areas",

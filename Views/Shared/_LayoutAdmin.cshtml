@@ -1,4 +1,9 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    // Lấy Role của user từ Session
+    var userRole = HttpContextAccessor.HttpContext.Session.GetString("Role");
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -11,168 +16,191 @@
     <title>
         @ViewBag.Title
     </title>
-    <!-- Fonts and icons -->
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700,900" />
-    <!-- Nucleo Icons -->
     <link href="~/css/admin/nucleo-icons.css" rel="stylesheet" />
     <link href="~/css/admin/nucleo-svg.css" rel="stylesheet" />
-    <!-- Font Awesome Icons -->
     <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
-    <!-- Material Icons -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
-    <!-- CSS Files -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
     <link id="pagestyle" href="~/css/admin/material-dashboard.css?v=3.2.0" rel="stylesheet" />
-    <link href="~/css/admin/hamburger.css" rel="stylesheet"/>
+    <link href="~/css/admin/hamburger.css" rel="stylesheet" />
     @RenderSection("Styles", required: false)
 </head>
 
-<body class="g-sidenav-show  bg-gray-100">
-    <!-- Nút Hamburger Menu -->
+<body class="g-sidenav-show   bg-gray-100">
     <button class="sidenav-toggler" id="sidenavToggler" type="button">
         <span></span>
         <span></span>
         <span></span>
     </button>
 
-    <!-- Overlay khi mở sidebar trên mobile -->
     <div class="sidenav-overlay" id="sidenavOverlay"></div>
 
-    <!-- SideNavbar start -->
     <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-radius-lg fixed-start ms-2  bg-white my-2" id="sidenav-main">
         <div class="sidenav-header">
             <i class="fas fa-times p-3 cursor-pointer text-dark opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
-            <a class="navbar-brand px-4 py-3 m-0" asp-controller="Dashboard" asp-action="Index" target="_blank">
-                <img src="~/images/logo-ct-dark.png" class="navbar-brand-img" width="26" height="26" alt="main_logo">
-                <span class="ms-1 text-sm text-dark">Admin Dashboard</span>
-            </a>
+            @if(userRole == "Admin")
+            {
+                <a class="navbar-brand px-4 py-3 m-0" asp-controller="Dashboard" asp-action="Index">
+                    <img src="~/images/logo-ct-dark.png" class="navbar-brand-img" width="26" height="26" alt="main_logo">
+                    <span class="ms-1 text-sm text-dark">Admin Dashboard</span>
+                </a>
+            }
+            @if(userRole == "Receptionist")
+            {
+                <a class="navbar-brand px-4 py-3 m-0" asp-controller="Booking" asp-action="Index">
+                    <img src="~/images/logo-ct-dark.png" class="navbar-brand-img" width="26" height="26" alt="main_logo">
+                    <span class="ms-1 text-sm text-dark">Receptionist</span>
+                </a>
+            }
         </div>
         <hr class="horizontal dark mt-0 mb-2">
         <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
             <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link active bg-gradient-dark text-white" asp-controller="Dashboard" asp-action="Index">
-                        <i class="material-symbols-rounded opacity-5">dashboard</i>
-                        <span class="nav-link-text ms-1">Dashboard</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-controller="Booking" asp-action="Index">
-                        <i class="material-symbols-rounded opacity-5">table_view</i>
-                        <span class="nav-link-text ms-1">Booking Management</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-controller="Booking" asp-action="Calendar">
-                        <i class="material-symbols-rounded opacity-5">receipt_long</i>
-                        <span class="nav-link-text ms-1">Booking View</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-controller="Room" asp-action="Index">
-                        <i class="bi bi-house-door material-symbols-rounded opacity-5" style="padding-bottom: 5.5px;"></i>
-                        <span class="nav-link-text ms-1">Room Management</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" id="customerCollapseToggle" data-bs-toggle="collapse" href="#customerSubmenu">
-                        <i class="material-symbols-rounded opacity-5" >Patient_List</i>
-                        <span class="nav-link-text ms-1">Customer Management</span>
-                    </a>
-                    <div class="collapse" id="customerSubmenu">
-                        <ul class="nav nav-sm flex-column">
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Customer" asp-action="CustomerList">
-                                    <i class="material-symbols-rounded opacity-5">Patient_List</i>
-                                    <span class="nav-link-text ms-3">Customer List</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Customer" asp-action="AddnewCustomer">
-                                    <i class="material-symbols-rounded opacity-5">Patient_List</i>
-                                    <span class="nav-link-text ms-3">Add New Customer</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" id="accountCollapseToggle" data-bs-toggle="collapse" href="#accountSubmenu">
-                        <i class="material-symbols-rounded opacity-5">table_view</i>
-                        <span class="nav-link-text ms-1">Employee Management</span>
-                    </a>
-                    <div class="collapse" id="accountSubmenu">
-                        <ul class="nav nav-sm flex-column">
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="EmployeeManagement" asp-action="EmployeeAccountList">
-                                    <i class="material-symbols-rounded opacity-5">table_view</i>
-                                    <span class="nav-link-text ms-3">Employee Account</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="EmployeeManagement" asp-action="AddNewEmployeeAccount">
-                                    <i class="material-symbols-rounded opacity-5">Person_add</i>
-                                    <span class="nav-link-text ms-3">Add Employee Account</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="nav-item mt-3">
-                    <h6 class="ps-4 ms-2 text-uppercase text-xs text-dark font-weight-bolder opacity-5">Account pages</h6>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="Admin" asp-controller="AdminProfile" asp-action="ShowAdminProfile">
-                        <i class="material-symbols-rounded opacity-5">person</i>
-                        <span class="nav-link-text ms-1">Profile</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="Customer" asp-controller="Account" asp-action="Logout">
-                        <i class="material-symbols-rounded opacity-5">logout</i>
-                        <span class="nav-link-text ms-1">Log out</span>
-                    </a>
-                </li>
-                @* <li class="nav-item">
-                    <a class="nav-link text-dark" href="../pages/sign-up.html">
-                        <i class="material-symbols-rounded opacity-5">assignment</i>
-                        <span class="nav-link-text ms-1">Sign Up</span>
-                    </a>
-                </li> *@
+                @* Menu RIÊNG cho Admin - Full quyền *@
+                @if (userRole == "Admin")
+                {
+                    <li class="nav-item">
+                        <a class="nav-link active bg-gradient-dark text-white" asp-controller="Dashboard" asp-action="Index">
+                            <i class="material-symbols-rounded opacity-5">dashboard</i>
+                            <span class="nav-link-text ms-1">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-controller="Booking" asp-action="Index">
+                            <i class="material-symbols-rounded opacity-5">table_view</i>
+                            <span class="nav-link-text ms-1">Booking Management</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-controller="Booking" asp-action="Calendar">
+                            <i class="material-symbols-rounded opacity-5">receipt_long</i>
+                            <span class="nav-link-text ms-1">Booking View</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-controller="Room" asp-action="Index">
+                            <i class="bi bi-house-door material-symbols-rounded opacity-5"></i>
+                            <span class="nav-link-text ms-1">Room Management</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" id="customerCollapseToggle" data-bs-toggle="collapse" href="#customerSubmenu">
+                            <i class="material-symbols-rounded opacity-5">Patient_List</i>
+                            <span class="nav-link-text ms-1">Customer Management</span>
+                        </a>
+                        <div class="collapse" id="customerSubmenu">
+                            <ul class="nav nav-sm flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Customer" asp-action="CustomerList">
+                                        <i class="material-symbols-rounded opacity-5">Patient_List</i>
+                                        <span class="nav-link-text ms-3">Customer List</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="Customer" asp-action="AddnewCustomer">
+                                        <i class="material-symbols-rounded opacity-5">Patient_List</i>
+                                        <span class="nav-link-text ms-3">Add New Customer</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" id="accountCollapseToggle" data-bs-toggle="collapse" href="#accountSubmenu">
+                            <i class="material-symbols-rounded opacity-5">table_view</i>
+                            <span class="nav-link-text ms-1">Employee Management</span>
+                        </a>
+                        <div class="collapse" id="accountSubmenu">
+                            <ul class="nav nav-sm flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="EmployeeManagement" asp-action="EmployeeAccountList">
+                                        <i class="material-symbols-rounded opacity-5">table_view</i>
+                                        <span class="nav-link-text ms-3">Employee Account</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-controller="EmployeeManagement" asp-action="AddNewEmployeeAccount">
+                                        <i class="material-symbols-rounded opacity-5">Person_add</i>
+                                        <span class="nav-link-text ms-3">Add Employee Account</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                }
+
+                @* Menu RIÊNG cho Receptionist - Chỉ Booking *@
+                @if (userRole == "Receptionist")
+                {
+                    <li class="nav-item">
+                        <a class="nav-link active bg-gradient-dark text-white" asp-controller="Booking" asp-action="Index">
+                            <i class="material-symbols-rounded opacity-5">table_view</i>
+                            <span class="nav-link-text ms-1">Booking Management</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-controller="Booking" asp-action="Calendar">
+                            <i class="material-symbols-rounded opacity-5">receipt_long</i>
+                            <span class="nav-link-text ms-1">Booking View</span>
+                        </a>
+                    </li>
+                }
+
+                @* Account pages - Chung cho Admin và Receptionist *@
+                @if (userRole == "Admin" || userRole == "Receptionist")
+                {
+                    <li class="nav-item mt-3">
+                        <h6 class="ps-4 ms-2 text-uppercase text-xs text-dark font-weight-bolder opacity-5">Account pages</h6>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="Admin" asp-controller="AdminProfile" asp-action="ShowAdminProfile">
+                            <i class="material-symbols-rounded opacity-5">person</i>
+                            <span class="nav-link-text ms-1">Profile</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-area="Customer" asp-controller="Account" asp-action="Logout">
+                            <i class="material-symbols-rounded opacity-5">logout</i>
+                            <span class="nav-link-text ms-1">Log out</span>
+                        </a>
+                    </li>
+                }
             </ul>
         </div>
     </aside>
-    <!-- Side Navbar end -->
-
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
-        <!-- Navbar Header start -->
         <nav class="navbar navbar-main navbar-expand-lg px-0 mx-3 shadow-none border-radius-xl" id="navbarBlur" data-scroll="true">
             <div class="container-fluid py-1 px-3">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
-                        <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" asp-controller="Dashboard" asp-action="Index";">Admin</a></li>
+                        @if(userRole == "Admin")
+                        {
+                            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" asp-controller="Dashboard" asp-action="Index" ;">Admin</a></li>   
+                        }
+                        @if (userRole == "Receptionist")
+                        {
+                            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" asp-controller="Booking" asp-action="Index" ;">Receptionist</a></li>
+                        }
                         <li class="breadcrumb-item text-sm text-dark active" aria-current="page">@ViewBag.Title</li>
                     </ol>
                 </nav>
                 <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
                     <ul class="navbar-nav d-flex align-items-center  justify-content-end ms-auto">
-                        <!-- Start Account-->
-                        <li class="nav-item d-flex align-items-center">
-                            <a asp-area="Admin" asp-controller="AdminProfile" asp-action="ShowAdminProfile" class="nav-link text-body font-weight-bold px-0">
-                                <i class="material-symbols-rounded">account_circle</i>
-                            </a>
-                        </li>
-                        <!-- End Account-->
+                        @if (userRole == "Admin" || userRole == "Receptionist")
+                        {
+                            <li class="nav-item d-flex align-items-center">
+                                <a asp-area="Admin" asp-controller="AdminProfile" asp-action="ShowAdminProfile" class="nav-link text-body font-weight-bold px-0">
+                                    <i class="material-symbols-rounded">account_circle</i>
+                                </a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>
         </nav>
-        <!-- End Navbar -->
-        <!-- Start Main -->
         @RenderBody()
-        <!-- End main -->
     </main>
     <script src="~/js/admin/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -200,9 +228,10 @@
                 // Chuyển href thành lowercase để so sánh
                 const linkPath = href.toLowerCase();
 
+                // SỬA LỖI Ở ĐÂY: "linkLPath" đã được đổi thành "linkPath"
                 // Kiểm tra nếu current path khớp với link
                 // Ưu tiên link dài hơn (cụ thể hơn)
-                if (currentPath === linkPath || currentPath.endsWith(linkPath)) {
+                if (currentPath === linkPath || (linkPath !== '/' && currentPath.endsWith(linkPath))) {
                     if (linkPath.length > bestMatchLength) {
                         bestMatch = link;
                         bestMatchLength = linkPath.length;
@@ -222,7 +251,7 @@
                 bestMatch.classList.add('active', 'bg-gradient-dark', 'text-white');
                 bestMatch.classList.remove('text-dark');
 
-                // Nếu link này nằm trong submenu, tự động mở submenu (nhưng không highlight cha)
+                // Nếu link này nằm trong submenu, tự động mở submenu
                 const parentCollapse = bestMatch.closest('.collapse');
                 if (parentCollapse) {
                     parentCollapse.classList.add('show');
