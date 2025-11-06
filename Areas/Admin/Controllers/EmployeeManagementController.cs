@@ -191,7 +191,7 @@ namespace Hotel_Management.Areas.Admin.Controllers
             ViewBag.pageNum = totalPages;
 
 
-            // Logic lấy dữ liệu phân trang (Giữ nguyên)
+            // Logic lấy dữ liệu phân trang
             var pagedResult = await query.OrderBy(a => a.Role).ThenBy(a => a.Username)
                                          .Skip((pageIndex - 1) * pageSize)
                                          .Take(pageSize)
@@ -271,7 +271,6 @@ namespace Hotel_Management.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(EditEmployeeViewModel model)
         {
-            // (Bỏ qua ModelState.Remove vì ViewModel đã đúng)
 
             if (ModelState.IsValid)
             {

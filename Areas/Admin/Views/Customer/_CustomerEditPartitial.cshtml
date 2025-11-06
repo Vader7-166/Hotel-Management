@@ -28,7 +28,7 @@
                 </div>
                 <div class="col-md-6 mb-3">
                     <div class="input-group input-group-outline">
-                        <label asp-for="BirthDate" class="form-label">Ngày sinh</label>
+                        @* <label asp-for="BirthDate" class="form-label">Ngày sinh</label> *@
                         <input asp-for="BirthDate" type="date" class="form-control" asp-format="{0:yyyy-MM-dd}" />
                     </div>
                     <span asp-validation-for="BirthDate" class="text-danger ms-1"></span>
