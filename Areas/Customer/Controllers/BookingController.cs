@@ -116,30 +116,39 @@ namespace Hotel_Management.Areas.Customer.Controllers
             if (checkOut <= checkIn)
                 return BadRequest(new { success = false, message = "Check-out date must be after check-in date." });
 
-            // 🧠 Tách toàn bộ dữ liệu BookingDetails ra trước, vì EF không dịch được ToDateTime
-            var bookingDetails = _context.BookingDetails
-                .Include(bd => bd.Booking)
-                .AsEnumerable() // ⚠️ chuyển sang xử lý bằng LINQ to Objects
-                .Where(bd => bd.Booking != null &&
-                    checkIn.Date < bd.Booking.CheckOutDate.ToDateTime(TimeOnly.MinValue) &&
-                    checkOut.Date > bd.Booking.CheckInDate.ToDateTime(TimeOnly.MinValue))
-                .Select(bd => bd.RoomId)
-                .Distinct()
-                .ToList();
+            // 2. Chuyển đổi DateTime (từ form) sang DateOnly (để so sánh với CSDL)
+            // CSDL của bạn dùng kiểu DATE, nên C# sẽ dùng DateOnly
+            DateOnly checkInDateOnly = DateOnly.FromDateTime(checkIn);
+            DateOnly checkOutDateOnly = DateOnly.FromDateTime(checkOut);
 
-            // Lọc phòng chưa được đặt
+            // 3. Logic tìm phòng bị trùng (Overlap logic)
+            //  Để SQL Server tự làm.
+            var bookedRoomIds = _context.BookingDetails
+                .Where(bd => bd.Booking != null &&
+                             bd.Booking.Status != "Cancelled" &&
+                             // Logic: (StartA < EndB) AND (EndA > StartB)
+                             bd.Booking.CheckInDate < checkOutDateOnly &&
+                             bd.Booking.CheckOutDate > checkInDateOnly)
+                .Select(bd => bd.RoomId)
+                .Distinct();
+
+            // 4. Lấy phòng trống (TRỪ đi các phòng đã bị đặt)
+            // EF Core sẽ dịch .Contains() thành câu lệnh SQL "NOT IN (...)"
             var availableRooms = _context.Rooms
                 .Include(r => r.RoomType)
-                .Where(r => !bookingDetails.Contains(r.RoomId) && r.Status == "Available");
+                .Where(r => !bookedRoomIds.Contains(r.RoomId) && r.Status == "Available");
 
+            // 5. Áp dụng các bộ lọc còn lại
             if (minPrice.HasValue)
                 availableRooms = availableRooms.Where(r => r.RoomType.BasePrice >= minPrice);
             if (maxPrice.HasValue)
                 availableRooms = availableRooms.Where(r => r.RoomType.BasePrice <= maxPrice);
             if (guests.HasValue && guests > 0)
                 availableRooms = availableRooms.Where(r => r.RoomType.MaxOccupancy >= guests);
-            if(roomTypeId.HasValue&&roomTypeId>0)
+            if (roomTypeId.HasValue && roomTypeId > 0)
+            {
                 availableRooms = availableRooms.Where(r => r.RoomTypeId == roomTypeId);
+            }
             var result = availableRooms.Select(r => new
             {
                 roomId = r.RoomId,
