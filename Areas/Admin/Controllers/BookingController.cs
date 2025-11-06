@@ -58,7 +58,7 @@ namespace Hotel_Management.Areas.Admin.Controllers
             var totalBookingsCount = bookingsQuery.Count();
             var totalPages = (int)Math.Ceiling(totalBookingsCount / (double)pageSize);
             var paginatedBookings = bookingsQuery
-                .Skip((page-1)*pageSize)    // Skip current page-1 * number of value in page
+                .Skip((page-1)*pageSize)    
                 .Take(pageSize)
                 .ToList();
 
