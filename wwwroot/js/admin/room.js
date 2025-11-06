@@ -1,7 +1,8 @@
-﻿function scrollToFloor(floorNumber) {
+﻿// Scroll to a specific floor
+function scrollToFloor(floorNumber) {
     var element = document.getElementById('floor-' + floorNumber);
     if (element) {
-        var offset = 100; // Khoảng cách từ top (để không bị che bởi thanh navigation)
+        var offset = 100; // Distance from the top (to prevent being hidden by navigation bar)
         var elementPosition = element.getBoundingClientRect().top;
         var offsetPosition = elementPosition + window.pageYOffset - offset;
 
@@ -10,7 +11,7 @@
             behavior: 'smooth'
         });
 
-        // Hiệu ứng highlight
+        // Highlight effect
         element.classList.add('highlight-floor');
         setTimeout(function () {
             element.classList.remove('highlight-floor');
@@ -18,7 +19,7 @@
     }
 }
 
-// Scroll về đầu trang
+// Scroll to the top of the page
 function scrollToTop() {
     window.scrollTo({
         top: 0,
@@ -26,43 +27,42 @@ function scrollToTop() {
     });
 }
 
-// Ajax Room Details
+// Ajax: View Room Details
 function viewRoomDetails(roomId) {
     $.ajax({
         url: `/Admin/Room/Details?id=${roomId}`,
         type: 'GET',
         success: function (data) {
             $('#roomModalBody').html(data);
-            $('#roomModalLabel').text('Chi Tiết Phòng');
+            $('#roomModalLabel').text('Room Details');
             var modal = new bootstrap.Modal(document.getElementById('roomModal'));
             modal.show();
         },
         error: function () {
-            alert('Không thể tải thông tin phòng!');
+            alert('Unable to load room details!');
         }
     });
 }
 
-// Ajax Create Room
+// Ajax: Open Add Room Modal
 function openAddRoomModal() {
     $.ajax({
         url: `/Admin/Room/Create`,
         type: 'POST',
         success: function (data) {
             $('#roomModalBody').html(data);
-            $('#roomModalLabel').text('Thêm Phòng Mới');
+            $('#roomModalLabel').text('Add New Room');
             var modal = new bootstrap.Modal(document.getElementById('roomModal'));
             modal.show();
         },
         error: function () {
-            alert('Không thể mở form thêm phòng!');
+            alert('Unable to open Add New Room form!');
         }
     });
 }
 
-// Ajax save room
+// Ajax: Save Room (Create or Edit)
 function saveRoom(isEdit) {
-    console.log('Hàm saveRoom đã được gọi! Đang chỉnh sửa: ' + isEdit);
     var form = $('#roomForm');
     var url = isEdit ? '/Admin/Room/Edit' : '/Admin/Room/Create';
 
@@ -72,27 +72,24 @@ function saveRoom(isEdit) {
         data: form.serialize(),
         success: function (response) {
             if (response.success !== undefined) {
-                // NẾU LÀ JSON (Thành công hoặc Lỗi Server)
                 if (response.success === true) {
-                    // Thành công
-                    alert(response.message); 
+                    alert(response.message);
                     $('#roomModal').modal('hide');
                     loadRoomLayout();
                 } else {
-                    // Thất bại (ví dụ: lỗi server, lỗi CSDL)
-                    alert(response.message); 
+                    alert(response.message);
                 }
             }
         },
         error: function () {
-            alert('Có lỗi xảy ra!');
+            alert('An error occurred!');
         }
     });
 }
 
-// Ajax delete room
+// Ajax: Delete Room
 function deleteRoom(roomId) {
-    if (confirm('Bạn có chắc chắn muốn xóa phòng này?')) {
+    if (confirm('Are you sure you want to delete this room?')) {
         $.ajax({
             url: `/Admin/Room/Delete/${roomId}`,
             type: 'POST',
@@ -107,16 +104,15 @@ function deleteRoom(roomId) {
                 }
             },
             error: function () {
-                alert('Có lỗi xảy ra khi xóa phòng!');
+                alert('An error occurred while deleting the room!');
             }
         });
     }
 }
 
-// Reload room table without reload a whole page
+// Reload room layout without reloading the entire page
 function loadRoomLayout() {
-    console.log("Đang tải lại bảng phòng...");
-
+    console.log("Reloading room layout...");
 
     var container = $("#room-layout-container");
     $.ajax({
@@ -126,7 +122,7 @@ function loadRoomLayout() {
             container.html(tableHtml);
         },
         error: function () {
-            container.html('<p class="text-danger">Lỗi khi tải danh sách phòng.</p>');
+            container.html('<p class="text-danger">Error loading room list.</p>');
         }
     });
 }
