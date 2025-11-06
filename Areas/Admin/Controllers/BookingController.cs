@@ -161,7 +161,7 @@ namespace Hotel_Management.Areas.Admin.Controllers
                     CheckInDate = viewModel.CheckInDate,
                     CheckOutDate = viewModel.CheckOutDate,
                     Status = viewModel.Status,
-                    BookingDate = viewModel.Status == "Confirmed" ? DateTime.Now : DateTime.MinValue,
+                    BookingDate = DateTime.Now,
                     Notes = viewModel.Notes,
                     CreatedAt = DateTime.Now
                 };
@@ -183,6 +183,21 @@ namespace Hotel_Management.Areas.Admin.Controllers
 
                 // Update Room's Status 
                 roomToAssign.Status = "Occupied";
+
+                // Update Invoices 
+                var newInvoice = new Invoice
+                {
+                    BookingId = booking.BookingId,
+                    InvoiceDate = booking.BookingDate,
+                    RoomAmount = bookingDetail.SubTotal??0,
+                    ServiceAmount = 0,
+                    Discount = 0,
+                    PaymentStatus = (viewModel.Status == "Cancelled") ? "Cancelled" : "Unpaid",
+                    PaymentMethod = null,
+                    CreatedAt = DateTime.Now
+                };
+                db.Invoices.Add(newInvoice);
+
                 // Save all change
                 db.SaveChanges();
                 return RedirectToAction(nameof(Index));
@@ -368,7 +383,53 @@ namespace Hotel_Management.Areas.Admin.Controllers
                             bookingEntityToUpdate.UpdatedAt = DateTime.Now;
                         }
 
-                        // 6. Save all
+                        // 6. Update Invoices Status
+                        var existingInvoice = await db.Invoices.FirstOrDefaultAsync(i => i.BookingId == viewModel.BookingId);
+                        var newRoomAmount = bookingDetailToUpdate.SubTotal ?? 0;
+                        string newBookingStatus = viewModel.Status;
+
+                        if (existingInvoice != null)
+                        {
+                            // Đã có hóa đơn -> Cập nhật nó
+                            existingInvoice.RoomAmount = newRoomAmount;
+                            existingInvoice.UpdatedAt = DateTime.Now;
+
+                            // Cập nhật trạng thái thanh toán dựa trên trạng thái booking
+                            switch (newBookingStatus)
+                            {
+                                case "Confirmed":
+                                    existingInvoice.PaymentStatus = "Paid";
+                                    break;
+                                case "Cancelled":
+                                    existingInvoice.PaymentStatus = "Cancelled";
+                                    break;
+                                default:
+                                    if (existingInvoice.PaymentStatus == "Cancelled")
+                                    {
+                                        existingInvoice.PaymentStatus = "Unpaid";
+                                    }
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            // Nếu chưa có hóa đơn 
+                            var newInvoice = new Invoice
+                            {
+                                BookingId = viewModel.BookingId,
+                                InvoiceDate = bookingEntityToUpdate.BookingDate, 
+                                RoomAmount = newRoomAmount,
+                                ServiceAmount = 0,
+                                Discount = 0,
+
+                                PaymentStatus = (newBookingStatus == "Cancelled") ? "Cancelled" :
+                                                (newBookingStatus == "Confirmed") ? "Paid" : "Unpaid",
+                                CreatedAt = DateTime.Now
+                            };
+                            await db.Invoices.AddAsync(newInvoice);
+                        }
+
+                        // 7. Save all
                         await db.SaveChangesAsync();
                         await transaction.CommitAsync();
 
