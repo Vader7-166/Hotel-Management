@@ -192,7 +192,7 @@
 
             // 3. Lấy giá trị HIỆN TẠI của chúng (đã được tải từ ViewModel)
             var currentRole = roleDropdown.val();
-            var currentPosition = positionDropdown.val(); // Đây là giá trị ta muốn giữ
+            var currentPosition = positionDropdown.data('current-position'); // Đây là giá trị ta muốn giữ
 
             // 4. Gọi hàm helper để lọc danh sách, 
             //    nhưng vẫn giữ nguyên giá trị 'currentPosition' đã chọn
@@ -228,8 +228,19 @@
                 } else {
                     // Nếu validation fail, cập nhật lại modal với form và lỗi
                     $('#detailsModal .modal-content').html(response);
-                    alert(response.message);
-                    $('#detailsModal').modal('hide');
+                    var roleDropdown = $('#detailsModal #Role');
+                    var positionDropdown = $('#detailsModal #Position');
+
+                    // 3. Lấy Role và Position mà người dùng đã chọn (server trả về)
+                    var currentRole = roleDropdown.val();
+                    var currentPosition = positionDropdown.val();
+
+                    // 4. Gọi hàm helper để lọc danh sách
+                    if (currentRole) {
+                        // Gọi hàm helper, và CHỌN LẠI
+                        // position mà người dùng đã chọn trước khi submit
+                        updatePositionDropdown(currentRole, positionDropdown, currentPosition);
+                    }
                 }
             },
             error: function () {

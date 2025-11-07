@@ -81,7 +81,11 @@
                 <div class="col-md-6 mb-3">
                     <div class="form-floating">
 
-                        <select asp-for="Position" class="form-select" required disabled>
+                        <select asp-for="Position"
+                                class="form-select"
+                                required
+                                disabled
+                                data-current-position="@Model.Position">
                             <option value="">Select Role to see positions...</option>
                         </select>
 
