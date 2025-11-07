@@ -334,7 +334,7 @@
         // 1. Vô hiệu hóa dropdown "Position" trong khi đang tải dữ liệu
         positionDropdown.prop('disabled', true);
 
-        // 2. Gọi AJAX đến Action mới ta vừa tạo
+        // 2. Gọi AJAX đến Action GetPositionsByRole
         $.ajax({
             url: '/Admin/EmployeeManagement/GetPositionsByRole',
             type: 'GET',
@@ -355,7 +355,7 @@
                 // 5. Kích hoạt lại dropdown
                 positionDropdown.prop('disabled', false);
 
-                // 6. Cập nhật lại giao diện floating label (nếu bạn dùng)
+                // 6. Cập nhật lại giao diện floating label
                 initializeFloatingLabels();
             },
             error: function () {
