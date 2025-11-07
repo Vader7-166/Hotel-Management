@@ -11,7 +11,7 @@
     var serviceSubtotal = Model.ServiceUsages.Sum(s => s.TotalAmount ?? 0);
     var grandTotal = roomSubtotal + serviceSubtotal;
 
-    // --- Xác ??nh màu tr?ng thái ---
+   
     var statusClass = Model.Status switch
     {
         "Pending" => "bg-warning text-dark",

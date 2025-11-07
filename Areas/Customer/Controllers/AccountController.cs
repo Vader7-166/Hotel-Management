@@ -1,8 +1,11 @@
 ﻿using Hotel_Management.Filters;
 using Hotel_Management.Models;
+using Hotel_Management.Models.ViewModels.Customer;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Security.Cryptography;
 using System.Text;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Model;
 
 
 //đăng ký đăng nhập
@@ -27,31 +30,32 @@ namespace Hotel_Management.Areas.Customer.Controllers
         [Route("Customer/Account/Login")]
         public IActionResult Login()
         {
-            return View();
+            // truyền một instance mới của ViewModel vào View
+            return View(new LoginViewModel());
         }
 
         [HttpPost]
         [Route("Customer/Account/Login")]
-        public IActionResult Login(string Username, string Password)
+        public IActionResult Login(LoginViewModel model)
         {
             // 🧩 1. Kiểm tra dữ liệu nhập vào
-            if (string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Password))
+            if (!ModelState.IsValid)
             {
-                ViewBag.Error = "Please enter all required information!";
-                return View();
+                //Nếu có lỗi [Required],trả về View với model để hiển thị lỗi
+                return View(model);
             }
 
             // 🔒 2. Hash mật khẩu để so sánh
-            string hashedPassword = HashPassword(Password);
+            string hashedPassword = HashPassword(model.Password);
 
             // 🧠 3. Tìm tài khoản hợp lệ
             var account = _context.Accounts
-                .FirstOrDefault(a => a.Username == Username && a.PasswordHash == hashedPassword && a.IsActive);
+                .FirstOrDefault(a => a.Username == model.Username && a.PasswordHash == hashedPassword && a.IsActive);
 
             if (account == null)
             {
-                ViewBag.Error = "Invalid username or password!";
-                return View();
+                ModelState.AddModelError(string.Empty, "Invalid username or password.Please try again.");
+                return View(model);
             }
             //Luu thong tin tai khoan vao Session
             HttpContext.Session.SetString("Username", account.Username);
@@ -81,8 +85,9 @@ namespace Hotel_Management.Areas.Customer.Controllers
             }
             else 
             {
-                ViewBag.Error = "Invalid role! . Please contact support!";
-                return View();
+                // TƯƠNG TỰ: Dùng ModelState.AddModelError
+                ModelState.AddModelError(string.Empty, "Invalid role! . Please contact support!");
+                return View(model);
             }
  
         }
@@ -93,43 +98,40 @@ namespace Hotel_Management.Areas.Customer.Controllers
         [Route("Customer/Account/Register")]
         public IActionResult Register()
         {
-            return View();
+            return View(new RegisterViewModel());
         }
 
         [HttpPost]
         [Route("Customer/Account/Register")]
-        public IActionResult Register(string FullName, String UserName, string Email, string Password, string ConfirmPassword)
+        public IActionResult Register(RegisterViewModel model)
         {
-            if (string.IsNullOrEmpty(FullName) || string.IsNullOrEmpty(UserName) || string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Password) || string.IsNullOrEmpty(ConfirmPassword))
+            if (!ModelState.IsValid)
             {
-                ViewBag.Error = "Please enter all the required information !.";
-                return View();
+               
+                return View(model);
             }
-            if (Password != ConfirmPassword)
-            {
-                ViewBag.Error = "Password and Confirm Password do not match !.";
-                return View();
-            }
-            var existingAccount = _context.Accounts.FirstOrDefault(a => a.Username == UserName || a.Email == Email);
+            
+            var existingAccount = _context.Accounts.FirstOrDefault(a => a.Username == model.Username || a.Email == model.Email);
             if (existingAccount != null)
             {
-                ViewBag.Error = "Username or Email already exists !.";
-                return View();
+                ModelState.AddModelError(string.Empty, "Username or Email already exists. Please choose another.");
+               // Trả lại View với model để hiển thị lỗi qua Validation Summary
+                return View(model);
             }
+            // 3. Tạo Khách hàng (Customer)
             var customer = new Hotel_Management.Models.Customer
             {
-                FullName = FullName,
-                Email = Email,
+                FullName = model.FullName,
+                Email = model.Email,
                 CreatedAt = DateTime.Now,
-
             };
             _context.Customers.Add(customer);
             _context.SaveChanges();
             var account = new Account
             {
-                Username = UserName,
-                PasswordHash = HashPassword(Password),
-                Email = Email,
+                Username = model.Username,
+                PasswordHash = HashPassword(model.Password), // Băm mật khẩu từ model
+                Email = model.Email,
                 CustomerId = customer.CustomerId,
                 Role = "Customer",
                 IsActive = true,
