@@ -100,7 +100,10 @@
     // Phần Footer của Modal
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-        <a href="@Url.Action("Edit", "Customer", new { id = Model.CustomerId })" class="btn btn-primary edit-details-btn" data-bs-toggle="modal" data-bs-target="#detailsModal">Chỉnh sửa</a>
+        <a href="@Url.Action("Edit", "Customer", new { id = Model.CustomerId })"
+           class="btn btn-primary edit-details-btn">
+            Chỉnh sửa
+        </a>
     </div>
 }
 else

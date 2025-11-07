@@ -173,6 +173,27 @@ namespace Hotel_Management.Areas.Admin.Controllers
                 return BadRequest(); //trả về lỗi 404 Bab Request
             }
 
+            //// 1. Kiểm tra Email trống
+            //if (string.IsNullOrEmpty(customerViewModel.Email))
+            //{
+            //    // Thêm lỗi vào ModelState
+            //    ModelState.AddModelError("Email", "Email không thể bỏ trống");
+            //}
+            //else
+            //{
+            //    // 2. Kiểm tra cú pháp Email (dùng EmailAddressAttribute thủ công)
+            //    var emailValidator = new System.ComponentModel.DataAnnotations.EmailAddressAttribute();
+            //    if (!emailValidator.IsValid(customerViewModel.Email))
+            //    {
+            //        ModelState.AddModelError("Email", "Email không đúng cú pháp (ví dụ: example@mail.com)");
+            //    }
+            //}
+
+            //if (await db.Customers.AnyAsync(c => c.Email == customerViewModel.Email && c.CustomerId != id))
+            //{
+            //    ModelState.AddModelError("Email", "Email này đã được sử dụng.");
+            //}
+
             //bước 2 kiểm tra dữ liệu được gửi lên có hợp lệ không (dựa trên các data annotation)
             if (ModelState.IsValid)
             {
@@ -251,7 +272,7 @@ namespace Hotel_Management.Areas.Admin.Controllers
                         if (booking.Invoice != null)
                             db.Invoices.Remove(booking.Invoice);
 
-                        // Xóa Chi tiết Đặt phòng (VÀ cập nhật trạng thái phòng)
+                        // Xóa Chi tiết Đặt phòng
                         if (booking.BookingDetails != null && booking.BookingDetails.Any())
                         {
                             foreach (var detail in booking.BookingDetails)

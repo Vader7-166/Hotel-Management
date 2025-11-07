@@ -1,6 +1,0 @@
-﻿namespace Hotel_Management.Models.ViewModels.Customer
-{
-    public class BookingViewModel
-    {
-    }
-}
