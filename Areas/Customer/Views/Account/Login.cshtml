@@ -1,4 +1,5 @@
-﻿@{
+﻿@model Hotel_Management.Models.ViewModels.Customer.LoginViewModel
+@{
     ViewData["Title"] = "Login";
     Layout = "~/Views/Shared/_LayoutCustomer.cshtml";
 }
@@ -6,26 +7,38 @@
 <div class="login-container d-flex justify-content-center align-items-center">
     <div class="login-card shadow-lg p-4 rounded">
         <h3 class="text-center mb-4 fw-bold text-gold">LOGIN</h3>
-
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger text-center" role="alert"></div>
         <form asp-area="Customer" asp-controller="Account" asp-action="Login" method="post">
             <div class="mb-3">
-                <label for="Username" class="form-label text-light">Username</label>
-                <input type="text" class="form-control custom-input" id="Username" name="Username"
-                       placeholder="Enter your username" required />
+                @* SỬ DỤNG asp-for để liên kết Label với ViewModel *@
+                <label asp-for="Username" class="form-label text-light"></label>
+
+                @* SỬ DỤNG asp-for để liên kết Input với ViewModel (Tự động gán id, name, type) *@
+                <input asp-for="Username" class="form-control custom-input"
+                       placeholder="Enter your username" />
+
+                @* THÊM DÒNG NÀY để hiển thị lỗi chi tiết (như "Username is required") *@
+                <span asp-validation-for="Username" class="text-danger small"></span>
             </div>
 
             <div class="mb-3">
-                <label for="Password" class="form-label text-light">Password</label>
-                <input type="password" class="form-control custom-input" id="Password" name="Password"
-                       placeholder="Enter your password" required />
+                @* SỬ DỤNG asp-for cho Password *@
+                <label asp-for="Password" class="form-label text-light"></label>
+
+                @* Tag Helper tự động thêm type="password" vì bạn dùng [DataType(DataType.Password)] trong ViewModel *@
+                <input asp-for="Password" class="form-control custom-input"
+                       placeholder="Enter your password" />
+
+                @* THÊM DÒNG NÀY để hiển thị lỗi chi tiết *@
+                <span asp-validation-for="Password" class="text-danger small"></span>
             </div>
 
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="RememberMe" name="RememberMe">
-                    <label class="form-check-label text-light" for="RememberMe">Remember me</label>
-                </div>
-                <a href="#" class="text-gold small text-decoration-none">Forgot password?</a>
+                    @* SỬ DỤNG asp-for cho RememberMe *@
+                    <input asp-for="RememberMe" class="form-check-input" type="checkbox">
+                    <label asp-for="RememberMe" class="form-check-label text-light"></label>
+                </div>               
             </div>
 
             <button type="submit" class="btn btn-gold w-100 mt-2">Login</button>
@@ -37,7 +50,11 @@
         </p>
     </div>
 </div>
-
+@section Scripts {
+    @*  DÒNG NÀY ĐỂ KÍCH HOẠT CLIENT-SIDE VALIDATION *@
+    <partial name="_ValidationScriptsPartial" />
+ 
+}
 @section Styles {
     <style>
         body {
@@ -96,5 +113,27 @@
             color: #c8a45d !important;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
+        /* Định dạng chung cho div chứa cảnh báo lỗi */
+        .alert-danger {
+            background-color: #dc354530; /* Nền đỏ nhạt (trong suốt) */
+            color: #dc3545; /* Chữ màu đỏ */
+            border: 1px solid #dc3545; /* Viền đỏ */
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+
+            /* Loại bỏ dấu chấm đầu dòng cho danh sách lỗi (ul) bên trong alert */
+            .alert-danger ul {
+                list-style-type: none; /* Quan trọng: Loại bỏ dấu chấm */
+                padding-left: 0;
+                margin-bottom: 0;
+            }
+
+            /* Định dạng cho từng lỗi (li) bên trong alert */
+            .alert-danger li {
+                font-weight: 500;
+                font-size: 0.95rem;
+            }
     </style>
 }

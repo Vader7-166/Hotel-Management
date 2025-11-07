@@ -69,7 +69,7 @@ namespace Hotel_Management.Areas.Customer.Controllers
                 .Include(b => b.BookingDetails)
                     .ThenInclude(d => d.Room)
                         .ThenInclude(r => r.RoomType)
-                .Include(b => b.ServiceUsages) // <-- ⭐ MỚI: Thêm dòng này
+                .Include(b => b.ServiceUsages) 
                 .Where(b => b.CustomerId == customerId)
                 .OrderByDescending(b => b.BookingDate)
                 .ToList();

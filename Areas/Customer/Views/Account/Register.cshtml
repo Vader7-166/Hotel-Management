@@ -1,4 +1,4 @@
-﻿
+﻿@model Hotel_Management.Models.ViewModels.Customer.RegisterViewModel
 @{
     ViewData["Title"] = "Register";
     Layout = "~/Views/Shared/_LayoutCustomer.cshtml";
@@ -7,36 +7,42 @@
 <div class="register-container d-flex justify-content-center align-items-center">
     <div class="register-card shadow-lg p-4 rounded">
         <h3 class="text-center mb-4 fw-bold text-gold">CREATE ACCOUNT</h3>
+        @* HIỂN THỊ LỖI CHUNG (Tên/Email đã tồn tại) - Nếu bạn dùng ModelState.AddModelError(string.Empty, ...) *@
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger text-center" role="alert"></div>
 
         <form asp-action="Register" method="post">
             <div class="mb-3">
-                <label for="FullName" class="form-label text-light">Full Name</label>
-                <input type="text" class="form-control custom-input" id="FullName" name="FullName"
-                       placeholder="Enter your full name" required />
+                <label asp-for="FullName" class ="form-label text-light"></label>
+                <input asp-for="FullName" class="form-control custom-input"
+                       placeholder="Enter your full name" />
+                <span asp-validation-for="FullName" class="text-danger small"></span>
             </div>
 
             <div class="mb-3">
-                <label for="Username" class="form-label text-light">Username</label>
-                <input type="text" class="form-control custom-input" id="Username" name="Username"
-                       placeholder="Choose a username" required />
+                <label asp-for="Username" class="form-label text-light"></label>
+                <input asp-for="Username" class="form-control custom-input"
+                       placeholder="Choose a username" />
             </div>
 
             <div class="mb-3">
-                <label for="Email" class="form-label text-light">Email</label>
-                <input type="email" class="form-control custom-input" id="Email" name="Email"
-                       placeholder="Enter your email" required />
+                <label asp-for="Email" class="form-label text-light"></label>
+                <input asp-for="Email" class="form-control custom-input"
+                       placeholder="Enter your email" />
+                <span asp-validation-for="Email" class="text-danger small"></span>
             </div>
 
             <div class="mb-3">
-                <label for="Password" class="form-label text-light">Password</label>
-                <input type="password" class="form-control custom-input" id="Password" name="Password"
-                       placeholder="Create a password" required />
+                <label asp-for="Password" class="form-label text-light"></label>
+                <input asp-for="Password" class="form-control custom-input"
+                       placeholder="Create a password" />
+                <span asp-validation-for="Password" class="text-danger small"></span>
             </div>
 
             <div class="mb-3">
-                <label for="ConfirmPassword" class="form-label text-light">Confirm Password</label>
-                <input type="password" class="form-control custom-input" id="ConfirmPassword" name="ConfirmPassword"
-                       placeholder="Re-enter your password" required />
+                <label asp-for="ConfirmPassword" class="form-label text-light"></label>
+                <input asp-for="ConfirmPassword" class="form-control custom-input"
+                       placeholder="Re-enter your password" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
             </div>
 
             <button type="submit" class="btn btn-gold w-100 mt-2">Register</button>
@@ -49,7 +55,10 @@
         </form>
     </div>
 </div>
-
+@section Scripts {
+    @* Kích hoạt Client-side Validation *@
+    <partial name="_ValidationScriptsPartial" />
+}
 @section Styles {
     <style>
         body {
@@ -102,6 +111,11 @@
             background-color: #091a33 !important;
             color: #c8a45d !important;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .text-danger {
+            /* Định dạng cho lỗi chi tiết dưới input */
+            font-size: 0.85rem !important;
         }
     </style>
 }
