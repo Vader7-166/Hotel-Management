@@ -1,5 +1,6 @@
 ﻿using Hotel_Management.Filters;
 using Hotel_Management.Models;
+using Hotel_Management.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
@@ -52,96 +53,97 @@ namespace Hotel_Management.Areas.Admin.Controllers
         {
             // 1. Lấy username từ session
             var username = HttpContext.Session.GetString("Username");
-
-            // 2. THÊM BẢO VỆ: Kiểm tra xem session có tồn tại không
-            // (Đây là logic bạn đã thêm cho ShowAdminProfile)
             if (string.IsNullOrEmpty(username))
             {
-                // Nếu không, chuyển hướng người dùng về trang đăng nhập
-                // (Hãy đổi "SignIn" và "Account" cho đúng)
                 return RedirectToAction("Login", "Account", new { Area = "Customer" });
             }
 
-            // 3. Code cũ của bạn: Tìm tài khoản
-            var account = await db.Accounts.Include(a => a.Employee)
-                                         .FirstOrDefaultAsync(a => a.Username == username);
+            // 2. Lấy dữ liệu gốc (Entity) từ CSDL
+            var account = await db.Accounts
+                .Include(a => a.Employee) // Bắt buộc Include Employee
+                .FirstOrDefaultAsync(a => a.Username == username);
 
-            // 4. Kiểm tra (Bảo vệ thêm)
-            if (account == null)
+            if (account == null || account.Employee == null)
             {
-                return NotFound("Account not found.");
+                return NotFound("Không tìm thấy tài khoản hoặc hồ sơ nhân viên.");
             }
 
-            // 5. Trả về View "Edit.cshtml" với Model hợp lệ
-            return View(account);
+            // 3. ÁNH XẠ (MAP) từ Entity (Account/Employee) sang ViewModel
+            var viewModel = new AdminProfileEditViewModel
+            {
+                Username = account.Username,
+                EmployeeId = account.EmployeeId.Value,
+                Email = account.Email,
+                FullName = account.Employee.FullName,
+                Phone = account.Employee.Phone,
+                Address = account.Employee.Address,
+                Gender = account.Employee.Gender,
+                BirthDate = account.Employee.BirthDate,
+
+                // Gán các trường ẩn
+                Position = account.Employee.Position,
+                Salary = account.Employee.Salary,
+                HireDate = account.Employee.HireDate
+            };
+
+            // 4. Trả về View với ViewModel
+            return View(viewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditAdminProfile(Account model)
+        public async Task<IActionResult> EditAdminProfile(AdminProfileEditViewModel model)
         {
-            // 1. Lấy username từ session để bảo mật
-            var loggedInUsername = HttpContext.Session.GetString("Username");
-            if (string.IsNullOrEmpty(loggedInUsername))
+            // === LOGIC VALIDATE MỚI ===
+            // 1. Kiểm tra Email trùng (với người KHÁC)
+            if (await db.Accounts.AnyAsync(a => a.Email == model.Email && a.Username != model.Username))
             {
-                // Nếu mất session, đá về trang đăng nhập
-                return RedirectToAction("Login", "Account", new { Area = "Customer" });
+                ModelState.AddModelError("Email", "Email này đã được sử dụng bởi một tài khoản khác.");
             }
 
-            // 2. Gỡ các validation không cần thiết (Giữ nguyên)
-            ModelState.Remove("PasswordHash");
-            ModelState.Remove("Role");
-            ModelState.Remove("CreatedAt");
-            ModelState.Remove("Employee.Position");
-            ModelState.Remove("Employee.Salary");
-            ModelState.Remove("Employee.HireDate");
+            // (Thêm các logic validate tùy chỉnh khác nếu cần...)
 
-            // 3. Kiểm tra các trường còn lại
+            // 2. Kiểm tra tất cả validation (cả Data Annotation và tùy chỉnh)
             if (!ModelState.IsValid)
             {
-                // SỬA Ở ĐÂY:
-                // Nếu validation thất bại, trả về View ĐỂ HIỂN THỊ LỖI
-                // thay vì trả về BadRequest
+                // Nếu lỗi, trả về View với model (đã chứa lỗi)
                 return View(model);
             }
 
+            // 3. Nếu hợp lệ -> Lưu vào CSDL
             try
             {
-                // 4. Lấy bản ghi GỐC từ DB (Giữ nguyên)
-                var accountToUpdate = await db.Accounts
-                    .Include(a => a.Employee)
-                    .FirstOrDefaultAsync(a => a.Username == loggedInUsername);
+                // 3a. Lấy bản ghi GỐC từ DB
+                var accountToUpdate = await db.Accounts.FindAsync(model.Username);
+                var employeeToUpdate = await db.Employees.FindAsync(model.EmployeeId);
 
-                if (accountToUpdate == null)
+                if (accountToUpdate == null || employeeToUpdate == null)
                 {
-                    return NotFound("Account not found.");
+                    return NotFound();
                 }
 
-                // 5. Cập nhật thông tin (Giữ nguyên)
+                // 3b. ÁNH XẠ NGƯỢC (MAP) từ ViewModel -> Entity
+                // (Chỉ cập nhật những trường được phép sửa)
                 accountToUpdate.Email = model.Email;
                 accountToUpdate.UpdatedAt = DateTime.Now;
 
-                if (accountToUpdate.Employee != null && model.Employee != null)
-                {
-                    accountToUpdate.Employee.FullName = model.Employee.FullName;
-                    accountToUpdate.Employee.Phone = model.Employee.Phone;
-                    accountToUpdate.Employee.Address = model.Employee.Address;
-                    accountToUpdate.Employee.Gender = model.Employee.Gender;
-                    accountToUpdate.Employee.BirthDate = model.Employee.BirthDate;
-                    accountToUpdate.Employee.UpdatedAt = DateTime.Now;
-                }
+                employeeToUpdate.FullName = model.FullName;
+                employeeToUpdate.Phone = model.Phone;
+                employeeToUpdate.Address = model.Address;
+                employeeToUpdate.Gender = model.Gender;
+                employeeToUpdate.BirthDate = model.BirthDate;
+                employeeToUpdate.UpdatedAt = DateTime.Now;
 
-                // 7. Lưu tất cả thay đổi (Giữ nguyên)
+                // (Các trường Position, Salary, HireDate không được cập nhật, đúng theo logic cũ của bạn)
+
+                // 3c. Lưu thay đổi
                 await db.SaveChangesAsync();
 
-                // 8. SỬA Ở ĐÂY:
-                // Trả về lệnh CHUYỂN HƯỚNG thay vì JSON
+                // 3d. Chuyển hướng về trang xem Profile
                 return RedirectToAction("ShowAdminProfile");
             }
             catch (Exception ex)
             {
-                // SỬA Ở ĐÂY:
-                // Ghi log và trả về View với thông báo lỗi
                 // Ghi log lỗi (ex.Message)
                 ModelState.AddModelError(string.Empty, "An internal server error occurred.");
                 return View(model);

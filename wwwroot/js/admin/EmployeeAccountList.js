@@ -237,8 +237,7 @@
 
                     // 4. Gọi hàm helper để lọc danh sách
                     if (currentRole) {
-                        // Gọi hàm helper, và CHỌN LẠI
-                        // position mà người dùng đã chọn trước khi submit
+
                         updatePositionDropdown(currentRole, positionDropdown, currentPosition);
                     }
                 }

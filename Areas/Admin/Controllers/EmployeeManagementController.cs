@@ -68,6 +68,34 @@ namespace Hotel_Management.Areas.Admin.Controllers
                     ModelState.AddModelError("Email", "This email is already in use.");
                 }
 
+                if (model.BirthDate.HasValue && model.HireDate.HasValue)
+                {
+                    // A. Kiểm tra `HireDate` có sau `BirthDate` không
+                    if (model.HireDate.Value <= model.BirthDate.Value)
+                    {
+                        ModelState.AddModelError("HireDate", "Ngày vào làm phải sau ngày sinh.");
+                    }
+
+                    var ageAtHire = model.HireDate.Value.Year - model.BirthDate.Value.Year;
+
+                    if (model.BirthDate.Value.DayOfYear > model.HireDate.Value.DayOfYear)
+                    {
+                        ageAtHire--;
+                    }
+
+                    if (ageAtHire < 19)
+                    {
+                        ModelState.AddModelError("HireDate", "Nhân viên phải đủ 19 tuổi tại thời điểm vào làm.");
+                        ModelState.AddModelError("BirthDate", "Nhân viên phải đủ 19 tuổi tại thời điểm vào làm.");
+                    }
+                }
+
+
+                if (model.BirthDate.HasValue && model.BirthDate.Value > DateOnly.FromDateTime(DateTime.Now))
+                {
+                    ModelState.AddModelError("BirthDate", "Ngày sinh không thể ở tương lai.");
+                }
+
                 // Nếu vẫn còn lỗi sau khi kiểm tra, trả về View
                 if (!ModelState.IsValid)
                 {
