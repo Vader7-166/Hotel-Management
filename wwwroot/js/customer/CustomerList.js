@@ -2,7 +2,7 @@
 
     // ============ LOGIC "NHÃN NỔI" (FLOATING LABEL) ============
 
-    // Hàm này sẽ kiểm tra tất cả các input và select, thêm class 'is-filled' nếu chúng có giá trị
+
     function initializeFloatingLabels() {
         $('.input-group .form-control').each(function () {
             const input = $(this);
@@ -17,15 +17,14 @@
         });
     }
 
-    // SỬ DỤNG EVENT DELEGATION cho các sự kiện focus và blur
-    // Gắn sự kiện vào 'body' để nó hoạt động với cả các element được tạo sau này bằng AJAX
 
-    // Khi một input hoặc select được focus
+
+
     $('body').on('focus', '.input-group .form-control', function () {
         $(this).closest('.input-group').addClass('is-focused');
     });
 
-    // Khi một input hoặc select bị mất focus (blur)
+
     $('body').on('blur', '.input-group .form-control', function () {
         const input = $(this);
         const inputGroup = input.closest('.input-group');
@@ -39,15 +38,15 @@
         }
     });
 
-    // Chạy lần đầu khi trang tải xong cho các input có sẵn (như ô search)
+
     initializeFloatingLabels();
 
     // ============ LOGIC LỌC, PHÂN TRANG, VÀ RESET ============
 
     // Gán sự kiện 'click' cho nút Filter
     $('#filterButton').on('click', function () {
-        loadPage(1); // Luôn tải trang 1 với bộ lọc mới
-        //khi nhấn nút filter thì sẽ gọi đến hàm loadpage, lấy giá trị tại các bộ lọc, hàm loadpage nhận vào số trang
+        loadPage(1); 
+
     });
 
     // Gán sự kiện nhấn phím 'Enter' trong ô tìm kiếm
@@ -69,24 +68,7 @@
         loadPage(page);
     });
 
-    //Gán sự kiện click cho các nút Action trên mỗi đối tượng
-    //sự kiên Víew details
-    // Sự kiện View details
-    $('body').on('click', '.view-details-btn', function (e) {
-        e.preventDefault();
-        var url = $(this).attr('href');
-        // Target vào .modal-content để nhất quán với logic Edit
-        var modalContent = $('#detailsModal .modal-content');
 
-        // Hiển thị một spinner đơn giản
-        modalContent.html('<div class="modal-body text-center p-5"><div class="spinner-border text-primary"></div></div>');
-
-        $.get(url, function (response) {
-            modalContent.html(response);
-        }).fail(function () {
-            modalContent.html('<div class="modal-body"><p>Could not load the Details!</p></div>');
-        });
-    });
 
 
     // =======================================================
@@ -137,9 +119,24 @@
     // LOGIC CHO ACTION
     // =======================================================
 
-    // ============ AJAX XỬ LÍ ACTION TRÊN MỖI NGƯỜI DÙNG ============
-    // === AJAX GET ĐỂ LẤY FORM EDIT ===
-    // Class của nút bấm là '.edit-details-btn'
+    // View details
+    $('body').on('click', '.view-details-btn', function (e) {
+        e.preventDefault();
+        var url = $(this).attr('href');
+        // Target vào .modal-content để nhất quán với logic Edit
+        var modalContent = $('#detailsModal .modal-content');
+
+        // Hiển thị một spinner đơn giản
+        modalContent.html('<div class="modal-body text-center p-5"><div class="spinner-border text-primary"></div></div>');
+
+        $.get(url, function (response) {
+            modalContent.html(response);
+        }).fail(function () {
+            modalContent.html('<div class="modal-body"><p>Could not load the Details!</p></div>');
+        });
+    });
+
+    //Edit
     $('body').on('click', '.edit-details-btn', function (e) {
         e.preventDefault();
         var url = $(this).attr('href');
@@ -189,7 +186,6 @@
         });
     });
 
-    // Thêm vào file CustomerList.js
 
     // === AJAX ĐỂ HIỂN THỊ MODAL XÁC NHẬN XÓA ===
     $('body').on('click', '.delete-button', function (e) {
@@ -197,11 +193,11 @@
 
         const customerId = $(this).data('id');
         const customerName = $(this).data('name');
-        const url = `/Admin/Customer/Delete/${customerId}`; // Xây dựng URL cho action POST
+        const url = `/Admin/Customer/Delete/${customerId}`; 
 
         const modalContent = $('#detailsModal .modal-content');
 
-        // Tạo HTML cho modal xác nhận
+     
         const confirmationHtml = `
         <div class="modal-header">
             <h5 class="modal-title">Confirm Deletion</h5>
@@ -219,7 +215,6 @@
         </div>
     `;
 
-        // Cập nhật và hiển thị modal
         modalContent.html(confirmationHtml);
         $('#detailsModal').modal('show');
     });
@@ -243,9 +238,7 @@
             success: function (response) {
                 if (response.success) {
                     $('#detailsModal').modal('hide');
-                    alert(response.message); // Hoặc dùng Toastr
-
-                    // Tải lại bảng dữ liệu ở trang hiện tại
+                    alert(response.message);                                              
                     const currentPage = parseInt($('ul.pagination li.active').attr('page')) || 1;
                     loadPage(currentPage);
                 } else {

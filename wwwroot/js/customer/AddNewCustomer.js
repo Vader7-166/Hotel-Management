@@ -1,5 +1,4 @@
-﻿// Luôn đợi cho toàn bộ nội dung HTML được tải xong rồi mới chạy script
-document.addEventListener('DOMContentLoaded', function () {
+﻿document.addEventListener('DOMContentLoaded', function () {
 
     // --- Floating Label for Inputs ---
     // Tìm tất cả các nhóm input có outline trên trang
@@ -31,7 +30,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
 
-            // Xử lý trường hợp trang tải lại và input đã có sẵn giá trị
             if (input.value !== '') {
                 group.classList.add('is-filled');
             }

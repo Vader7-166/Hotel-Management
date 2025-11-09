@@ -26,13 +26,11 @@ namespace Hotel_Management.Areas.Admin.Controllers
             // Lấy tên đăng nhập của người dùng hiện tại từ Session
             var loggedInUsername = HttpContext.Session.GetString("Username");
 
-            // Bắt đầu truy vấn
             IQueryable<Account> query = db.Accounts
                 .Include(a => a.Customer)
                 .Include(a => a.Employee)
                 .Where(a => a.Role == "Admin" || a.Role == "Employee" || a.Role == "Receptionist");
 
-            // Nếu đã lấy được tên đăng nhập, thêm điều kiện để loại trừ chính tài khoản đó
             if (!string.IsNullOrEmpty(loggedInUsername))
             {
                 query = query.Where(a => a.Username != loggedInUsername);
@@ -46,7 +44,6 @@ namespace Hotel_Management.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult AddNewEmployeeAccount()
         {
-            // Tạo một ViewModel rỗng và truyền nó vào View
             var model = new AddNewEmployeeViewModel();
             return View(model);
         }
@@ -58,7 +55,7 @@ namespace Hotel_Management.Areas.Admin.Controllers
             // 1. Kiểm tra validation từ ViewModel
             if (ModelState.IsValid)
             {
-                // 2. Kiểm tra nghiệp vụ (Username/Email có bị trùng không)
+
                 if (await db.Accounts.AnyAsync(a => a.Username == model.Username))
                 {
                     ModelState.AddModelError("Username", "This username is already taken.");
@@ -125,14 +122,14 @@ namespace Hotel_Management.Areas.Admin.Controllers
                         db.Employees.Add(newEmployee);
                         await db.SaveChangesAsync();
 
-                        // 3b. Tạo và lưu Account, liên kết với Employee vừa tạo
+
                         var newAccount = new Account
                         {
                             Username = model.Username,
                             PasswordHash = HashPassword(model.Password),
                             Email = model.Email,
                             Role = model.Role,
-                            EmployeeId = newEmployee.EmployeeId, // Liên kết khóa ngoại
+                            EmployeeId = newEmployee.EmployeeId, 
                             IsActive = true,
                             CreatedAt = DateTime.Now
 
@@ -140,7 +137,6 @@ namespace Hotel_Management.Areas.Admin.Controllers
                         db.Accounts.Add(newAccount);
                         await db.SaveChangesAsync();
 
-                        // 3c. Commit transaction
                         await transaction.CommitAsync();
 
                         TempData["SuccessMessage"] = "Employee account created successfully!";
@@ -148,17 +144,17 @@ namespace Hotel_Management.Areas.Admin.Controllers
                     }
                     catch (Exception)
                     {
-                        // 3d. Nếu lỗi, rollback transaction
+
                         await transaction.RollbackAsync();
                         ModelState.AddModelError(string.Empty, "An unexpected error occurred.");
                     }
                 }
             }
-            // 4. Nếu ModelState không hợp lệ ngay từ đầu, trả về View với các lỗi
+
             return View(model);
         }
 
-        // Hàm HashPassword
+
         private string HashPassword(string password)
         {
             using (SHA256 sha = SHA256.Create())
@@ -174,16 +170,16 @@ namespace Hotel_Management.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> AccountTableAndPagination(int pageIndex = 1, string searchQuery = "", string role = "", string position = "" )
         {
-            // Lấy tên đăng nhập của người dùng hiện tại từ Session
+     
             var loggedInUsername = HttpContext.Session.GetString("Username");
 
-            // Bắt đầu truy vấn (Giữ nguyên)
+
             IQueryable<Account> query = db.Accounts
                                           .Include(a => a.Customer)
                                           .Include(a => a.Employee)
                                           .Where(a => a.Role == "Admin" || a.Role == "Employee" || a.Role == "Receptionist");
 
-            // Lọc loại trừ
+
             if (!string.IsNullOrEmpty(loggedInUsername))
             {
                 query = query.Where(a => a.Username != loggedInUsername);
@@ -200,21 +196,20 @@ namespace Hotel_Management.Areas.Admin.Controllers
             }
             if (!string.IsNullOrEmpty(position))
             {
-                // Lọc dựa trên cột Position trong bảng Employee liên quan
+   
                 query = query.Where(a => a.Employee.Position == position);
             }
 
-            // 1. Đếm tổng số record THỎA MÃN ĐIỀU KIỆN
+
             var totalItems = await query.CountAsync();
 
-            // 2. Tính toán số trang
-            int pageSize = 7; // mặc định tối đa 3 record trên 1 page
+
+            int pageSize = 7; // mặc định tối đa 7 record trên 1 page
             var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
 
-            // Đảm bảo luôn là "Page 1 / 1" ngay cả khi không có record nào
+   
             if (totalPages == 0) totalPages = 1;
 
-            // 3. Đưa thông tin vào ViewBag để View có thể đọc
             ViewBag.currentPage = pageIndex;
             ViewBag.pageNum = totalPages;
 
@@ -228,8 +223,6 @@ namespace Hotel_Management.Areas.Admin.Controllers
             return PartialView("_AccountListPartial", pagedResult);
         }
 
-
-        // Action xử lý việc xóa (sẽ được gọi bằng AJAX POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(string id) // <-- id ở đây là username
@@ -243,22 +236,22 @@ namespace Hotel_Management.Areas.Admin.Controllers
                     return Json(new { success = false, message = "Account not found." }); //không tìm thấy thì sẽ trả về json false
                 }
                 db.Accounts.Remove(accountToDelete); //ngược lại tìm thấy thì xóa
-                await db.SaveChangesAsync(); //lưu tình trạng hiện tại của db
-                return Json(new { success = true, message = "Account has been deleted successfully." }); //trả về json true
+                await db.SaveChangesAsync(); 
+                return Json(new { success = true, message = "Account has been deleted successfully." });
             }
             catch (Exception)
             {
-                return Json(new { success = false, message = "An error occurred." }); //nếu không mở được db thì báo lỗi An erro Occured
+                return Json(new { success = false, message = "An error occurred." }); 
             }
         }
 
-        // Action Details(id), Edit(id) [HttpGet], Edit(id) [HttpPost] ở đây
+        // Action Details(id), Edit(id) [HttpGet], Edit(id) [HttpPost]
         public async Task<IActionResult> Details(string username) 
         {
             var account = await db.Accounts
                                   .Include(a => a.Customer)
                                   .Include(a => a.Employee)
-                                  .FirstOrDefaultAsync(a => a.Username == username); //tìm các record thỏa mãn
+                                  .FirstOrDefaultAsync(a => a.Username == username);
             if (account == null) return NotFound();
             return PartialView("_AccountDetailsPartitial", account); //trả về view cùng với strongly model
         }
@@ -266,23 +259,21 @@ namespace Hotel_Management.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string username)
         {
-            // DÙNG .Include() ĐỂ TẢI EMPLOYEE
+    
             var account = await db.Accounts
                 .Include(a => a.Employee)
                 .FirstOrDefaultAsync(a => a.Username == username);
 
             if (account == null) return NotFound();
 
-            // Ánh xạ (Map) từ Entity -> ViewModel
             var viewModel = new EditEmployeeViewModel
             {
                 Username = account.Username,
                 Email = account.Email,
                 Role = account.Role,
                 IsActive = account.IsActive,
-                EmployeeId = account.EmployeeId ?? 0, // Lấy EmployeeId
+                EmployeeId = account.EmployeeId ?? 0,
 
-                // Gán giá trị Employee (nếu có)
                 FullName = account.Employee?.FullName,
                 Position = account.Employee?.Position,
                 Salary = account.Employee?.Salary,
@@ -369,7 +360,7 @@ namespace Hotel_Management.Areas.Admin.Controllers
 
             List<string> positionsToSend;
 
-            // 2. Quyết định danh sách nào sẽ gửi đi
+
             if (role == "Admin")
             {
                 positionsToSend = adminPositions;
@@ -382,14 +373,12 @@ namespace Hotel_Management.Areas.Admin.Controllers
             {
                 positionsToSend = receptionistPositions;
             }
-            else // Trường hợp role == "" (Tức là chọn "All Roles" trong bộ lọc)
+            else 
             {
-                // Gộp cả 2 danh sách lại
+  
                 positionsToSend = adminPositions.Concat(employeePositions).ToList();
             }
-
-            // 3. Sắp xếp và trả về JSON
-            positionsToSend.Sort(); // Sắp xếp theo thứ tự ABC
+            positionsToSend.Sort();
             return Json(positionsToSend);
         }
     }
