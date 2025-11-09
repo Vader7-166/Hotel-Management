@@ -125,7 +125,8 @@
 
                     <div class="col-md-6 mb-3">
                         <div class="form-floating">
-                            <select asp-for="Position" class="form-select" disabled>
+                            <select asp-for="Position" class="form-select" disabled
+                                    data-current-position="@Model.Position">
                                 <option value="" selected disabled>Select Role to see positions...</option>
                             </select>
                             <label asp-for="Position"></label>

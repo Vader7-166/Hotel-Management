@@ -27,6 +27,8 @@ namespace Hotel_Management.ViewModels
         public string Position { get; set; }
 
         public decimal? Salary { get; set; }
+        [Display(Name = "Số điện thoại")]
+        [RegularExpression(@"^(0[0-9]{9})$", ErrorMessage = "Số điện thoại phải là 10 số, bắt đầu bằng 0 (ví dụ: 0912345678).")]
         public string? Phone { get; set; }
         public string? Address { get; set; }
         public string? Gender { get; set; }
