@@ -65,10 +65,6 @@
 
             <p class="text-sm mb-0">
                 Trang <strong>@(ViewBag.currentPage ?? 1)</strong> / <strong>@(ViewBag.pageNum ?? 1)</strong>
-                @if (ViewBag.TotalItems != null)
-                {
-                    <span class="ms-2 text-muted">(Tổng số @ViewBag.TotalItems khách hàng)</span>
-                }
             </p>
 
             <nav aria-label="Page navigation">

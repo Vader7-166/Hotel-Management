@@ -61,7 +61,7 @@
     // Gán sự kiện 'click' cho các nút phân trang
     $('body').on('click', 'li.page-item a', function (e) {
         e.preventDefault();
-        var $pageItem = $(this).parent();
+        var $pageItem = $(this).parent();//khởi tạo đối tượng Jquery
         if ($pageItem.hasClass('disabled') || $pageItem.hasClass('active')) {
             return;
         }

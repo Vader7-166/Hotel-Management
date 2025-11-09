@@ -73,7 +73,7 @@
         $('#searchAccountInput').val('');
         $('#roleFilter').val('');
         $('#positionFilter').val('');
-        initializeFloatingLabels();
+        //initializeFloatingLabels();
         loadPage(1);
     });
 
