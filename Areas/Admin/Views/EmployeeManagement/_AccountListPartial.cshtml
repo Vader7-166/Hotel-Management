@@ -19,7 +19,6 @@
                         <h6 class="mb-0 text-sm px-2 py-1">@account.Username</h6>
                     </td>
                     <td>
-                        @* Thử lấy FullName từ Employee, nếu không có thì lấy từ Customer *@
                         <p class="text-sm font-weight-bold mb-0">@(account.Employee?.FullName ?? account.Customer?.FullName ?? "N/A")</p>
                     </td>
                     <td>
@@ -61,7 +60,7 @@
     </table>
 </div>
 
-@* Thêm pagination ở đây nếu bạn cần, logic tương tự _CustomerListPartial.cshtml *@
+
 <!-- Pagination -->
 <div id="paginationContainer">
     <div class="border-top py-3 px-4">
@@ -74,12 +73,9 @@
                         int pageNum = ViewBag.pageNum ?? 1;
 
                         // --- CÀI ĐẶT ---
-                        // Số trang lân cận (neighbors) bạn muốn thấy bên cạnh trang hiện tại
-                        // (neighbors = 1 có nghĩa là: ... 49 [50] 51 ...)
+                        // (neighbors = 1 
                         int neighbors = 1;
 
-                        // Tổng số nút tối đa sẽ hiển thị trước khi kích hoạt dấu "..."
-                        // (Hiện tại là 7: 1 + ... + 49 + 50 + 51 + ... + 100)
                         int maxButtons = (neighbors * 2) + 5;
                     }
 
@@ -92,7 +88,6 @@
                     @if (pageNum <= maxButtons)
                     {
                         // TRƯỜNG HỢP 1: SỐ TRANG QUÁ ÍT (<= 7)
-                        // Quay lại logic "đơn giản": In tất cả các số.
                         for (int i = 1; i <= pageNum; i++)
                         {
                             <li class="page-item @(i == currentPage ? "active" : "")" page="@i">
@@ -103,7 +98,7 @@
                     else
                     {
                         // TRƯỜNG HỢP 2: SỐ TRANG NHIỀU (> 7)
-                        // Dùng logic "thông minh" (có dấu "...").
+                        // có dấu "...".
                         for (int i = 1; i <= pageNum; i++)
                         {
                             // Xác định các "vùng" sẽ được hiển thị
