@@ -70,7 +70,13 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-var port = Environment.GetEnvironmentVariable("PORT") ?? "10000";
-app.Run($"http://0.0.0.0:{port}");
+var port = Environment.GetEnvironmentVariable("PORT");
 
-app.Run();
+if (!string.IsNullOrEmpty(port))
+{
+    app.Run($"http://0.0.0.0:{port}");
+}
+else
+{
+    app.Run();
+}
